@@ -1,3 +1,4 @@
+export const runtime = 'edge';
 import { NextResponse } from 'next/server'
 import { stripe } from '@/lib/stripe'
 import { createServerSupabase } from '@/lib/supabase/server'
