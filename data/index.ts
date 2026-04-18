@@ -1,0 +1,189 @@
+export interface Instrument {
+  sym: string
+  price: number
+  chg: number
+  mcap?: string
+}
+
+export const instruments: Instrument[] = [
+  { sym: 'BTC-USD', price: 66816.26, chg: 1.31, mcap: '$1.3T' },
+  { sym: 'ETH-USD', price: 2040.63, chg: 2.93, mcap: '$245B' },
+  { sym: 'AAPL', price: 246.63, chg: -0.87, mcap: '$3.8T' },
+  { sym: 'TSLA', price: 355.28, chg: -1.81, mcap: '$1.1T' },
+  { sym: 'META', price: 536.38, chg: 2.03, mcap: '$1.4T' },
+  { sym: 'GOOGL', price: 273.50, chg: -0.31, mcap: '$2.1T' },
+  { sym: 'EUR/USD', price: 1.14613, chg: -0.64 },
+  { sym: 'GBP/USD', price: 1.31822, chg: -1.15 },
+  { sym: 'GOLD', price: 2338.40, chg: 1.08 },
+  { sym: 'SPX', price: 5234.18, chg: 0.67, mcap: '$42T' },
+  { sym: 'JPM', price: 283.77, chg: 0.33, mcap: '$496B' },
+  { sym: 'AMZN', price: 200.95, chg: 0.81, mcap: '$2.1T' },
+]
+
+export interface Indicator {
+  label: string
+  val: string
+  dir: 'up' | 'down' | 'flat'
+}
+
+export const indicators: Indicator[] = [
+  { label: 'Interest Rate', val: '3.64', dir: 'flat' },
+  { label: 'Inflation', val: '327.46', dir: 'up' },
+  { label: 'Unemployment', val: '4.4%', dir: 'up' },
+  { label: 'GDP', val: '24,065', dir: 'up' },
+  { label: '10Y Bond', val: '4.44%', dir: 'up' },
+  { label: 'VIX', val: '30.6', dir: 'down' },
+  { label: 'DXY', val: '100.5', dir: 'up' },
+  { label: 'HY OAS', val: '3.42%', dir: 'up' },
+  { label: 'Core CPI', val: '333.51', dir: 'up' },
+]
+
+export interface NewsItem {
+  title: string
+  time: string
+  tag: string
+}
+
+export const newsItems: NewsItem[] = [
+  { title: 'Fed signals potential rate adjustment amid inflation data', time: '2h ago', tag: 'Macro' },
+  { title: 'Bitcoin breaks through key resistance level at $67,000', time: '4h ago', tag: 'Crypto' },
+  { title: 'S&P 500 breadth narrows as tech concentration rises', time: '5h ago', tag: 'Equities' },
+  { title: 'ECB holds rates, signals data-dependent approach', time: '8h ago', tag: 'FX' },
+  { title: 'Gold surges to new highs on safe-haven demand', time: '12h ago', tag: 'Commodities' },
+]
+
+export interface COTEntry {
+  cat: string
+  long: number
+  short: number
+  net: number
+  netChg: number
+}
+
+export const cotData: COTEntry[] = [
+  { cat: 'Dealer', long: 0, short: 0, net: 0, netChg: 0 },
+  { cat: 'Asset Manager', long: 1105309, short: 226918, net: 878000, netChg: -8000 },
+  { cat: 'Leveraged', long: 135794, short: 479921, net: -344000, netChg: -4000 },
+  { cat: 'Other Reportable', long: 84240, short: 33744, net: 50000, netChg: 18000 },
+]
+
+export interface Plan {
+  name: string
+  desc: string
+  priceM: number
+  priceY: number
+  popular: boolean
+  cta: string
+  features: string[]
+}
+
+export const plans: Plan[] = [
+  {
+    name: 'Free', desc: 'Essential tools to start', priceM: 0, priceY: 0,
+    popular: false, cta: 'Get started',
+    features: ['Basic charting', '3 alerts', '1 watchlist', 'Web terminal', 'Global indicators', 'Community support'],
+  },
+  {
+    name: 'Pro', desc: 'For active analysts', priceM: 14.99, priceY: 9.99,
+    popular: true, cta: 'Start 14-day trial',
+    features: ['Advanced charting', '50 alerts', '10 watchlists', 'COT reports', 'Market screener', '5 saved layouts', 'Web + Desktop', 'Email support'],
+  },
+  {
+    name: 'Premium', desc: 'Full professional suite', priceM: 29.99, priceY: 19.99,
+    popular: false, cta: 'Start 14-day trial',
+    features: ['Everything in Pro', 'Unlimited alerts', 'Unlimited watchlists', 'Macro intelligence', 'On-chain analytics', 'Sentiment tools', 'Unlimited layouts', 'Priority support', 'API access'],
+  },
+]
+
+export interface FAQ {
+  q: string
+  a: string
+}
+
+export const faqs: FAQ[] = [
+  { q: 'Is Termimal a broker or exchange?', a: 'No. Termimal is a market analysis platform only. We do not execute trades, hold funds, or act as a financial intermediary. You research here — you execute on your own preferred platform.' },
+  { q: 'Does Termimal provide financial advice?', a: 'No. All data, charts, and tools are for informational and research purposes only. Nothing on Termimal constitutes financial, investment, or trading advice.' },
+  { q: 'What data does Termimal include?', a: 'Live market data, CFTC COT reports, on-chain analytics, macro economic indicators, prediction market data, and sentiment metrics — all in one workspace.' },
+  { q: 'Can I sync between web and desktop?', a: 'Yes. Your watchlists, layouts, alerts, and preferences sync automatically across all your devices via cloud.' },
+  { q: 'How do I cancel?', a: 'Cancel anytime from account settings. You retain access until the end of your billing period. No fees, no questions.' },
+]
+
+export interface MarketCard {
+  name: string
+  count: string
+  desc: string
+}
+
+export const marketCards: MarketCard[] = [
+  { name: 'Stocks', count: '10,000+', desc: 'US, EU, APAC equities' },
+  { name: 'Forex', count: '80+', desc: 'Major, minor, exotic pairs' },
+  { name: 'Crypto', count: '200+', desc: 'Spot and derivatives data' },
+  { name: 'Commodities', count: '30+', desc: 'Metals, energy, agriculture' },
+  { name: 'Indices', count: '50+', desc: 'Global benchmark indices' },
+  { name: 'ETFs', count: '500+', desc: 'Sector, thematic, leveraged' },
+  { name: 'Macro', count: '50+', desc: 'Global economic indicators' },
+  { name: 'Positioning', count: 'Live', desc: 'COT & institutional flow' },
+]
+
+export interface ExploreTab {
+  title: string
+  desc: string
+  key: string
+}
+
+export const exploreTabs: ExploreTab[] = [
+  { title: 'Charting workspace', desc: 'Multi-timeframe candlestick charts with 100+ indicators, on-chain overlays, and custom layouts.', key: 'chart' },
+  { title: 'Global indicators', desc: 'Interest rates, inflation, GDP, employment, and yield curve data — structured and live.', key: 'indicators' },
+  { title: 'Watchlist intelligence', desc: 'Your watchlist connected to news, signals, and contextual analysis — not a static list.', key: 'watchlist' },
+  { title: 'News flow', desc: 'Curated market news filtered by your watchlist, with importance badges and asset tagging.', key: 'news' },
+  { title: 'COT positioning', desc: 'CFTC institutional positioning with smart money vs spec breakdown and crowding alerts.', key: 'cot' },
+  { title: 'Risk & sentiment', desc: 'VIX regime, credit spreads, breadth, liquidity — the market pulse dashboard.', key: 'risk' },
+]
+
+export interface Story {
+  tag: string
+  title: string
+  desc: string
+  points: string[]
+  img: string
+}
+
+export const stories: Story[] = [
+  {
+    tag: 'Charting', title: 'Chart faster with context',
+    desc: 'Multi-layout charting with on-chain valuation overlays. See MVRV, realized cap, and cycle position — not just price.',
+    points: ['On-chain valuation overlays', 'Multi-timeframe with volume', 'Customizable layouts and sync', '100+ technical indicators'],
+    img: '/screenshots/chart.png',
+  },
+  {
+    tag: 'Macro', title: 'See macro in context',
+    desc: 'Global indicators paired with market instruments. Interest rates, inflation, GDP — structured by category with directional context.',
+    points: ['Structured economic data', 'Directional arrows for context', 'Cross-category correlation', 'Real-time updates'],
+    img: '/screenshots/indicators.png',
+  },
+  {
+    tag: 'Intelligence', title: 'Turn your watchlist into intelligence',
+    desc: 'Your watchlist triggers filtered news, contextual analysis, and signal summaries. It becomes a research hub, not a price list.',
+    points: ['News filtered by watchlist', 'Signal summaries per asset', 'Contextual analysis triggers', 'Priority-ranked feeds'],
+    img: '/screenshots/dashboard.png',
+  },
+  {
+    tag: 'Positioning', title: 'Read positioning before price reacts',
+    desc: 'CFTC COT data with institutional positioning, crowded trade alerts, and smart money vs spec breakdown.',
+    points: ['S&P 500, NASDAQ, VIX, 10Y COT', 'Smart money vs leveraged funds', 'Week-over-week changes', 'Crowded positioning alerts'],
+    img: '/screenshots/cot.png',
+  },
+  {
+    tag: 'Workflow', title: 'Build your own workflow',
+    desc: 'Saved layouts, custom filters, personalized workspaces. Your terminal adapts to how you think and work.',
+    points: ['Save and sync layouts', 'Custom screener filters', 'Personalized workspace tabs', 'Cross-device continuity'],
+    img: '/screenshots/macro.png',
+  },
+]
+
+export const footerLinks = {
+  product: ['Web Terminal', 'Desktop App', 'Features', 'Markets', 'Pricing', 'Changelog', 'Status'],
+  resources: ['Blog', 'Academy', 'Help Center', 'API', 'Status'],
+  company: ['About', 'Careers', 'Contact', 'Affiliates', 'Refer a Friend'],
+  legal: ['Terms', 'Privacy', 'Cookies', 'Risk Disclaimer', 'Refund Policy'],
+}
