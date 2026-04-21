@@ -119,9 +119,7 @@ export default function Navbar() {
           }`}
           style={{
             borderColor: "var(--border)",
-            backgroundColor: "var(--bg2)",
-            backdropFilter: "blur(18px)",
-            boxShadow: "0 20px 60px rgba(0,0,0,0.45)",
+            backgroundColor: "var(--surface)",
             color: "var(--t1)",
           }}
         >
@@ -168,20 +166,8 @@ export default function Navbar() {
                 key={link.name}
                 href={link.href}
                 onClick={closeMenu}
-                className="rounded-xl px-3 py-3 text-[15px] font-semibold transition-colors"
-                style={{
-                  color: "var(--t1)",
-                  backgroundColor: "transparent",
-                  border: "1px solid transparent",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = "var(--bg3)"
-                  e.currentTarget.style.borderColor = "var(--border)"
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = "transparent"
-                  e.currentTarget.style.borderColor = "transparent"
-                }}
+                className="rounded-xl px-3 py-3 text-[15px] font-medium transition-colors hover:bg-white/5"
+                style={{ color: "var(--t2)" }}
               >
                 {link.name}
               </Link>
@@ -189,7 +175,7 @@ export default function Navbar() {
           </nav>
 
           <div
-            className="border-t px-4 py-4 mt-auto"
+            className="border-t px-4 py-4"
             style={{ borderColor: "var(--border)" }}
           >
             <div className="flex flex-col gap-3">
@@ -200,7 +186,7 @@ export default function Navbar() {
                 style={{
                   color: "var(--t1)",
                   borderColor: "var(--border)",
-                  backgroundColor: "var(--bg3)",
+                  backgroundColor: "var(--bg)",
                 }}
               >
                 Sign in
@@ -219,4 +205,3 @@ export default function Navbar() {
     </>
   )
 }
-
