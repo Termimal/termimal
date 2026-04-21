@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import { DM_Sans, JetBrains_Mono } from 'next/font/google'
 import './globals.css'
+import { createClient } from '@supabase/supabase-js'
+import SiteBanner from '@/components/SiteBanner'
 
 const dmSans = DM_Sans({
   subsets: ['latin'],
@@ -12,9 +14,29 @@ const jetbrainsMono = JetBrains_Mono({
   variable: '--font-mono',
 })
 
-export const metadata: Metadata = {
-  title: 'Termimal — Professional Market Analysis Terminal',
-  description: 'Institutional-grade charting, macro intelligence, COT positioning, and risk analytics. Analysis only — no trade execution.',
+// Revalidate every hour so SEO caches update automatically
+export const revalidate = 3600
+
+export async function generateMetadata(): Promise<Metadata> {
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+  )
+  
+  const { data } = await supabase
+    .from('site_settings')
+    .select('site_title, site_description, site_keywords, og_image')
+    .eq('id', 'global')
+    .single()
+
+  return {
+    title: data?.site_title || 'Termimal — Professional Market Analysis Terminal',
+    description: data?.site_description || 'Institutional-grade charting, macro intelligence, COT positioning, and risk analytics. Analysis only — no trade execution.',
+    keywords: data?.site_keywords || '',
+    openGraph: data?.og_image ? {
+      images: [data.og_image],
+    } : undefined,
+  }
 }
 
 export default function RootLayout({
@@ -25,6 +47,10 @@ export default function RootLayout({
   return (
     <html lang="en" data-theme="dark" suppressHydrationWarning>
       <body className={`${dmSans.variable} ${jetbrainsMono.variable} font-sans`}>
+        
+        {/* GLOBAL PROMO BANNER FROM ADMIN PANEL */}
+        <SiteBanner />
+        
         <script
           dangerouslySetInnerHTML={{
             __html: `
