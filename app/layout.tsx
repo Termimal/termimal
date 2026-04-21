@@ -1,7 +1,6 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { DM_Sans, JetBrains_Mono } from 'next/font/google'
 import './globals.css'
-import { createClient } from '@supabase/supabase-js'
 import SiteBanner from '@/components/SiteBanner'
 
 const dmSans = DM_Sans({
@@ -14,33 +13,76 @@ const jetbrainsMono = JetBrains_Mono({
   variable: '--font-mono',
 })
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://termimal.com'
+const defaultTitle = 'Termimal | Market Analysis Terminal for Macro, COT & Risk Intelligence'
+const defaultDescription =
+  'Termimal is a market analysis terminal for charting, macro intelligence, CFTC COT positioning, on-chain analytics, sentiment, and risk research. Analysis only — no trade execution.'
+
 export const revalidate = 3600
 
-export async function generateMetadata(): Promise<Metadata> {
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
-  )
-
-  const { data } = await supabase
-    .from('site_settings')
-    .select('site_description, site_keywords, og_image')
-    .eq('id', 'global')
-    .single()
-
-  return {
-    title: 'Termimal',
+export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: defaultTitle,
+    template: '%s | Termimal',
+  },
+  description: defaultDescription,
+  keywords: [
+    'Termimal',
+    'termimal.com',
+    'market analysis terminal',
+    'trading terminal',
+    'macro intelligence platform',
+    'COT positioning',
+    'CFTC COT analysis',
+    'risk analytics platform',
+    'on-chain analytics',
+    'sentiment analysis platform',
+    'institutional-grade charting',
+    'Bloomberg terminal alternative',
+    'market research terminal',
+    'web terminal for traders',
+  ],
+  alternates: {
+    canonical: '/',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      noimageindex: false,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+      'max-video-preview': -1,
+    },
+  },
+  openGraph: {
+    type: 'website',
+    url: siteUrl,
+    siteName: 'Termimal',
+    title: defaultTitle,
     description:
-      data?.site_description ||
-      'Institutional-grade charting, macro intelligence, COT positioning, and risk analytics.',
-    keywords: data?.site_keywords || '',
-
-    openGraph: data?.og_image
-      ? {
-          images: [data.og_image],
-        }
-      : undefined,
-  }
+      'Institutional-grade charting, macro intelligence, COT positioning, on-chain analytics, sentiment, and risk research in one terminal.',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'Termimal market analysis terminal',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Termimal | Market Analysis Terminal',
+    description:
+      'Charting, macro intelligence, COT positioning, on-chain analytics, sentiment, and risk research in one platform.',
+    images: ['/og-image.png'],
+  },
+  category: 'finance',
+  applicationName: 'Termimal',
 }
 
 export default function RootLayout({
@@ -50,25 +92,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" data-theme="dark" suppressHydrationWarning>
-        <head>
-          <link rel="icon" type="image/png" href="https://www.termimal.com/icon.png?v=199407" />
-          <link rel="shortcut icon" type="image/png" href="https://www.termimal.com/icon.png?v=199407" />
-          <link rel="apple-touch-icon" href="https://www.termimal.com/icon.png?v=199407" />
-        </head>
+      <head>
+        <link rel="icon" type="image/png" href="/icon.png" />
+        <link rel="shortcut icon" type="image/png" href="/icon.png" />
+        <link rel="apple-touch-icon" href="/icon.png" />
+      </head>
       <body className={`${dmSans.variable} ${jetbrainsMono.variable} font-sans`}>
         <SiteBanner />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                var saved = localStorage.getItem('termimal-theme');
-                var sys = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
-                var theme = saved || sys || 'dark';
-                document.documentElement.setAttribute('data-theme', theme);
-              })();
-            `,
-          }}
-        />
         {children}
       </body>
     </html>
