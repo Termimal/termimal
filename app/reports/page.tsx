@@ -2,6 +2,7 @@ import { createClient } from '@supabase/supabase-js'
 import Link from 'next/link'
 
 export const revalidate = 60
+export const runtime = 'edge'
 
 export default async function ReportsPage() {
   const supabase = createClient(

@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import { ArrowLeft } from 'lucide-react'
 
 export const revalidate = 60
+export const runtime = 'edge'
 
 export default async function ArticlePage({ params }: { params: { id: string } }) {
   const supabase = createClient(
