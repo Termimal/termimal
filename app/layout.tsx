@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { DM_Sans, JetBrains_Mono } from 'next/font/google'
 import './globals.css'
 import { createClient } from '@supabase/supabase-js'
@@ -30,9 +30,10 @@ export async function generateMetadata(): Promise<Metadata> {
     .single()
 
   return {
-    title: data?.site_title || 'Termimal — Professional Market Analysis Terminal',
-    description: data?.site_description || 'Institutional-grade charting, macro intelligence, COT positioning, and risk analytics. Analysis only — no trade execution.',
+    title: data?.site_title || 'Termimal â€” Professional Market Analysis Terminal',
+    description: data?.site_description || 'Institutional-grade charting, macro intelligence, COT positioning, and risk analytics. Analysis only â€” no trade execution.',
     keywords: data?.site_keywords || '',
+    icons: { icon: '/favicon.ico' },
     openGraph: data?.og_image ? {
       images: [data.og_image],
     } : undefined,
