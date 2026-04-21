@@ -40,9 +40,7 @@ export default function HomeFaq() {
     return (
       <section className="py-20">
         <div className="mx-auto max-w-4xl px-6">
-          <p className="text-sm" style={{ color: 'var(--t3)' }}>
-            Loading FAQs...
-          </p>
+          <p className="text-sm" style={{ color: 'var(--t3)' }}>Loading FAQs...</p>
         </div>
       </section>
     )
@@ -63,6 +61,7 @@ export default function HomeFaq() {
         <div className="space-y-4">
           {faqs.map((faq) => {
             const isOpen = openId === faq.id
+            const chevronClass = isOpen ? 'transition-transform rotate-180' : 'transition-transform'
 
             return (
               <div
@@ -80,7 +79,7 @@ export default function HomeFaq() {
                   </span>
                   <ChevronDown
                     size={18}
-                    className={	ransition-transform }
+                    className={chevronClass}
                     style={{ color: 'var(--t3)' }}
                   />
                 </button>
