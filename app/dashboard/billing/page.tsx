@@ -58,7 +58,7 @@ export default function BillingPage() {
       <div className="p-6 rounded-xl mb-6" style={{ border: '1px solid var(--border)', background: 'var(--surface)' }}>
         <div className="flex items-center justify-between mb-4">
           <div>
-            <div className="text-[0.62rem] font-bold uppercase tracking-widest mb-1" style={{ color: 'var(--t4)' }}>Current plan</div>
+            <div className="text-sm font-bold uppercase tracking-widest mb-1" style={{ color: 'var(--t4)' }}>Current plan</div>
             <div className="text-xl font-bold">{plan.charAt(0).toUpperCase() + plan.slice(1)}</div>
             <div className="text-xs" style={{ color: 'var(--t3)' }}>
               {plan === 'free' ? 'Free forever — no credit card required' :
@@ -98,16 +98,16 @@ export default function BillingPage() {
               <div className="text-lg font-bold mb-3">{p.price}</div>
               <ul className="space-y-1">
                 {p.features.map(f => (
-                  <li key={f} className="text-[0.68rem] flex items-center gap-1.5" style={{ color: 'var(--t3)' }}>
+                  <li key={f} className="text-sm flex items-center gap-1.5" style={{ color: 'var(--t3)' }}>
                     <span style={{ color: 'var(--green-val)' }}>✓</span> {f}
                   </li>
                 ))}
               </ul>
               {plan === p.name.toLowerCase() ? (
-                <div className="mt-3 text-[0.62rem] font-semibold text-center py-1.5 rounded" style={{ color: 'var(--acc)', background: 'var(--acc-d)' }}>Current plan</div>
+                <div className="mt-3 text-sm font-semibold text-center py-1.5 rounded" style={{ color: 'var(--acc)', background: 'var(--acc-d)' }}>Current plan</div>
               ) : (
                 <button onClick={() => handleUpgrade(`${p.name.toLowerCase()}_yearly`)}
-                  className="mt-3 w-full text-[0.62rem] font-semibold text-center py-1.5 rounded transition-colors"
+                  className="mt-3 w-full text-sm font-semibold text-center py-1.5 rounded transition-colors"
                   style={{ color: 'var(--t2)', border: '1px solid var(--border)' }}>
                   {p.name === 'Free' ? 'Downgrade' : 'Upgrade'}
                 </button>
@@ -138,10 +138,10 @@ export default function BillingPage() {
                   <td className="py-3 font-mono" style={{ color: 'var(--t2)' }}>{new Date(inv.created_at).toLocaleDateString()}</td>
                   <td className="py-3 text-right font-mono" style={{ color: 'var(--t2)' }}>${inv.amount}</td>
                   <td className="py-3 text-right">
-                    <span className="px-2 py-0.5 rounded text-[0.6rem] font-semibold" style={{ color: 'var(--green-val)', background: 'rgba(52,211,153,.1)' }}>{inv.status}</span>
+                    <span className="px-2 py-0.5 rounded text-sm font-semibold" style={{ color: 'var(--green-val)', background: 'rgba(52,211,153,.1)' }}>{inv.status}</span>
                   </td>
                   <td className="py-3 text-right">
-                    {inv.invoice_url && <a href={inv.invoice_url} target="_blank" className="text-[0.62rem] font-medium" style={{ color: 'var(--acc)' }}>View</a>}
+                    {inv.invoice_url && <a href={inv.invoice_url} target="_blank" className="text-sm font-medium" style={{ color: 'var(--acc)' }}>View</a>}
                   </td>
                 </tr>
               ))}
@@ -152,3 +152,4 @@ export default function BillingPage() {
     </div>
   )
 }
+

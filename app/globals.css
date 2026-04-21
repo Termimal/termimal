@@ -72,6 +72,8 @@ html {
 }
 
 body {
+  font-size: 16px;
+  line-height: 1.6;
   font-family: 'DM Sans', system-ui, sans-serif;
   background: var(--bg);
   color: var(--t1);

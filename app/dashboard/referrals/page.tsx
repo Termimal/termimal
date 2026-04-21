@@ -40,7 +40,7 @@ export default function ReferralsPage() {
             <div key={s.step}>
               <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold mb-2" style={{ background: 'var(--acc-d)', color: 'var(--acc)' }}>{s.step}</div>
               <div className="text-xs font-semibold mb-0.5">{s.title}</div>
-              <div className="text-[0.68rem]" style={{ color: 'var(--t4)' }}>{s.desc}</div>
+              <div className="text-sm" style={{ color: 'var(--t4)' }}>{s.desc}</div>
             </div>
           ))}
         </div>
@@ -48,3 +48,4 @@ export default function ReferralsPage() {
     </div>
   )
 }
+

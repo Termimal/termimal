@@ -64,7 +64,7 @@ export default function Navbar() {
         <nav className="hidden lg:flex items-center">
           {navLinks.map(item => (
             <Link key={item.label} href={item.href}
-              className="px-3 py-1.5 text-[0.78rem] font-medium transition-colors hover:opacity-80"
+              className="px-3 py-1.5 text-sm font-medium transition-colors hover:opacity-80"
               style={{ color: 'var(--t2)' }}>
               {item.label}
             </Link>
@@ -73,11 +73,11 @@ export default function Navbar() {
 
         <div className="hidden lg:flex items-center gap-3">
           {user ? (
-            <Link href="/dashboard" className="btn-primary text-[0.78rem] px-4 py-2">Dashboard</Link>
+            <Link href="/dashboard" className="btn-primary text-sm px-4 py-2">Dashboard</Link>
           ) : (
             <>
-              <Link href="/login" className="text-[0.78rem] font-medium hover:opacity-80 transition-opacity" style={{ color: 'var(--t2)' }}>Sign in</Link>
-              <Link href="/signup" className="btn-primary text-[0.78rem] px-4 py-2">Start Free</Link>
+              <Link href="/login" className="text-sm font-medium hover:opacity-80 transition-opacity" style={{ color: 'var(--t2)' }}>Sign in</Link>
+              <Link href="/signup" className="btn-primary text-sm px-4 py-2">Start Free</Link>
             </>
           )}
           <ThemeToggle />

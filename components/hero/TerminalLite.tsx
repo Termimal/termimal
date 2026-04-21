@@ -103,14 +103,14 @@ export default function TerminalLite() {
             <span className="w-2 h-2 rounded-full bg-yellow-400" />
             <span className="w-2 h-2 rounded-full bg-emerald-400" />
           </div>
-          <button onClick={cycleSym} className="flex items-center gap-1.5 px-2 py-1 rounded text-[0.65rem] font-mono transition-colors"
+          <button onClick={cycleSym} className="flex items-center gap-1.5 px-2 py-1 rounded text-sm font-mono transition-colors"
             style={{ background: 'var(--terminal-surface)', color: 'var(--t3)' }}>
             <Search size={10} /> {inst.sym} <span className="opacity-40">⌘K</span>
           </button>
           <div className="flex">
             {tabs.map(tab => (
               <button key={tab} onClick={() => setActiveTab(tab)}
-                className={cn('px-2.5 py-1 text-[0.6rem] font-semibold uppercase tracking-wide border-b-2 transition-all',
+                className={cn('px-2.5 py-1 text-sm font-semibold uppercase tracking-wide border-b-2 transition-all',
                   activeTab === tab ? 'border-[var(--acc)]' : 'border-transparent'
                 )}
                 style={{ color: activeTab === tab ? 'var(--acc)' : 'var(--t4)', background: 'none', fontFamily: 'inherit' }}>
@@ -119,7 +119,7 @@ export default function TerminalLite() {
             ))}
           </div>
         </div>
-        <div className="flex items-center gap-2 text-[0.58rem] font-mono" style={{ color: 'var(--t4)' }}>
+        <div className="flex items-center gap-2 text-sm font-mono" style={{ color: 'var(--t4)' }}>
           <span className="flex items-center gap-1" style={{ color: 'var(--green-val)' }}>
             <span className="w-1.5 h-1.5 rounded-full animate-pulse-dot" style={{ background: 'var(--green-val)' }} /> Live
           </span>
@@ -138,12 +138,12 @@ export default function TerminalLite() {
                 <span className="text-xs font-mono font-semibold" style={{ color: inst.chg >= 0 ? 'var(--green-val)' : 'var(--red-val)' }}>
                   {inst.chg >= 0 ? '+' : ''}{inst.chg.toFixed(2)}%
                 </span>
-                {inst.mcap && <span className="text-[0.55rem] font-mono ml-auto" style={{ color: 'var(--t4)' }}>MCAP {inst.mcap}</span>}
+                {inst.mcap && <span className="text-sm font-mono ml-auto" style={{ color: 'var(--t4)' }}>MCAP {inst.mcap}</span>}
               </div>
               <div className="flex gap-0.5 mb-2 px-1">
                 {timeframes.map(tf => (
                   <button key={tf}
-                    className={cn('px-1.5 py-0.5 text-[0.55rem] font-mono font-semibold rounded transition-all')}
+                    className={cn('px-1.5 py-0.5 text-sm font-mono font-semibold rounded transition-all')}
                     style={{
                       color: activeTF === tf ? 'var(--acc)' : 'var(--t4)',
                       background: activeTF === tf ? 'rgba(52,211,153,.1)' : 'transparent',
@@ -160,29 +160,29 @@ export default function TerminalLite() {
 
             {/* Watchlist */}
             <div className="p-2 hidden md:block">
-              <div className="text-[0.55rem] font-bold uppercase tracking-widest mb-2 px-1" style={{ color: 'var(--t4)' }}>Watchlist</div>
+              <div className="text-sm font-bold uppercase tracking-widest mb-2 px-1" style={{ color: 'var(--t4)' }}>Watchlist</div>
               {instruments.slice(0, 8).map((item, i) => (
                 <div key={item.sym} onClick={() => setSymIdx(i)}
                   className={cn('flex items-center justify-between py-1.5 px-1.5 rounded cursor-pointer transition-colors',
                     i === symIdx ? 'bg-white/[.03]' : 'hover:bg-white/[.02]'
                   )}>
                   <div>
-                    <div className="text-[0.68rem] font-semibold" style={{ color: 'rgba(255,255,255,.7)' }}>{item.sym}</div>
+                    <div className="text-sm font-semibold" style={{ color: 'rgba(255,255,255,.7)' }}>{item.sym}</div>
                   </div>
                   <div className="text-right">
-                    <div className="text-[0.62rem] font-mono" style={{ color: 'rgba(255,255,255,.5)' }}>{fmtPrice(item.price)}</div>
-                    <div className="text-[0.55rem] font-mono font-semibold" style={{ color: item.chg >= 0 ? 'var(--green-val)' : 'var(--red-val)' }}>
+                    <div className="text-sm font-mono" style={{ color: 'rgba(255,255,255,.5)' }}>{fmtPrice(item.price)}</div>
+                    <div className="text-sm font-mono font-semibold" style={{ color: item.chg >= 0 ? 'var(--green-val)' : 'var(--red-val)' }}>
                       {item.chg >= 0 ? '+' : ''}{item.chg.toFixed(2)}%
                     </div>
                   </div>
                 </div>
               ))}
               <div className="mt-3 pt-2 border-t" style={{ borderColor: 'var(--terminal-border)' }}>
-                <div className="text-[0.55rem] font-bold uppercase tracking-widest mb-1.5 px-1" style={{ color: 'var(--t4)' }}>Alerts</div>
-                <div className="flex items-center gap-1.5 text-[0.6rem] px-1 mb-1" style={{ color: 'var(--t3)' }}>
+                <div className="text-sm font-bold uppercase tracking-widest mb-1.5 px-1" style={{ color: 'var(--t4)' }}>Alerts</div>
+                <div className="flex items-center gap-1.5 text-sm px-1 mb-1" style={{ color: 'var(--t3)' }}>
                   <Bell size={10} className="text-amber-400/50" /> BTC &gt; 68,000
                 </div>
-                <div className="flex items-center gap-1.5 text-[0.6rem] px-1" style={{ color: 'var(--t3)' }}>
+                <div className="flex items-center gap-1.5 text-sm px-1" style={{ color: 'var(--t3)' }}>
                   <Bell size={10} style={{ color: 'var(--t4)' }} /> ETH &lt; 3,400
                 </div>
               </div>
@@ -193,13 +193,13 @@ export default function TerminalLite() {
         {/* Indicators tab */}
         {activeTab === 'Indicators' && (
           <div className="p-4">
-            <h4 className="text-[0.65rem] font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--t4)' }}>Global indicators</h4>
+            <h4 className="text-sm font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--t4)' }}>Global indicators</h4>
             <div className="grid grid-cols-3 gap-2">
               {indicators.map(ind => (
                 <div key={ind.label} className="p-2.5 rounded" style={{ background: 'var(--terminal-surface)', border: '1px solid var(--terminal-border)' }}>
-                  <div className="text-[0.55rem] mb-0.5" style={{ color: 'var(--t4)' }}>{ind.label}</div>
+                  <div className="text-sm mb-0.5" style={{ color: 'var(--t4)' }}>{ind.label}</div>
                   <div className="text-sm font-bold font-mono text-white">{ind.val}</div>
-                  <div className="text-[0.55rem] font-semibold font-mono" style={{ color: ind.dir === 'up' ? 'var(--green-val)' : ind.dir === 'down' ? 'var(--red-val)' : 'var(--t4)' }}>
+                  <div className="text-sm font-semibold font-mono" style={{ color: ind.dir === 'up' ? 'var(--green-val)' : ind.dir === 'down' ? 'var(--red-val)' : 'var(--t4)' }}>
                     {ind.dir === 'up' ? '▲' : ind.dir === 'down' ? '▼' : '--'}
                   </div>
                 </div>
@@ -211,14 +211,14 @@ export default function TerminalLite() {
         {/* News tab */}
         {activeTab === 'News' && (
           <div className="p-4">
-            <h4 className="text-[0.65rem] font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--t4)' }}>News flow</h4>
+            <h4 className="text-sm font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--t4)' }}>News flow</h4>
             {newsItems.map((n, i) => (
-              <div key={i} className="flex justify-between py-2 border-b last:border-0 text-[0.68rem]" style={{ borderColor: 'var(--terminal-border)' }}>
+              <div key={i} className="flex justify-between py-2 border-b last:border-0 text-sm" style={{ borderColor: 'var(--terminal-border)' }}>
                 <span style={{ color: 'var(--t3)' }}>
-                  <span className="text-[0.55rem] font-bold mr-2 px-1 py-0.5 rounded" style={{ color: 'var(--acc)', background: 'var(--acc-d)' }}>{n.tag}</span>
+                  <span className="text-sm font-bold mr-2 px-1 py-0.5 rounded" style={{ color: 'var(--acc)', background: 'var(--acc-d)' }}>{n.tag}</span>
                   {n.title}
                 </span>
-                <span className="text-[0.55rem] font-mono shrink-0 ml-4" style={{ color: 'var(--t4)' }}>{n.time}</span>
+                <span className="text-sm font-mono shrink-0 ml-4" style={{ color: 'var(--t4)' }}>{n.time}</span>
               </div>
             ))}
           </div>
@@ -227,14 +227,14 @@ export default function TerminalLite() {
         {/* COT tab */}
         {activeTab === 'COT' && (
           <div className="p-4">
-            <h4 className="text-[0.65rem] font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--t4)' }}>COT positioning — S&P 500</h4>
-            <div className="flex justify-between py-2 border-b text-[0.65rem] font-bold" style={{ borderColor: 'var(--terminal-border)', color: 'var(--t3)' }}>
+            <h4 className="text-sm font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--t4)' }}>COT positioning — S&P 500</h4>
+            <div className="flex justify-between py-2 border-b text-sm font-bold" style={{ borderColor: 'var(--terminal-border)', color: 'var(--t3)' }}>
               <span className="flex-1">Category</span>
               <span className="w-20 text-right">Net</span>
               <span className="w-20 text-right">Net Δ</span>
             </div>
             {cotData.map(c => (
-              <div key={c.cat} className="flex justify-between py-2 border-b last:border-0 text-[0.65rem]" style={{ borderColor: 'var(--terminal-border)' }}>
+              <div key={c.cat} className="flex justify-between py-2 border-b last:border-0 text-sm" style={{ borderColor: 'var(--terminal-border)' }}>
                 <span className="flex-1" style={{ color: 'var(--t3)' }}>{c.cat}</span>
                 <span className="w-20 text-right font-mono font-semibold" style={{ color: c.net >= 0 ? 'var(--green-val)' : 'var(--red-val)' }}>{fmtK(c.net)}</span>
                 <span className="w-20 text-right font-mono font-semibold" style={{ color: c.netChg >= 0 ? 'var(--green-val)' : 'var(--red-val)' }}>{c.netChg >= 0 ? '+' : ''}{fmtK(c.netChg)}</span>
@@ -246,14 +246,15 @@ export default function TerminalLite() {
 
       {/* Bottom bar */}
       <div className="relative z-10 flex items-center justify-between px-3 py-1.5 border-t" style={{ borderColor: 'var(--terminal-border)' }}>
-        <div className="flex items-center gap-3 text-[0.55rem] font-mono" style={{ color: 'var(--t4)' }}>
+        <div className="flex items-center gap-3 text-sm font-mono" style={{ color: 'var(--t4)' }}>
           <span style={{ color: 'var(--green-val)' }}>● Connected</span>
           <span>Latency: 12ms</span>
         </div>
-        <div className="text-[0.5rem] uppercase tracking-widest font-semibold" style={{ color: 'var(--t4)' }}>
+        <div className="text-sm uppercase tracking-widest font-semibold" style={{ color: 'var(--t4)' }}>
           Analysis only · No execution
         </div>
       </div>
     </div>
   )
 }
+

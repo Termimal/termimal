@@ -89,7 +89,7 @@ export default function SignupPage() {
           </div>
           
           <div className="mb-6">
-            <label className="flex items-start gap-2 text-[0.68rem] cursor-pointer" style={{ color: 'var(--t3)' }}>
+            <label className="flex items-start gap-2 text-sm cursor-pointer" style={{ color: 'var(--t3)' }}>
               <input type="checkbox" className="mt-0.5" checked={agreed} onChange={e => setAgreed(e.target.checked)} />
               <span>
                 I agree to the{' '}
@@ -136,7 +136,7 @@ export default function SignupPage() {
               </button>
             </div>
             
-            <div className="max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar text-[0.8rem] space-y-4" style={{ color: 'var(--t2)' }}>
+            <div className="max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar text-sm space-y-4" style={{ color: 'var(--t2)' }}>
               {modal === 'terms' ? (
                 <>
                   <p>Welcome to Termimal. These Terms of Service ("Terms") govern your access to and use of the Termimal website, platform, and services (collectively, the "Service"), operated by Hiram OÜ ("we", "us", or "our"). By accessing or using the Service, you agree to be bound by these Terms.</p>

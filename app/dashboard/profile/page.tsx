@@ -69,7 +69,7 @@ export default function ProfilePage() {
             { label: 'Language', key: 'language', value: profile?.language || 'en' },
           ].map(f => (
             <div key={f.key}>
-              <label className="block text-[0.62rem] font-semibold uppercase tracking-widest mb-1.5" style={{ color: 'var(--t4)' }}>{f.label}</label>
+              <label className="block text-sm font-semibold uppercase tracking-widest mb-1.5" style={{ color: 'var(--t4)' }}>{f.label}</label>
               <input
                 defaultValue={f.value}
                 disabled={f.disabled}
@@ -105,3 +105,4 @@ export default function ProfilePage() {
     </div>
   )
 }
+

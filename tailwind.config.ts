@@ -10,12 +10,14 @@ const config: Config = {
   // ADD THIS BLOCK RIGHT HERE:
   variants: {
     extend: {
+      fontSize: { 'xs': ['14px', '20px'], 'sm': ['16px', '24px'], 'base': ['18px', '28px'], 'lg': ['20px', '28px'] },
       display: ['dark'],
     },
   },
   
   theme: {
     extend: {
+      fontSize: { 'xs': ['14px', '20px'], 'sm': ['16px', '24px'], 'base': ['18px', '28px'], 'lg': ['20px', '28px'] },
       colors: {
         brand: {
           bg: 'var(--bg)',

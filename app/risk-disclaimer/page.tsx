@@ -4,10 +4,10 @@ export default function RiskDisclaimerPage() {
   return (
     <div className="min-h-screen pt-32 pb-20" style={{ background: 'var(--bg)' }}>
       <div className="max-w-[800px] mx-auto px-8">
-        <Link href="/" className="text-[0.8rem] mb-8 inline-block hover:underline" style={{ color: 'var(--acc)' }}>← Back to Home</Link>
+        <Link href="/" className="text-sm mb-8 inline-block hover:underline" style={{ color: 'var(--acc)' }}>← Back to Home</Link>
         <h1 className="text-3xl font-bold mb-2" style={{ color: 'var(--t1)', letterSpacing: '-0.02em' }}>Risk Disclaimer</h1>
         
-        <div className="space-y-8 text-[0.9rem] leading-relaxed mt-8" style={{ color: 'var(--t2)' }}>
+        <div className="space-y-8 text-sm leading-relaxed mt-8" style={{ color: 'var(--t2)' }}>
           <div className="p-6 rounded-xl mb-8" style={{ background: 'rgba(248,113,113,.1)', border: '1px solid rgba(248,113,113,.2)' }}>
             <p className="font-bold mb-2" style={{ color: 'var(--red-val)' }}>HIGH RISK WARNING</p>
             <p style={{ color: 'var(--t1)' }}>Trading foreign exchange, cryptocurrencies, equities, and commodities on margin carries a high level of risk and may not be suitable for all investors. The high degree of leverage can work against you as well as for you.</p>

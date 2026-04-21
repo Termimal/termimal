@@ -49,7 +49,7 @@ export default function AuthLayout({ children, title, subtitle, footer }: AuthLa
             {['Charting', 'Macro', 'COT', 'Risk', 'News'].map(m => (
               <span
                 key={m}
-                className="text-[0.6rem] font-semibold uppercase tracking-wider"
+                className="text-sm font-semibold uppercase tracking-wider"
                 style={{ color: 'var(--acc)' }}
               >
                 {m}
@@ -97,12 +97,12 @@ export default function AuthLayout({ children, title, subtitle, footer }: AuthLa
           {children}
 
           {footer && (
-            <div className="mt-8 text-center text-[0.75rem]" style={{ color: 'var(--t3)' }}>
+            <div className="mt-8 text-center text-sm" style={{ color: 'var(--t3)' }}>
               {footer}
             </div>
           )}
 
-          <p className="mt-10 text-[0.72rem] text-center leading-relaxed" style={{ color: 'var(--t3)' }}>
+          <p className="mt-10 text-sm text-center leading-relaxed" style={{ color: 'var(--t3)' }}>
             Termimal is a market analysis platform. No trade execution. No financial advice.
           </p>
         </div>

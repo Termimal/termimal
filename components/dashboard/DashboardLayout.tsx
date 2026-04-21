@@ -29,7 +29,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             const active = pathname === item.href
             return (
               <Link key={item.href} href={item.href}
-                className={cn('flex items-center gap-2.5 px-3 py-2 rounded-lg text-[0.78rem] font-medium transition-all',
+                className={cn('flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-all',
                   active ? 'font-semibold' : ''
                 )}
                 style={{ background: active ? 'var(--bh)' : 'transparent', color: active ? 'var(--t1)' : 'var(--t3)' }}>
@@ -40,7 +40,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </nav>
         <div className="flex items-center gap-2 mt-auto pt-4 border-t" style={{ borderColor: 'var(--border)' }}>
           <ThemeToggle />
-          <button className="flex items-center gap-2 px-3 py-2 rounded-lg text-[0.72rem] transition-all" style={{ color: 'var(--t4)' }}>
+          <button className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all" style={{ color: 'var(--t4)' }}>
             <LogOut size={14} /> Sign out
           </button>
         </div>
@@ -49,8 +49,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <header className="flex items-center justify-between px-8 py-4 border-b" style={{ borderColor: 'var(--border)' }}>
           <h1 className="text-lg font-bold tracking-tight">{navItems.find(n => n.href === pathname)?.label || 'Dashboard'}</h1>
           <div className="flex items-center gap-3">
-            <button className="btn-secondary text-[0.72rem] py-1.5 px-3">Launch Terminal</button>
-            <div className="w-8 h-8 rounded-full flex items-center justify-center text-[0.65rem] font-bold" style={{ background: 'var(--acc-d)', color: 'var(--acc)' }}>KU</div>
+            <button className="btn-secondary text-sm py-1.5 px-3">Launch Terminal</button>
+            <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold" style={{ background: 'var(--acc-d)', color: 'var(--acc)' }}>KU</div>
           </div>
         </header>
         <div className="p-8">{children}</div>
@@ -58,3 +58,4 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     </div>
   )
 }
+

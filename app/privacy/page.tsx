@@ -4,11 +4,11 @@ export default function PrivacyPage() {
   return (
     <div className="min-h-screen pt-32 pb-20" style={{ background: 'var(--bg)' }}>
       <div className="max-w-[800px] mx-auto px-8">
-        <Link href="/" className="text-[0.8rem] mb-8 inline-block hover:underline" style={{ color: 'var(--acc)' }}>← Back to Home</Link>
+        <Link href="/" className="text-sm mb-8 inline-block hover:underline" style={{ color: 'var(--acc)' }}>← Back to Home</Link>
         <h1 className="text-3xl font-bold mb-2" style={{ color: 'var(--t1)', letterSpacing: '-0.02em' }}>Privacy Policy</h1>
-        <p className="text-[0.85rem] mb-8" style={{ color: 'var(--t3)' }}>Last updated: April 2026</p>
+        <p className="text-sm mb-8" style={{ color: 'var(--t3)' }}>Last updated: April 2026</p>
         
-        <div className="space-y-8 text-[0.9rem] leading-relaxed" style={{ color: 'var(--t2)' }}>
+        <div className="space-y-8 text-sm leading-relaxed" style={{ color: 'var(--t2)' }}>
           <section>
             <h2 className="text-lg font-bold mb-3" style={{ color: 'var(--t1)' }}>1. Information We Collect</h2>
             <p>Hiram OÜ respects your privacy. We collect minimal information required to provide our service, including your name, email address, IP address, and platform usage data. Payment processing is handled by secure third-party providers (e.g., Stripe); we never store your full credit card details.</p>

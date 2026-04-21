@@ -20,14 +20,14 @@ export default function HeroSection() {
       <div className="max-w-site mx-auto px-8 w-full relative z-10">
         <div className="grid lg:grid-cols-[340px_1fr] gap-8 items-center">
           <div>
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[0.625rem] font-semibold tracking-widest uppercase mb-6"
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-sm font-semibold tracking-widest uppercase mb-6"
               style={{ color: 'var(--acc)', background: 'var(--acc-d)', border: '1px solid rgba(52,211,153,.1)' }}>
               <Radio size={10} /> Live market analysis
             </div>
 
             <div className="flex gap-1.5 flex-wrap mb-6">
               {['Charting', 'Macro', 'News', 'COT', 'Risk', 'Screener'].map(m => (
-                <span key={m} className="px-2 py-0.5 rounded text-[0.6rem] font-semibold uppercase tracking-wide"
+                <span key={m} className="px-2 py-0.5 rounded text-sm font-semibold uppercase tracking-wide"
                   style={{ color: 'var(--t3)', background: 'var(--surface)', border: '1px solid var(--border)' }}>
                   {m}
                 </span>
@@ -39,16 +39,16 @@ export default function HeroSection() {
               <span style={{ color: 'var(--acc)' }}>deeper.</span>
             </h1>
 
-            <p className="text-[0.85rem] leading-relaxed mb-6 max-w-[320px]" style={{ color: 'var(--t3)' }}>
+            <p className="text-sm leading-relaxed mb-6 max-w-[320px]" style={{ color: 'var(--t3)' }}>
               One terminal for price, macro, positioning, and sentiment. Professional-grade analysis without brokerage complexity.
             </p>
 
             <div className="flex gap-2 flex-wrap mb-6">
-              <Link href="/signup" className="btn-primary py-2.5 px-6 text-[0.82rem]">Start Free →</Link>
+              <Link href="/signup" className="btn-primary py-2.5 px-6 text-sm">Start Free →</Link>
               <Link href="/web-terminal" className="btn-secondary py-2.5 px-5">Launch Web Terminal</Link>
             </div>
 
-            <div className="flex gap-4 text-[0.68rem]" style={{ color: 'var(--t4)' }}>
+            <div className="flex gap-4 text-sm" style={{ color: 'var(--t4)' }}>
               <span className="flex items-center gap-1"><Check size={13} /> 14-day free trial</span>
               <span className="flex items-center gap-1"><Check size={13} /> Cancel anytime</span>
             </div>
@@ -64,7 +64,7 @@ export default function HeroSection() {
               className="w-full block" priority />
             <div className="absolute bottom-0 left-0 right-0 h-[35%] pointer-events-none"
               style={{ background: 'linear-gradient(to top, var(--bg), transparent)' }} />
-            <div className="absolute bottom-6 left-6 text-[0.6rem] font-bold uppercase tracking-widest z-10" style={{ color: 'var(--t4)' }}>
+            <div className="absolute bottom-6 left-6 text-sm font-bold uppercase tracking-widest z-10" style={{ color: 'var(--t4)' }}>
               Termimal Dashboard — Live market overview
             </div>
           </div>

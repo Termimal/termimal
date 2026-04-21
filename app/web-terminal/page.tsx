@@ -19,13 +19,13 @@ export default function WebTerminalPage() {
             />
             <span className="text-xs font-semibold text-white">Termimal</span>
           </Link>
-          <span className="text-[0.5rem] font-bold uppercase tracking-widest px-2 py-0.5 rounded" style={{ color: 'var(--acc)', background: 'var(--acc-d)' }}>Web Terminal</span>
+          <span className="text-sm font-bold uppercase tracking-widest px-2 py-0.5 rounded" style={{ color: 'var(--acc)', background: 'var(--acc-d)' }}>Web Terminal</span>
         </div>
         <div className="flex items-center gap-3">
-          <span className="text-[0.6rem] font-mono" style={{ color: 'var(--t4)' }}>Analysis only · No execution</span>
+          <span className="text-sm font-mono" style={{ color: 'var(--t4)' }}>Analysis only · No execution</span>
           <ThemeToggle />
-          <Link href="/login" className="text-[0.68rem] font-medium" style={{ color: 'var(--t2)' }}>Sign in</Link>
-          <Link href="/signup" className="btn-primary text-[0.68rem] py-1.5 px-3">Start Free</Link>
+          <Link href="/login" className="text-sm font-medium" style={{ color: 'var(--t2)' }}>Sign in</Link>
+          <Link href="/signup" className="btn-primary text-sm py-1.5 px-3">Start Free</Link>
         </div>
       </div>
 
@@ -36,7 +36,7 @@ export default function WebTerminalPage() {
 
       {/* Bottom */}
       <div className="px-4 py-2 border-t text-center" style={{ borderColor: 'var(--terminal-border)' }}>
-        <p className="text-[0.55rem]" style={{ color: 'var(--t4)' }}>
+        <p className="text-sm" style={{ color: 'var(--t4)' }}>
           This is a preview of the Termimal web terminal. Sign up for full access to all features, indicators, and workspaces.
         </p>
       </div>

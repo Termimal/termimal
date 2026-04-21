@@ -4,11 +4,11 @@ export default function CookiesPage() {
   return (
     <div className="min-h-screen pt-32 pb-20" style={{ background: 'var(--bg)' }}>
       <div className="max-w-[800px] mx-auto px-8">
-        <Link href="/" className="text-[0.8rem] mb-8 inline-block hover:underline" style={{ color: 'var(--acc)' }}>← Back to Home</Link>
+        <Link href="/" className="text-sm mb-8 inline-block hover:underline" style={{ color: 'var(--acc)' }}>← Back to Home</Link>
         <h1 className="text-3xl font-bold mb-2" style={{ color: 'var(--t1)', letterSpacing: '-0.02em' }}>Cookie Policy</h1>
-        <p className="text-[0.85rem] mb-8" style={{ color: 'var(--t3)' }}>Last updated: April 2026</p>
+        <p className="text-sm mb-8" style={{ color: 'var(--t3)' }}>Last updated: April 2026</p>
         
-        <div className="space-y-8 text-[0.9rem] leading-relaxed" style={{ color: 'var(--t2)' }}>
+        <div className="space-y-8 text-sm leading-relaxed" style={{ color: 'var(--t2)' }}>
           <section>
             <h2 className="text-lg font-bold mb-3" style={{ color: 'var(--t1)' }}>1. What Are Cookies?</h2>
             <p>Cookies are small text files stored on your device when you visit our website. They help Termimal remember your preferences, keep you logged in, and understand how you interact with our platform.</p>

@@ -44,9 +44,9 @@ export default function DashboardPage() {
           { label: 'Saved layouts', value: `${limits.layouts}`, sub: `${plan} plan limit` },
         ].map(stat => (
           <div key={stat.label} className="p-4 rounded-xl" style={{ border: '1px solid var(--border)', background: 'var(--surface)' }}>
-            <div className="text-[0.62rem] font-semibold uppercase tracking-widest mb-2" style={{ color: 'var(--t4)' }}>{stat.label}</div>
+            <div className="text-sm font-semibold uppercase tracking-widest mb-2" style={{ color: 'var(--t4)' }}>{stat.label}</div>
             <div className="text-lg font-bold mb-0.5">{stat.value}</div>
-            <div className="text-[0.68rem]" style={{ color: 'var(--t4)' }}>{stat.sub}</div>
+            <div className="text-sm" style={{ color: 'var(--t4)' }}>{stat.sub}</div>
           </div>
         ))}
       </div>
@@ -108,3 +108,4 @@ export default function DashboardPage() {
     </div>
   )
 }
+

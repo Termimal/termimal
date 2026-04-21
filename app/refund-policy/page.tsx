@@ -4,10 +4,10 @@ export default function RefundPolicyPage() {
   return (
     <div className="min-h-screen pt-32 pb-20" style={{ background: 'var(--bg)' }}>
       <div className="max-w-[800px] mx-auto px-8">
-        <Link href="/" className="text-[0.8rem] mb-8 inline-block hover:underline" style={{ color: 'var(--acc)' }}>← Back to Home</Link>
+        <Link href="/" className="text-sm mb-8 inline-block hover:underline" style={{ color: 'var(--acc)' }}>← Back to Home</Link>
         <h1 className="text-3xl font-bold mb-2" style={{ color: 'var(--t1)', letterSpacing: '-0.02em' }}>Refund Policy</h1>
         
-        <div className="space-y-8 text-[0.9rem] leading-relaxed mt-8" style={{ color: 'var(--t2)' }}>
+        <div className="space-y-8 text-sm leading-relaxed mt-8" style={{ color: 'var(--t2)' }}>
           <section>
             <h2 className="text-lg font-bold mb-3" style={{ color: 'var(--t1)' }}>1. 14-Day Free Trial</h2>
             <p>Termimal provides a 14-day free trial so you can fully evaluate our charts, data feeds, and macro indicators before committing to a paid subscription. We highly encourage all users to utilize this trial period to ensure the platform meets their needs.</p>

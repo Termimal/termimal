@@ -66,10 +66,10 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         </div>
 
         <nav className="flex-1 p-3">
-          <div className="text-[0.55rem] font-bold uppercase tracking-widest px-3 mb-2" style={{ color: 'var(--t4)' }}>Account</div>
+          <div className="text-sm font-bold uppercase tracking-widest px-3 mb-2" style={{ color: 'var(--t4)' }}>Account</div>
           {navItems.map(item => (
             <Link key={item.href} href={item.href}
-              className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-[0.78rem] font-medium transition-colors mb-0.5"
+              className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors mb-0.5"
               style={{
                 color: pathname === item.href ? 'var(--t1)' : 'var(--t3)',
                 background: pathname === item.href ? 'var(--bg)' : 'transparent',
@@ -83,7 +83,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           <div className="flex items-center justify-between mb-3">
             <div>
               <div className="text-xs font-semibold">{displayName}</div>
-              <div className="text-[0.62rem]" style={{ color: 'var(--t4)' }}>{user?.email}</div>
+              <div className="text-sm" style={{ color: 'var(--t4)' }}>{user?.email}</div>
             </div>
             <ThemeToggle />
           </div>
@@ -103,3 +103,4 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     </div>
   )
 }
+
