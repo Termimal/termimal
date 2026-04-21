@@ -1,17 +1,14 @@
 import { createClient } from '@supabase/supabase-js'
 import Link from 'next/link'
 
-// We revalidate every hour so the site stays fast but updates with new posts
-export const revalidate = 3600;
+export const revalidate = 60
 
 export default async function ReportsPage() {
-  // Use the anon key to read public data safely
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   )
 
-  // Fetch only PUBLISHED articles
   const { data: articles } = await supabase
     .from('articles')
     .select('*')
@@ -19,7 +16,7 @@ export default async function ReportsPage() {
     .order('published_date', { ascending: false })
 
   return (
-    <main className="max-w-4xl mx-auto px-6 py-24">
+    <main className="max-w-4xl mx-auto px-6 py-24 min-h-screen">
       <div className="mb-16">
         <h1 className="text-4xl font-bold tracking-tight mb-4">Market Reports</h1>
         <p className="text-lg" style={{ color: 'var(--t3)' }}>
