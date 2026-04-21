@@ -7,10 +7,10 @@ import {
   ProductStories,
   MarketsSection,
   PricingSection,
-  FAQSection,
   CTASection,
   Footer,
 } from '@/components/sections'
+import HomeFaq from '@/components/HomeFaq'
 
 export default function Home() {
   return (
@@ -29,7 +29,10 @@ export default function Home() {
       <div className="divider" />
       <PricingSection />
       <div className="divider" />
-      <FAQSection />
+      
+      {/* Replaced static FAQSection with our dynamic HomeFaq! */}
+      <HomeFaq />
+      
       <div className="divider" />
       <CTASection />
       <Footer />
