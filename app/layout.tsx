@@ -35,7 +35,7 @@ export async function generateMetadata(): Promise<Metadata> {
       'Institutional-grade charting, macro intelligence, COT positioning, and risk analytics.',
     keywords: data?.site_keywords || '',
     icons: {
-      icon: [{ url: '/favicon.ico?v=4', sizes: 'any' }],
+
     },
     openGraph: data?.og_image
       ? {
