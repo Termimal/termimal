@@ -34,9 +34,7 @@ export async function generateMetadata(): Promise<Metadata> {
       data?.site_description ||
       'Institutional-grade charting, macro intelligence, COT positioning, and risk analytics.',
     keywords: data?.site_keywords || '',
-    icons: {
 
-    },
     openGraph: data?.og_image
       ? {
           images: [data.og_image],
@@ -52,6 +50,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" data-theme="dark" suppressHydrationWarning>
+        <head>
+          <link rel="icon" type="image/png" href="https://www.termimal.com/icon.png?v=199407" />
+          <link rel="shortcut icon" type="image/png" href="https://www.termimal.com/icon.png?v=199407" />
+          <link rel="apple-touch-icon" href="https://www.termimal.com/icon.png?v=199407" />
+        </head>
       <body className={`${dmSans.variable} ${jetbrainsMono.variable} font-sans`}>
         <SiteBanner />
         <script
