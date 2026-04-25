@@ -95,6 +95,199 @@ body {
   border-radius: 4px;
 }
 
+/* ════════════════════════════════════════════
+   ANIMATION KEYFRAMES
+   ════════════════════════════════════════════ */
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-32px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(32px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes floatY {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-10px); }
+}
+
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); }
+  50%       { box-shadow: 0 0 28px 4px rgba(52, 211, 153, 0.18); }
+}
+
+@keyframes badgePulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.6; }
+}
+
+@keyframes shimmerSweep {
+  0%   { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+@keyframes navEntrance {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes borderGlow {
+  0%, 100% { border-color: rgba(52, 211, 153, 0.18); }
+  50%       { border-color: rgba(52, 211, 153, 0.42); }
+}
+
+@keyframes counterUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ════════════════════════════════════════════
+   SCROLL-REVEAL SYSTEM
+   (.reveal → animated by IntersectionObserver JS)
+   ════════════════════════════════════════════ */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-28px);
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal-left.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.reveal-right {
+  opacity: 0;
+  transform: translateX(28px);
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal-right.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.reveal-scale {
+  opacity: 0;
+  transform: scale(0.94);
+  transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal-scale.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Stagger delays for child items */
+.stagger-1 { transition-delay: 0ms !important; }
+.stagger-2 { transition-delay: 80ms !important; }
+.stagger-3 { transition-delay: 160ms !important; }
+.stagger-4 { transition-delay: 240ms !important; }
+.stagger-5 { transition-delay: 320ms !important; }
+.stagger-6 { transition-delay: 400ms !important; }
+.stagger-7 { transition-delay: 480ms !important; }
+.stagger-8 { transition-delay: 560ms !important; }
+
+/* ════════════════════════════════════════════
+   NAMED ANIMATION UTILITIES
+   ════════════════════════════════════════════ */
+
+.anim-fade-up {
+  animation: fadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.anim-fade-in {
+  animation: fadeIn 0.55s ease both;
+}
+
+.anim-float {
+  animation: floatY 5s ease-in-out infinite;
+}
+
+.anim-glow-pulse {
+  animation: glowPulse 3s ease-in-out infinite;
+}
+
+.anim-badge-pulse {
+  animation: badgePulse 2.5s ease-in-out infinite;
+}
+
+.anim-border-glow {
+  animation: borderGlow 3s ease-in-out infinite;
+}
+
+.anim-nav-entrance {
+  animation: navEntrance 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Hero entrance stagger delays */
+.hero-d1 { animation-delay: 0ms; }
+.hero-d2 { animation-delay: 90ms; }
+.hero-d3 { animation-delay: 180ms; }
+.hero-d4 { animation-delay: 270ms; }
+.hero-d5 { animation-delay: 360ms; }
+.hero-d6 { animation-delay: 460ms; }
+
+/* Shimmer for skeleton / highlight */
+.anim-shimmer {
+  background: linear-gradient(90deg, transparent 0%, rgba(52,211,153,0.08) 50%, transparent 100%);
+  background-size: 400px 100%;
+  animation: shimmerSweep 2.8s linear infinite;
+}
+
+/* Float variant with slight rotation */
+.anim-float-slow {
+  animation: floatY 7s ease-in-out infinite;
+}
+
+/* ════════════════════════════════════════════
+   REDUCED MOTION OVERRIDES
+   ════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal, .reveal-left, .reveal-right, .reveal-scale {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .anim-fade-up, .anim-float, .anim-float-slow,
+  .anim-glow-pulse, .anim-badge-pulse, .anim-border-glow,
+  .anim-shimmer, .anim-nav-entrance {
+    animation: none;
+  }
+}
+
 @layer components {
   .section-label {
     @apply text-[0.625rem] font-bold tracking-[0.1em] uppercase mb-3;
@@ -129,6 +322,7 @@ body {
   }
   .btn-primary:hover {
     filter: brightness(1.15);
+    transform: translateY(-1px);
   }
   .btn-primary:active {
     transform: scale(0.97);
@@ -143,5 +337,6 @@ body {
   .btn-secondary:hover {
     border-color: var(--bh);
     color: var(--t1);
+    transform: translateY(-1px);
   }
 }
