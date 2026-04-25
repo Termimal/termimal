@@ -6,11 +6,13 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import ThemeToggle from '@/components/ui/ThemeToggle'
 import Logo from '@/components/ui/Logo'
+import { openSupportChat } from '@/components/support/SupportChatLauncher'
 import {
   ArrowRight,
   Bell,
   CreditCard,
   Download,
+  Headphones,
   LayoutGrid,
   LogOut,
   Menu,
@@ -42,19 +44,14 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const getUser = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-
+      const { data: { user } } = await supabase.auth.getUser()
       if (!user) {
         router.push('/login')
         return
       }
-
       setUser(user)
       setLoading(false)
     }
-
     getUser()
   }, [router, supabase])
 
@@ -85,12 +82,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   }
 
   const displayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User'
-  const initials = displayName
-    .split(' ')
-    .map((s: string) => s[0])
-    .join('')
-    .slice(0, 2)
-    .toUpperCase()
+  const initials = displayName.split(' ').map((s: string) => s[0]).join('').slice(0, 2).toUpperCase()
 
   const SidebarContent = () => (
     <div
@@ -124,62 +116,20 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
             style={{
               borderColor: 'color-mix(in srgb, var(--border) 86%, white 14%)',
               background: 'linear-gradient(180deg, color-mix(in srgb, var(--bg) 78%, white 22%) 0%, color-mix(in srgb, var(--bg) 92%, black 8%) 100%)',
-              boxShadow: 'inset 0 1px 0 rgba(255,255,255,.05)',
             }}
           >
-            <span className="text-sm font-semibold" style={{ color: 'var(--t1)' }}>
-              {initials}
-            </span>
+            <span className="text-sm font-semibold" style={{ color: 'var(--t1)' }}>{initials}</span>
           </div>
 
           <div className="min-w-0">
-            <div className="truncate text-sm font-semibold" style={{ color: 'var(--t1)' }}>
-              {displayName}
-            </div>
-            <div className="truncate text-xs" style={{ color: 'var(--t4)' }}>
-              {user?.email}
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-4 grid grid-cols-2 gap-2.5">
-          <div
-            className="rounded-xl border p-3"
-            style={{
-              borderColor: 'color-mix(in srgb, var(--border) 84%, white 16%)',
-              background: 'color-mix(in srgb, var(--bg) 90%, black 10%)',
-            }}
-          >
-            <div className="text-[11px] uppercase tracking-[0.18em]" style={{ color: 'var(--t4)' }}>
-              Status
-            </div>
-            <div className="mt-1 text-sm font-semibold" style={{ color: 'var(--t1)' }}>
-              Active
-            </div>
-          </div>
-
-          <div
-            className="rounded-xl border p-3"
-            style={{
-              borderColor: 'color-mix(in srgb, var(--border) 84%, white 16%)',
-              background: 'color-mix(in srgb, var(--bg) 90%, black 10%)',
-            }}
-          >
-            <div className="text-[11px] uppercase tracking-[0.18em]" style={{ color: 'var(--t4)' }}>
-              Access
-            </div>
-            <div className="mt-1 text-sm font-semibold" style={{ color: 'var(--t1)' }}>
-              Web + Desktop
-            </div>
+            <div className="truncate text-sm font-semibold" style={{ color: 'var(--t1)' }}>{displayName}</div>
+            <div className="truncate text-xs" style={{ color: 'var(--t4)' }}>{user?.email}</div>
           </div>
         </div>
       </div>
 
       <nav className="flex-1 overflow-y-auto px-4 py-4">
-        <div
-          className="px-2 pb-2 text-[11px] font-semibold uppercase tracking-[0.28em]"
-          style={{ color: 'var(--t4)' }}
-        >
+        <div className="px-2 pb-2 text-[11px] font-semibold uppercase tracking-[0.28em]" style={{ color: 'var(--t4)' }}>
           Account
         </div>
 
@@ -201,7 +151,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                   border: active
                     ? '1px solid color-mix(in srgb, var(--border) 80%, white 20%)'
                     : '1px solid transparent',
-                  boxShadow: active ? '0 8px 24px rgba(0,0,0,.16), inset 0 1px 0 rgba(255,255,255,.03)' : 'none',
+                  boxShadow: active ? '0 8px 24px rgba(0,0,0,.16)' : 'none',
                 }}
               >
                 <div
@@ -217,11 +167,32 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                 </div>
 
                 <span className="flex-1">{item.label}</span>
-
                 <ArrowRight size={14} style={{ color: active ? 'var(--acc)' : 'transparent' }} />
               </Link>
             )
           })}
+
+          <button
+            type="button"
+            onClick={openSupportChat}
+            className="flex w-full items-center gap-3 rounded-2xl px-3 py-3 text-sm font-medium transition-all duration-200 md:hidden"
+            style={{
+              color: 'var(--t2)',
+              background: 'transparent',
+              border: '1px solid transparent',
+            }}
+          >
+            <div
+              className="flex h-9 w-9 items-center justify-center rounded-xl border"
+              style={{
+                borderColor: 'color-mix(in srgb, var(--border) 75%, transparent 25%)',
+              }}
+            >
+              <Headphones size={16} style={{ color: 'var(--t4)' }} />
+            </div>
+
+            <span className="flex-1 text-left">Support chat</span>
+          </button>
         </div>
       </nav>
 
@@ -252,12 +223,8 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
               </div>
 
               <div className="min-w-0">
-                <div className="truncate text-xs font-semibold" style={{ color: 'var(--t1)' }}>
-                  {displayName}
-                </div>
-                <div className="truncate text-[11px]" style={{ color: 'var(--t4)' }}>
-                  Settings & theme
-                </div>
+                <div className="truncate text-xs font-semibold" style={{ color: 'var(--t1)' }}>{displayName}</div>
+                <div className="truncate text-[11px]" style={{ color: 'var(--t4)' }}>Settings & theme</div>
               </div>
             </div>
 
@@ -267,12 +234,11 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
         <button
           onClick={handleSignOut}
-          className="w-full rounded-xl border px-4 py-3 text-sm font-semibold transition-all hover:opacity-95"
+          className="w-full rounded-xl border px-4 py-3 text-sm font-semibold transition-all"
           style={{
             color: 'var(--t1)',
             borderColor: 'color-mix(in srgb, var(--border) 86%, white 14%)',
             background: 'color-mix(in srgb, var(--bg) 92%, black 8%)',
-            boxShadow: 'inset 0 1px 0 rgba(255,255,255,.03)',
           }}
         >
           <span className="inline-flex items-center justify-center gap-2">
@@ -309,18 +275,33 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         >
           <Logo />
 
-          <button
-            aria-label="Open dashboard menu"
-            onClick={() => setMobileOpen(true)}
-            className="flex h-10 w-10 items-center justify-center rounded-xl border"
-            style={{
-              borderColor: 'color-mix(in srgb, var(--border) 84%, white 16%)',
-              background: 'color-mix(in srgb, var(--bg) 88%, black 12%)',
-              color: 'var(--t2)',
-            }}
-          >
-            <Menu size={18} />
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              aria-label="Open support chat"
+              onClick={openSupportChat}
+              className="flex h-10 w-10 items-center justify-center rounded-xl border"
+              style={{
+                borderColor: 'color-mix(in srgb, var(--border) 84%, white 16%)',
+                background: 'color-mix(in srgb, var(--bg) 88%, black 12%)',
+                color: 'var(--t2)',
+              }}
+            >
+              <Headphones size={18} />
+            </button>
+
+            <button
+              aria-label="Open dashboard menu"
+              onClick={() => setMobileOpen(true)}
+              className="flex h-10 w-10 items-center justify-center rounded-xl border"
+              style={{
+                borderColor: 'color-mix(in srgb, var(--border) 84%, white 16%)',
+                background: 'color-mix(in srgb, var(--bg) 88%, black 12%)',
+                color: 'var(--t2)',
+              }}
+            >
+              <Menu size={18} />
+            </button>
+          </div>
         </div>
 
         {mobileOpen && (
