@@ -202,3 +202,8 @@ export default function Navbar() {
     </>
   )
 }
+
+{/* Added Support link */}
+<Link href="/support" className="text-sm font-medium">
+  Support
+</Link>

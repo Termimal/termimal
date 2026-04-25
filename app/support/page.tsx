@@ -13,6 +13,9 @@ function openSupportChat() {
   window.$crisp = window.$crisp || []
   window.$crisp.push(["do", "chat:show"])
   window.$crisp.push(["do", "chat:open"])
+  setTimeout(() => {
+    window.$crisp?.push(["do", "chat:hide"])
+  }, 250)
 }
 
 export default function SupportPage() {
@@ -46,8 +49,7 @@ export default function SupportPage() {
           </h1>
 
           <p className="mt-4 text-base leading-7" style={{ color: "var(--t2)" }}>
-            You can contact support through live chat. If you are signed in, we can
-            identify your account faster.
+            Use support chat for billing, access, account, and product issues.
           </p>
 
           <div className="mt-8 flex flex-wrap gap-3">
