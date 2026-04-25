@@ -6,14 +6,10 @@ export const metadata: Metadata = {
   title: "Termimal",
   description: "Termimal platform",
   icons: {
-    icon: [
-      { url: "/icon.png", type: "image/png" }
-    ],
+    icon: [{ url: "/icon.png", type: "image/png" }],
     shortcut: ["/icon.png"],
-    apple: [
-      { url: "/icon.png", type: "image/png" }
-    ]
-  }
+    apple: [{ url: "/icon.png", type: "image/png" }],
+  },
 }
 
 export default function RootLayout({

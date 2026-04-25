@@ -1,22 +1,7 @@
 ﻿"use client"
 
 import Link from "next/link"
-
-declare global {
-  interface Window {
-    $crisp?: any[]
-  }
-}
-
-function openSupportChat() {
-  if (typeof window === "undefined") return
-  window.$crisp = window.$crisp || []
-  window.$crisp.push(["do", "chat:show"])
-  window.$crisp.push(["do", "chat:open"])
-  setTimeout(() => {
-    window.$crisp?.push(["do", "chat:hide"])
-  }, 250)
-}
+import { openSupportChat } from "@/components/support/SupportChatLauncher"
 
 export default function SupportPage() {
   return (
@@ -49,7 +34,7 @@ export default function SupportPage() {
           </h1>
 
           <p className="mt-4 text-base leading-7" style={{ color: "var(--t2)" }}>
-            Use support chat for billing, access, account, and product issues.
+            Use live chat for billing issues, login problems, account questions, and product support.
           </p>
 
           <div className="mt-8 flex flex-wrap gap-3">

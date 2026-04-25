@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react"
 import { Crisp } from "crisp-sdk-web"
-import { MessageSquareMore } from "lucide-react"
+import { Headphones } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 
 declare global {
@@ -13,14 +13,8 @@ declare global {
 
 export function openSupportChat() {
   if (typeof window === "undefined") return
-
   window.$crisp = window.$crisp || []
-  window.$crisp.push(["do", "chat:show"])
   window.$crisp.push(["do", "chat:open"])
-
-  setTimeout(() => {
-    window.$crisp?.push(["do", "chat:hide"])
-  }, 250)
 }
 
 export default function SupportChatLauncher() {
@@ -45,7 +39,7 @@ export default function SupportChatLauncher() {
   }, [supabase])
 
   useEffect(() => {
-    Crisp.configure("YOUR_CRISP_WEBSITE_ID")
+    Crisp.configure("d6ad7e7f-f6e7-4283-822b-1bad7920bfca")
 
     const email = user?.email ?? null
     const name =
@@ -60,48 +54,47 @@ export default function SupportChatLauncher() {
     if (typeof window !== "undefined") {
       window.$crisp = window.$crisp || []
       window.$crisp.push(["do", "chat:hide"])
+      window.$crisp.push(["on", "chat:closed", () => {
+        window.$crisp?.push(["do", "chat:hide"])
+      }])
     }
   }, [user])
 
   if (!mounted) return null
 
   return (
-    <>
-      <style jsx global>{`
-        .crisp-client .cc-tlyw,
-        .crisp-client .cc-1brb6,
-        .crisp-client .cc-unoo,
-        .crisp-client .cc-1xry,
-        .crisp-client [class*="launcher"],
-        .crisp-client [class*="button"] {
-          display: none !important;
-          opacity: 0 !important;
-          visibility: hidden !important;
-          pointer-events: none !important;
-        }
-      `}</style>
+    <div className="hidden md:block fixed bottom-5 right-5 z-[80] group">
+      <div
+        className="pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 translate-x-[-72px] whitespace-nowrap rounded-full border px-3 py-1.5 text-xs font-semibold opacity-0 transition-all duration-200 group-hover:opacity-100"
+        style={{
+          borderColor: "color-mix(in srgb, var(--border) 84%, white 16%)",
+          background: "color-mix(in srgb, var(--surface) 96%, black 4%)",
+          color: "var(--t1)",
+          boxShadow: "0 10px 30px rgba(0,0,0,.25)",
+        }}
+      >
+        Support
+      </div>
 
       <button
         type="button"
         aria-label="Open support chat"
         onClick={openSupportChat}
-        title="Support"
-        className="hidden md:flex fixed bottom-5 right-5 z-[80] items-center justify-center rounded-2xl border transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_18px_40px_rgba(16,185,129,.28)] hover:brightness-110 active:translate-y-0 active:scale-[0.98]"
+        className="flex items-center justify-center rounded-full border transition-all duration-200 hover:scale-[1.04] active:scale-[0.98]"
         style={{
-          width: 48,
-          height: 48,
-          borderColor: "rgba(52,211,153,.16)",
-          background:
-            "linear-gradient(180deg, rgba(16,185,129,.16) 0%, rgba(5,150,105,.26) 100%)",
+          width: 56,
+          height: 56,
+          borderColor: "rgba(52,211,153,.22)",
+          background: "linear-gradient(180deg, rgba(16,185,129,.20) 0%, rgba(5,150,105,.30) 100%)",
           color: "#d1fae5",
           boxShadow:
-            "0 10px 26px rgba(6,95,70,.22), inset 0 1px 0 rgba(255,255,255,.06)",
-          backdropFilter: "blur(10px)",
-          WebkitBackdropFilter: "blur(10px)",
+            "0 16px 38px rgba(6, 95, 70, .34), inset 0 1px 0 rgba(255,255,255,.06), 0 0 0 1px rgba(16,185,129,.08)",
+          backdropFilter: "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)",
         }}
       >
-        <MessageSquareMore size={18} strokeWidth={2.1} />
+        <Headphones size={22} strokeWidth={2} />
       </button>
-    </>
+    </div>
   )
 }
