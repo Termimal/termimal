@@ -1,4 +1,4 @@
-export const runtime = 'edge';
+﻿export const runtime = 'edge';
 import { NextResponse } from 'next/server'
 import { stripe, PLANS } from '@/lib/stripe'
 import { createServerSupabase } from '@/lib/supabase/server'
@@ -6,7 +6,7 @@ import { createServerSupabase } from '@/lib/supabase/server'
 export async function POST(request: Request) {
   try {
     const { priceKey } = await request.json()
-    const supabase = createServerSupabase()
+    const supabase = await createServerSupabase()
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) {
@@ -61,3 +61,4 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }
+

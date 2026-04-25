@@ -1,27 +1,12 @@
 ﻿'use client'
 
-import Link from 'next/link'
-import { useRouter, usePathname } from 'next/navigation'
 import { ReactNode, useEffect, useMemo, useState } from 'react'
+import { usePathname, useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import ThemeToggle from '@/components/ui/ThemeToggle'
-import {
-  ArrowRight,
-  Bell,
-  CreditCard,
-  Download,
-  LayoutGrid,
-  LogOut,
-  Menu,
-  Monitor,
-  PanelLeft,
-  ShieldCheck,
-  User2,
-  Users,
-  X,
-  Sparkles,
-  Settings2
-} from 'lucide-react'
+import Logo from '@/components/ui/Logo'
+import { ArrowRight, Bell, CreditCard, Download, LayoutGrid, LogOut, Menu, PanelLeft, Settings2, Sparkles, User2, Users, X } from 'lucide-react'
 
 const navItems = [
   { label: 'Overview', href: '/dashboard', icon: LayoutGrid },
@@ -32,25 +17,6 @@ const navItems = [
   { label: 'Referrals', href: '/dashboard/referrals', icon: Users },
   { label: 'Profile & Security', href: '/dashboard/profile', icon: User2 },
 ]
-
-function BrandLockup() {
-  return (
-    <Link href="/" className="flex items-center gap-2.5 group">
-      <span
-        className="relative flex h-10 w-10 items-center justify-center rounded-2xl border"
-        style={{ borderColor: 'var(--border)', background: 'linear-gradient(180deg, var(--bg), var(--surface))' }}
-      >
-        <span className="absolute inset-[9px] rotate-45 rounded-[4px]" style={{ background: 'var(--acc)' }} />
-      </span>
-      <div className="flex flex-col leading-none">
-        <span className="text-sm font-semibold tracking-tight">Termimal</span>
-        <span className="text-[11px] uppercase tracking-[0.24em]" style={{ color: 'var(--t4)' }}>
-          User dashboard
-        </span>
-      </div>
-    </Link>
-  )
-}
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<any>(null)
@@ -92,25 +58,17 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   }
 
   const displayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User'
-  const initials = displayName
-    .split(' ')
-    .map((s: string) => s[0])
-    .join('')
-    .slice(0, 2)
-    .toUpperCase()
+  const initials = displayName.split(' ').map((s: string) => s[0]).join('').slice(0, 2).toUpperCase()
 
   const SidebarContent = () => (
     <>
       <div className="p-5 border-b" style={{ borderColor: 'var(--border)' }}>
-        <BrandLockup />
+        <Logo />
       </div>
 
       <div className="px-5 py-4 border-b" style={{ borderColor: 'var(--border)' }}>
         <div className="flex items-center gap-3">
-          <div
-            className="flex h-11 w-11 items-center justify-center rounded-2xl border"
-            style={{ borderColor: 'var(--border)', background: 'linear-gradient(180deg, var(--bg), var(--surface))' }}
-          >
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl border" style={{ borderColor: 'var(--border)', background: 'linear-gradient(180deg, var(--bg), var(--surface))' }}>
             <span className="text-sm font-semibold" style={{ color: 'var(--t1)' }}>{initials}</span>
           </div>
           <div className="min-w-0">
@@ -132,9 +90,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       </div>
 
       <nav className="flex-1 p-3 overflow-y-auto">
-        <div className="text-[11px] font-semibold uppercase tracking-[0.28em] px-3 mb-2" style={{ color: 'var(--t4)' }}>
-          Account
-        </div>
+        <div className="text-[11px] font-semibold uppercase tracking-[0.28em] px-3 mb-2" style={{ color: 'var(--t4)' }}>Account</div>
         {navItems.map(item => {
           const Icon = item.icon
           const active = pathname === item.href
@@ -161,10 +117,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       <div className="p-4 border-t" style={{ borderColor: 'var(--border)' }}>
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <div
-              className="flex h-9 w-9 items-center justify-center rounded-xl border"
-              style={{ borderColor: 'var(--border)', background: 'var(--bg)' }}
-            >
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl border" style={{ borderColor: 'var(--border)', background: 'var(--bg)' }}>
               <Settings2 size={16} style={{ color: 'var(--t4)' }} />
             </div>
             <div>
@@ -174,12 +127,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           </div>
           <ThemeToggle />
         </div>
-
-        <button
-          onClick={handleSignOut}
-          className="w-full rounded-xl border px-4 py-2.5 text-xs font-semibold transition-colors"
-          style={{ color: 'var(--t2)', borderColor: 'var(--border)', background: 'var(--bg)' }}
-        >
+        <button onClick={handleSignOut} className="w-full rounded-xl border px-4 py-2.5 text-xs font-semibold transition-colors" style={{ color: 'var(--t2)', borderColor: 'var(--border)', background: 'var(--bg)' }}>
           <span className="inline-flex items-center justify-center gap-2">
             <LogOut size={14} />
             Sign out
@@ -191,56 +139,28 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-screen flex" style={{ background: 'var(--bg)' }}>
-      <aside
-        className="hidden lg:flex w-[286px] shrink-0 border-r flex-col"
-        style={{ borderColor: 'var(--border)', background: 'var(--surface)' }}
-      >
+      <aside className="hidden lg:flex w-[286px] shrink-0 border-r flex-col" style={{ borderColor: 'var(--border)', background: 'var(--surface)' }}>
         <SidebarContent />
       </aside>
 
       <main className="flex-1 min-w-0">
-        <div
-          className="sticky top-0 z-30 flex items-center justify-between border-b px-4 py-3 lg:hidden"
-          style={{ borderColor: 'var(--border)', background: 'color-mix(in srgb, var(--surface) 88%, transparent)' }}
-        >
-          <BrandLockup />
-          <button
-            aria-label="Open dashboard menu"
-            onClick={() => setMobileOpen(true)}
-            className="flex h-10 w-10 items-center justify-center rounded-xl border"
-            style={{ borderColor: 'var(--border)', background: 'var(--bg)', color: 'var(--t2)' }}
-          >
+        <div className="sticky top-0 z-30 flex items-center justify-between border-b px-4 py-3 lg:hidden" style={{ borderColor: 'var(--border)', background: 'color-mix(in srgb, var(--surface) 88%, transparent)' }}>
+          <Logo />
+          <button aria-label="Open dashboard menu" onClick={() => setMobileOpen(true)} className="flex h-10 w-10 items-center justify-center rounded-xl border" style={{ borderColor: 'var(--border)', background: 'var(--bg)', color: 'var(--t2)' }}>
             <Menu size={18} />
           </button>
         </div>
 
         {mobileOpen && (
           <div className="lg:hidden fixed inset-0 z-50">
-            <button
-              aria-label="Close menu overlay"
-              className="absolute inset-0"
-              style={{ background: 'rgba(0,0,0,.48)' }}
-              onClick={() => setMobileOpen(false)}
-            />
-            <div
-              className="absolute right-0 top-0 h-full w-[88vw] max-w-[360px] border-l flex flex-col"
-              style={{
-                borderColor: 'var(--border)',
-                background: 'var(--surface)',
-                boxShadow: '-24px 0 48px rgba(0,0,0,.22)',
-              }}
-            >
+            <button aria-label="Close menu overlay" className="absolute inset-0" style={{ background: 'rgba(0,0,0,.48)' }} onClick={() => setMobileOpen(false)} />
+            <div className="absolute right-0 top-0 h-full w-[88vw] max-w-[360px] border-l flex flex-col" style={{ borderColor: 'var(--border)', background: 'var(--surface)', boxShadow: '-24px 0 48px rgba(0,0,0,.22)' }}>
               <div className="flex items-center justify-between p-4 border-b" style={{ borderColor: 'var(--border)' }}>
                 <div className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em]" style={{ color: 'var(--t4)' }}>
                   <Sparkles size={12} />
                   Navigation
                 </div>
-                <button
-                  aria-label="Close dashboard menu"
-                  onClick={() => setMobileOpen(false)}
-                  className="flex h-10 w-10 items-center justify-center rounded-xl border"
-                  style={{ borderColor: 'var(--border)', background: 'var(--bg)', color: 'var(--t2)' }}
-                >
+                <button aria-label="Close dashboard menu" onClick={() => setMobileOpen(false)} className="flex h-10 w-10 items-center justify-center rounded-xl border" style={{ borderColor: 'var(--border)', background: 'var(--bg)', color: 'var(--t2)' }}>
                   <X size={18} />
                 </button>
               </div>

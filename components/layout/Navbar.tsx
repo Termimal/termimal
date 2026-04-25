@@ -1,10 +1,10 @@
-"use client"
+﻿"use client"
 
 import { useEffect, useState } from "react"
-import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Menu, X } from "lucide-react"
+import Logo from "@/components/ui/Logo"
 
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -50,32 +50,7 @@ export default function Navbar() {
         }}
       >
         <div className="mx-auto flex max-w-[1360px] items-center justify-between px-4 py-3 md:px-8">
-          <Link href="/" className="flex items-center gap-2.5 shrink-0 group">
-            <span className="relative block transition-transform duration-300 group-hover:scale-110">
-              <Image
-                src="/logo-dark.png"
-                alt="Termimal Logo"
-                width={32}
-                height={32}
-                className="object-contain"
-                style={{ display: "var(--logo-light-theme-display)" as React.CSSProperties["display"] }}
-              />
-              <Image
-                src="/logo-light.png"
-                alt="Termimal Logo"
-                width={32}
-                height={32}
-                className="object-contain"
-                style={{ display: "var(--logo-dark-theme-display)" as React.CSSProperties["display"] }}
-              />
-            </span>
-            <span
-              className="text-sm font-bold transition-colors duration-200 group-hover:text-white"
-              style={{ letterSpacing: "-0.02em", color: "var(--t1)" }}
-            >
-              Termimal
-            </span>
-          </Link>
+          <Logo />
 
           <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
             {navLinks.map((link, i) => {
@@ -141,9 +116,7 @@ export default function Navbar() {
       </header>
 
       <div
-        className={`fixed inset-0 z-[60] md:hidden ${
-          isMobileMenuOpen ? "pointer-events-auto" : "pointer-events-none"
-        }`}
+        className={`fixed inset-0 z-[60] md:hidden ${isMobileMenuOpen ? "pointer-events-auto" : "pointer-events-none"}`}
         aria-hidden={!isMobileMenuOpen}
       >
         <button
@@ -168,28 +141,7 @@ export default function Navbar() {
           }}
         >
           <div className="flex items-center justify-between border-b px-4 py-4" style={{ borderColor: "var(--border)" }}>
-            <Link href="/" className="flex items-center gap-2.5" onClick={closeMenu}>
-              <Image
-                src="/logo-dark.png"
-                alt="Termimal Logo"
-                width={28}
-                height={28}
-                className="object-contain"
-                style={{ display: "var(--logo-light-theme-display)" as React.CSSProperties["display"] }}
-              />
-              <Image
-                src="/logo-light.png"
-                alt="Termimal Logo"
-                width={28}
-                height={28}
-                className="object-contain"
-                style={{ display: "var(--logo-dark-theme-display)" as React.CSSProperties["display"] }}
-              />
-              <span className="text-base font-bold" style={{ letterSpacing: "-0.02em" }}>
-                Termimal
-              </span>
-            </Link>
-
+            <Logo size={28} showWordmark={false} />
             <button
               type="button"
               aria-label="Close navigation menu"
@@ -227,7 +179,7 @@ export default function Navbar() {
               <Link
                 href="/login"
                 onClick={closeMenu}
-                className="rounded-lg border px-4 py-2 text-center text-sm font-medium transition-all hover:border-[var(--bh)]"
+                className="rounded-lg border px-4 py-2 text-center text-sm font-medium transition-all"
                 style={{
                   color: "var(--t1)",
                   borderColor: "var(--border)",

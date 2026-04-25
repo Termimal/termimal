@@ -1,4 +1,4 @@
-export const runtime = 'edge';
+﻿export const runtime = 'edge'
 import { createServerSupabase } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 
@@ -8,12 +8,13 @@ export async function GET(request: Request) {
   const next = searchParams.get('next') ?? '/dashboard'
 
   if (code) {
-    const supabase = createServerSupabase()
+    const supabase = await createServerSupabase()
     const { error } = await supabase.auth.exchangeCodeForSession(code)
+
     if (!error) {
       return NextResponse.redirect(`${origin}${next}`)
     }
   }
 
-  return NextResponse.redirect(`${origin}/login?error=auth_failed`)
+  return NextResponse.redirect(`${origin}/login`)
 }
