@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { ArrowRight, KeyRound, ShieldCheck, ShieldOff, UserCircle2 } from 'lucide-react'
 
 type Factor = {
   id: string
@@ -49,7 +50,7 @@ export default function ProfilePage() {
       setLoading(false)
     }
     load()
-  }, [])
+  }, [supabase])
 
   const handleSave = async () => {
     setSaving(true)
@@ -172,136 +173,196 @@ export default function ProfilePage() {
   if (loading) return <div className="text-sm" style={{ color: 'var(--t3)' }}>Loading...</div>
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold tracking-tight mb-1" style={{ letterSpacing: '-0.02em' }}>Profile & Security</h1>
-      <p className="text-sm mb-8" style={{ color: 'var(--t3)' }}>Manage your account details and security settings.</p>
+    <div className="space-y-5 sm:space-y-6">
+      <section
+        className="rounded-3xl border p-5 sm:p-6 lg:p-8"
+        style={{ borderColor: 'var(--border)', background: 'linear-gradient(180deg, var(--surface), var(--bg))' }}
+      >
+        <div className="max-w-2xl">
+          <div
+            className="mb-3 inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em]"
+            style={{ borderColor: 'var(--border)', color: 'var(--t4)' }}
+          >
+            <UserCircle2 size={12} />
+            Profile & security
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight" style={{ letterSpacing: '-0.03em' }}>
+            Manage your account
+          </h1>
+          <p className="mt-3 max-w-xl text-sm leading-6" style={{ color: 'var(--t3)' }}>
+            Update your personal information, manage password access, and secure your Termimal account with two-factor authentication.
+          </p>
+        </div>
+      </section>
 
       {message && (
         <div
-          className="mb-6 p-3 rounded-lg text-xs font-medium"
+          className="rounded-2xl p-4 text-sm font-medium"
           style={{
             background: message.toLowerCase().includes('error') || message.toLowerCase().includes('invalid')
               ? 'rgba(248,113,113,.1)'
               : 'rgba(52,211,153,.1)',
             color: message.toLowerCase().includes('error') || message.toLowerCase().includes('invalid')
               ? 'var(--red-val)'
-              : 'var(--green-val)'
+              : 'var(--green-val)',
+            border: message.toLowerCase().includes('error') || message.toLowerCase().includes('invalid')
+              ? '1px solid rgba(248,113,113,.18)'
+              : '1px solid rgba(52,211,153,.18)',
           }}
         >
           {message}
         </div>
       )}
 
-      <div className="p-6 rounded-xl mb-6" style={{ border: '1px solid var(--border)', background: 'var(--surface)' }}>
-        <h3 className="text-sm font-bold mb-4">Personal information</h3>
-        <div className="grid grid-cols-2 gap-4">
-          {[
-            { label: 'Full name', key: 'full_name', value: profile?.full_name || '' },
-            { label: 'Email', key: 'email', value: profile?.email || '', disabled: true },
-            { label: 'Country', key: 'country', value: profile?.country || '' },
-            { label: 'Timezone', key: 'timezone', value: profile?.timezone || '' },
-            { label: 'Language', key: 'language', value: profile?.language || 'en' },
-          ].map(f => (
-            <div key={f.key}>
-              <label className="block text-sm font-semibold uppercase tracking-widest mb-1.5" style={{ color: 'var(--t4)' }}>{f.label}</label>
-              <input
-                defaultValue={f.value}
-                disabled={f.disabled}
-                onChange={e => setProfile({ ...profile, [f.key]: e.target.value })}
-                className="w-full px-3 py-2.5 rounded-lg text-sm disabled:opacity-50"
-                style={{ background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--t1)' }}
-              />
-            </div>
-          ))}
-        </div>
-        <button onClick={handleSave} disabled={saving} className="btn-primary text-xs py-2 px-4 mt-4">
-          {saving ? 'Saving...' : 'Save changes'}
-        </button>
-      </div>
-
-      <div className="p-6 rounded-xl mb-6" style={{ border: '1px solid var(--border)', background: 'var(--surface)' }}>
-        <h3 className="text-sm font-bold mb-4">Security</h3>
-
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="text-sm font-medium">Password</div>
-              <div className="text-xs" style={{ color: 'var(--t4)' }}>Send a password reset email</div>
-            </div>
-            <button onClick={handlePasswordReset} className="btn-secondary text-xs py-2 px-4">Reset password</button>
+      <div className="grid gap-5 xl:grid-cols-[1.05fr_0.95fr]">
+        <div className="rounded-2xl border p-5 sm:p-6" style={{ borderColor: 'var(--border)', background: 'var(--surface)' }}>
+          <div className="flex items-center justify-between gap-3">
+            <h3 className="text-sm font-semibold uppercase tracking-[0.2em]" style={{ color: 'var(--t4)' }}>
+              Personal information
+            </h3>
+            <button onClick={handleSave} disabled={saving} className="btn-primary text-xs py-2 px-4">
+              {saving ? 'Saving...' : 'Save changes'}
+            </button>
           </div>
 
-          <div className="h-px" style={{ background: 'var(--border)' }} />
+          <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {[
+              { label: 'Full name', key: 'full_name', value: profile?.full_name || '' },
+              { label: 'Email', key: 'email', value: profile?.email || '', disabled: true },
+              { label: 'Country', key: 'country', value: profile?.country || '' },
+              { label: 'Timezone', key: 'timezone', value: profile?.timezone || '' },
+              { label: 'Language', key: 'language', value: profile?.language || 'en' },
+            ].map(f => (
+              <div key={f.key} className={f.key === 'language' ? 'sm:col-span-2' : ''}>
+                <label className="block text-xs font-semibold uppercase tracking-[0.18em] mb-2" style={{ color: 'var(--t4)' }}>
+                  {f.label}
+                </label>
+                <input
+                  defaultValue={f.value}
+                  disabled={f.disabled}
+                  onChange={e => setProfile({ ...profile, [f.key]: e.target.value })}
+                  className="w-full px-3 py-3 rounded-xl text-sm disabled:opacity-50"
+                  style={{ background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--t1)' }}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
 
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <div className="text-sm font-medium">Two-factor authentication</div>
-              <div className="text-xs mt-1" style={{ color: 'var(--t4)' }}>
-                {totpEnabled ? '2FA is enabled on your account.' : 'Add an authenticator app for extra security.'}
+        <div className="space-y-5">
+          <div className="rounded-2xl border p-5 sm:p-6" style={{ borderColor: 'var(--border)', background: 'var(--surface)' }}>
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <h3 className="text-sm font-semibold uppercase tracking-[0.2em]" style={{ color: 'var(--t4)' }}>
+                  Password access
+                </h3>
+                <p className="mt-2 text-sm" style={{ color: 'var(--t3)' }}>
+                  Send a password reset email to the address on your account.
+                </p>
+              </div>
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl border" style={{ borderColor: 'var(--border)', background: 'var(--bg)' }}>
+                <KeyRound size={16} style={{ color: 'var(--acc)' }} />
               </div>
             </div>
 
-            {!totpEnabled ? (
-              <button onClick={handleEnable2FA} disabled={mfaLoading} className="btn-primary text-xs py-2 px-4">
-                {mfaLoading ? 'Starting...' : 'Enable 2FA'}
-              </button>
-            ) : (
-              <button onClick={handleDisable2FA} disabled={mfaLoading} className="btn-secondary text-xs py-2 px-4">
-                {mfaLoading ? 'Disabling...' : 'Disable 2FA'}
-              </button>
+            <button onClick={handlePasswordReset} className="btn-secondary text-xs py-2 px-4 mt-5">
+              Reset password
+            </button>
+          </div>
+
+          <div className="rounded-2xl border p-5 sm:p-6" style={{ borderColor: 'var(--border)', background: 'var(--surface)' }}>
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+              <div>
+                <div className="inline-flex items-center gap-2 text-sm font-semibold">
+                  <ShieldCheck size={15} style={{ color: 'var(--acc)' }} />
+                  Two-factor authentication
+                </div>
+                <p className="mt-2 text-sm" style={{ color: 'var(--t3)' }}>
+                  {totpEnabled ? '2FA is enabled on your account.' : 'Add an authenticator app for extra security.'}
+                </p>
+              </div>
+
+              {!totpEnabled ? (
+                <button onClick={handleEnable2FA} disabled={mfaLoading} className="btn-primary text-xs py-2 px-4">
+                  {mfaLoading ? 'Starting...' : 'Enable 2FA'}
+                </button>
+              ) : (
+                <button onClick={handleDisable2FA} disabled={mfaLoading} className="btn-secondary text-xs py-2 px-4">
+                  {mfaLoading ? 'Disabling...' : 'Disable 2FA'}
+                </button>
+              )}
+            </div>
+
+            {!totpEnabled && qrCode && (
+              <div className="mt-5 rounded-2xl border p-4" style={{ borderColor: 'var(--border)', background: 'var(--bg)' }}>
+                <div className="text-sm font-medium mb-4">Set up your authenticator app</div>
+
+                <div className="flex flex-col lg:flex-row gap-6 items-start">
+                  <div className="rounded-xl p-3 bg-white max-w-[220px]" dangerouslySetInnerHTML={{ __html: qrCode }} />
+
+                  <div className="flex-1 w-full">
+                    <p className="text-sm mb-3" style={{ color: 'var(--t3)' }}>
+                      Scan the QR code with Google Authenticator, 1Password, Authy, or another TOTP app.
+                    </p>
+
+                    <p className="text-xs mb-2" style={{ color: 'var(--t4)' }}>Manual setup code</p>
+                    <div
+                      className="text-xs font-mono break-all p-3 rounded-xl mb-4"
+                      style={{ background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--t2)' }}
+                    >
+                      {secret}
+                    </div>
+
+                    <label className="block text-xs font-semibold uppercase tracking-[0.18em] mb-2" style={{ color: 'var(--t4)' }}>
+                      Verification code
+                    </label>
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      placeholder="Enter 6-digit code"
+                      value={verifyCode}
+                      onChange={e => setVerifyCode(e.target.value)}
+                      className="w-full sm:max-w-[240px] px-3 py-3 rounded-xl text-sm mb-3"
+                      style={{ background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--t1)' }}
+                    />
+
+                    <button onClick={handleVerify2FA} disabled={mfaLoading} className="btn-primary text-xs py-2 px-4">
+                      <span className="inline-flex items-center gap-2">
+                        {mfaLoading ? 'Verifying...' : 'Verify and enable'}
+                        {!mfaLoading && <ArrowRight size={14} />}
+                      </span>
+                    </button>
+                  </div>
+                </div>
+              </div>
             )}
           </div>
 
-          {!totpEnabled && qrCode && (
-            <div className="mt-4 p-4 rounded-xl" style={{ border: '1px solid var(--border)', background: 'var(--bg)' }}>
-              <div className="text-sm font-medium mb-3">Set up your authenticator app</div>
-
-              <div className="flex flex-col md:flex-row gap-6 items-start">
-                <div
-                  className="rounded-lg p-3 bg-white"
-                  dangerouslySetInnerHTML={{ __html: qrCode }}
-                />
-
-                <div className="flex-1">
-                  <p className="text-xs mb-3" style={{ color: 'var(--t3)' }}>
-                    Scan the QR code with Google Authenticator, 1Password, Authy, or another TOTP app.
-                  </p>
-
-                  <p className="text-xs mb-2" style={{ color: 'var(--t4)' }}>Manual setup code</p>
-                  <div className="text-xs font-mono break-all p-3 rounded-lg mb-4" style={{ background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--t2)' }}>
-                    {secret}
-                  </div>
-
-                  <label className="block text-xs font-semibold uppercase tracking-widest mb-1.5" style={{ color: 'var(--t4)' }}>
-                    Verification code
-                  </label>
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    pattern="[0-9]*"
-                    placeholder="Enter 6-digit code"
-                    value={verifyCode}
-                    onChange={e => setVerifyCode(e.target.value)}
-                    className="w-full max-w-[220px] px-3 py-2.5 rounded-lg text-sm mb-3"
-                    style={{ background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--t1)' }}
-                  />
-
-                  <button onClick={handleVerify2FA} disabled={mfaLoading} className="btn-primary text-xs py-2 px-4">
-                    {mfaLoading ? 'Verifying...' : 'Verify and enable'}
-                  </button>
+          <div
+            className="rounded-2xl border p-5 sm:p-6"
+            style={{ border: '1px solid rgba(220,38,38,.2)', background: 'rgba(220,38,38,.02)' }}
+          >
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <div className="inline-flex items-center gap-2 text-sm font-semibold" style={{ color: 'var(--red-val)' }}>
+                  <ShieldOff size={15} />
+                  Danger zone
                 </div>
+                <p className="mt-2 text-sm" style={{ color: 'var(--t3)' }}>
+                  Permanently delete your account and all associated data. This action cannot be undone.
+                </p>
               </div>
             </div>
-          )}
-        </div>
-      </div>
 
-      <div className="p-6 rounded-xl" style={{ border: '1px solid rgba(220,38,38,.2)', background: 'rgba(220,38,38,.02)' }}>
-        <h3 className="text-sm font-bold mb-1" style={{ color: 'var(--red-val)' }}>Danger zone</h3>
-        <p className="text-xs mb-3" style={{ color: 'var(--t3)' }}>Permanently delete your account and all associated data. This action cannot be undone.</p>
-        <button className="text-xs font-semibold px-4 py-2 rounded-lg" style={{ color: 'var(--red-val)', border: '1px solid rgba(220,38,38,.3)' }}>
-          Delete account
-        </button>
+            <button
+              className="mt-5 text-xs font-semibold px-4 py-2.5 rounded-xl"
+              style={{ color: 'var(--red-val)', border: '1px solid rgba(220,38,38,.3)' }}
+            >
+              Delete account
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   )
