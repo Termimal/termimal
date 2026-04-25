@@ -1,4 +1,4 @@
-export interface Instrument {
+﻿export interface Instrument {
   sym: string
   price: number
   chg: number
@@ -133,7 +133,7 @@ export interface ExploreTab {
 
 export const exploreTabs: ExploreTab[] = [
   { title: 'Charting workspace', desc: 'Multi-timeframe candlestick charts with 100+ indicators, on-chain overlays, and custom layouts.', key: 'chart' },
-  { title: 'Global indicators', desc: 'Interest rates, inflation, GDP, employment, and yield curve data — structured and live.', key: 'indicators' },
+  { title: 'Global indicators', desc: 'Interest rates, inflation, GDP, employment, and yield curve data — structured by category and live.', key: 'indicators' },
   { title: 'Watchlist intelligence', desc: 'Your watchlist connected to news, signals, and contextual analysis — not a static list.', key: 'watchlist' },
   { title: 'News flow', desc: 'Curated market news filtered by your watchlist, with importance badges and asset tagging.', key: 'news' },
   { title: 'COT positioning', desc: 'CFTC institutional positioning with smart money vs spec breakdown and crowding alerts.', key: 'cot' },
@@ -182,8 +182,8 @@ export const stories: Story[] = [
 ]
 
 export const footerLinks = {
-  product: ['Web Terminal', 'Desktop App', 'Features', 'Markets', 'Pricing', 'Changelog', 'Status'],
-  resources: ['Blog', 'Academy', 'Help Center', 'API', 'Status'],
-  company: ['About', 'Careers', 'Contact', 'Affiliates', 'Refer a Friend'],
+  product: ['Web Terminal', 'Desktop App', 'Features', 'Markets', 'Pricing', 'Status'],
+  resources: ['Help Center'],
+  company: ['About', 'Careers', 'Affiliates', 'Refer a Friend'],
   legal: ['Terms', 'Privacy', 'Cookies', 'Risk Disclaimer', 'Refund Policy'],
 }
