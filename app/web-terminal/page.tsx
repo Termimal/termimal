@@ -6,35 +6,56 @@ import Image from 'next/image'
 export default function WebTerminalPage() {
   return (
     <div className="min-h-screen flex flex-col" style={{ background: 'var(--terminal-bg)' }}>
-      {/* Terminal nav */}
-      <div className="flex items-center justify-between px-4 py-2 border-b" style={{ borderColor: 'var(--terminal-border)' }}>
+      <div
+        className="flex items-center justify-between px-4 py-2 border-b"
+        style={{ borderColor: 'var(--terminal-border)', backdropFilter: 'blur(14px)' }}
+      >
         <div className="flex items-center gap-4">
           <Link href="/" className="flex items-center gap-2">
-            <Image 
-              src="/logo.png" 
-              alt="Termimal Logo" 
-              width={24} 
-              height={24} 
+            <Image
+              src="/logo-dark.png"
+              alt="Termimal Logo"
+              width={24}
+              height={24}
               className="object-contain"
+              style={{ display: "var(--logo-light-theme-display)" as React.CSSProperties["display"] }}
+            />
+            <Image
+              src="/logo-light.png"
+              alt="Termimal Logo"
+              width={24}
+              height={24}
+              className="object-contain"
+              style={{ display: "var(--logo-dark-theme-display)" as React.CSSProperties["display"] }}
             />
             <span className="text-xs font-semibold text-white">Termimal</span>
           </Link>
-          <span className="text-sm font-bold uppercase tracking-widest px-2 py-0.5 rounded" style={{ color: 'var(--acc)', background: 'var(--acc-d)' }}>Web Terminal</span>
+          <span
+            className="text-sm font-bold uppercase tracking-widest px-2 py-0.5 rounded"
+            style={{ color: 'var(--acc)', background: 'var(--acc-d)' }}
+          >
+            Web Termimal
+          </span>
         </div>
+
         <div className="flex items-center gap-3">
-          <span className="text-sm font-mono" style={{ color: 'var(--t4)' }}>Analysis only · No execution</span>
+          <span className="text-sm font-mono" style={{ color: 'var(--t4)' }}>
+            Analysis only · No execution
+          </span>
           <ThemeToggle />
-          <Link href="/login" className="text-sm font-medium" style={{ color: 'var(--t2)' }}>Sign in</Link>
-          <Link href="/signup" className="btn-primary text-sm py-1.5 px-3">Start Free</Link>
+          <Link href="/login" className="text-sm font-medium" style={{ color: 'var(--t2)' }}>
+            Sign in
+          </Link>
+          <Link href="/signup" className="btn-primary text-sm py-1.5 px-3">
+            Start Free
+          </Link>
         </div>
       </div>
 
-      {/* Terminal body */}
       <div className="flex-1 p-4">
         <TerminalLite />
       </div>
 
-      {/* Bottom */}
       <div className="px-4 py-2 border-t text-center" style={{ borderColor: 'var(--terminal-border)' }}>
         <p className="text-sm" style={{ color: 'var(--t4)' }}>
           This is a preview of the Termimal web terminal. Sign up for full access to all features, indicators, and workspaces.
@@ -43,3 +64,4 @@ export default function WebTerminalPage() {
     </div>
   )
 }
+

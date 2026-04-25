@@ -14,13 +14,12 @@ export default function Navbar() {
   const navLinks = [
     { name: "Platform", href: "/platform" },
     { name: "Features", href: "/features" },
-    { name: "Markets", href: "/markets" },
+    { name: "Markets", href: "/#markets" },
     { name: "Pricing", href: "/pricing" },
     { name: "Web Terminal", href: "/web-terminal" },
     { name: "Download", href: "/download" },
   ]
 
-  // Scroll-shrink: add backdrop blur + shadow after 40px
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40)
     window.addEventListener("scroll", onScroll, { passive: true })
@@ -51,7 +50,6 @@ export default function Navbar() {
         }}
       >
         <div className="mx-auto flex max-w-[1360px] items-center justify-between px-4 py-3 md:px-8">
-          {/* Logo */}
           <Link href="/" className="flex items-center gap-2.5 shrink-0 group">
             <span className="relative block transition-transform duration-300 group-hover:scale-110">
               <Image
@@ -79,7 +77,6 @@ export default function Navbar() {
             </span>
           </Link>
 
-          {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
             {navLinks.map((link, i) => {
               const isActive = pathname === link.href
@@ -92,11 +89,14 @@ export default function Navbar() {
                     color: isActive ? "var(--t1)" : "var(--t2)",
                     animationDelay: `${i * 40 + 80}ms`,
                   }}
-                  onMouseEnter={(e) => { e.currentTarget.style.color = "var(--t1)" }}
-                  onMouseLeave={(e) => { e.currentTarget.style.color = isActive ? "var(--t1)" : "var(--t2)" }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.color = "var(--t1)"
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.color = isActive ? "var(--t1)" : "var(--t2)"
+                  }}
                 >
                   {link.name}
-                  {/* Active underline */}
                   {isActive && (
                     <span
                       className="absolute -bottom-1 left-0 right-0 h-px rounded-full"
@@ -108,14 +108,17 @@ export default function Navbar() {
             })}
           </nav>
 
-          {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-3">
             <Link
               href="/login"
               className="text-sm font-medium transition-colors"
               style={{ color: "var(--t2)" }}
-              onMouseEnter={(e) => { e.currentTarget.style.color = "var(--t1)" }}
-              onMouseLeave={(e) => { e.currentTarget.style.color = "var(--t2)" }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = "var(--t1)"
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = "var(--t2)"
+              }}
             >
               Sign in
             </Link>
@@ -124,7 +127,6 @@ export default function Navbar() {
             </Link>
           </div>
 
-          {/* Mobile burger */}
           <button
             type="button"
             aria-label="Open navigation menu"
@@ -138,7 +140,6 @@ export default function Navbar() {
         </div>
       </header>
 
-      {/* Mobile overlay */}
       <div
         className={`fixed inset-0 z-[60] md:hidden ${
           isMobileMenuOpen ? "pointer-events-auto" : "pointer-events-none"
@@ -166,10 +167,7 @@ export default function Navbar() {
             color: "var(--t1)",
           }}
         >
-          <div
-            className="flex items-center justify-between border-b px-4 py-4"
-            style={{ borderColor: "var(--border)" }}
-          >
+          <div className="flex items-center justify-between border-b px-4 py-4" style={{ borderColor: "var(--border)" }}>
             <Link href="/" className="flex items-center gap-2.5" onClick={closeMenu}>
               <Image
                 src="/logo-dark.png"
@@ -217,18 +215,6 @@ export default function Navbar() {
                     backgroundColor: isActive ? "var(--acc-d)" : "transparent",
                     border: `1px solid ${isActive ? "rgba(52,211,153,.12)" : "transparent"}`,
                   }}
-                  onMouseEnter={(e) => {
-                    if (!isActive) {
-                      e.currentTarget.style.backgroundColor = "var(--bg3)"
-                      e.currentTarget.style.borderColor = "var(--border)"
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (!isActive) {
-                      e.currentTarget.style.backgroundColor = "transparent"
-                      e.currentTarget.style.borderColor = "transparent"
-                    }
-                  }}
                 >
                   {link.name}
                 </Link>
@@ -236,10 +222,7 @@ export default function Navbar() {
             })}
           </nav>
 
-          <div
-            className="border-t px-4 py-4 mt-auto"
-            style={{ borderColor: "var(--border)" }}
-          >
+          <div className="border-t px-4 py-4 mt-auto" style={{ borderColor: "var(--border)" }}>
             <div className="flex flex-col gap-3">
               <Link
                 href="/login"
