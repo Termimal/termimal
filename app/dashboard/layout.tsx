@@ -6,7 +6,21 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import ThemeToggle from '@/components/ui/ThemeToggle'
 import Logo from '@/components/ui/Logo'
-import { ArrowRight, Bell, CreditCard, Download, LayoutGrid, LogOut, Menu, PanelLeft, Settings2, Sparkles, User2, Users, X } from 'lucide-react'
+import {
+  ArrowRight,
+  Bell,
+  CreditCard,
+  Download,
+  LayoutGrid,
+  LogOut,
+  Menu,
+  PanelLeft,
+  Settings2,
+  Sparkles,
+  User2,
+  Users,
+  X,
+} from 'lucide-react'
 
 const navItems = [
   { label: 'Overview', href: '/dashboard', icon: LayoutGrid },
@@ -28,20 +42,33 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const getUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+
       if (!user) {
         router.push('/login')
         return
       }
+
       setUser(user)
       setLoading(false)
     }
+
     getUser()
   }, [router, supabase])
 
   useEffect(() => {
     setMobileOpen(false)
   }, [pathname])
+
+  useEffect(() => {
+    const original = document.body.style.overflow
+    document.body.style.overflow = mobileOpen ? 'hidden' : original
+    return () => {
+      document.body.style.overflow = original
+    }
+  }, [mobileOpen])
 
   const handleSignOut = async () => {
     await supabase.auth.signOut()
@@ -58,112 +85,290 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   }
 
   const displayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User'
-  const initials = displayName.split(' ').map((s: string) => s[0]).join('').slice(0, 2).toUpperCase()
+  const initials = displayName
+    .split(' ')
+    .map((s: string) => s[0])
+    .join('')
+    .slice(0, 2)
+    .toUpperCase()
 
   const SidebarContent = () => (
-    <>
-      <div className="p-5 border-b" style={{ borderColor: 'var(--border)' }}>
+    <div
+      className="flex h-full flex-col"
+      style={{
+        background:
+          'linear-gradient(180deg, color-mix(in srgb, var(--surface) 96%, black 4%) 0%, color-mix(in srgb, var(--surface) 92%, black 8%) 100%)',
+      }}
+    >
+      <div
+        className="px-5 py-5 border-b"
+        style={{
+          borderColor: 'color-mix(in srgb, var(--border) 86%, white 14%)',
+          background: 'color-mix(in srgb, var(--surface) 94%, black 6%)',
+        }}
+      >
         <Logo />
       </div>
 
-      <div className="px-5 py-4 border-b" style={{ borderColor: 'var(--border)' }}>
+      <div
+        className="mx-4 mt-4 rounded-2xl border p-4"
+        style={{
+          borderColor: 'color-mix(in srgb, var(--border) 88%, white 12%)',
+          background: 'linear-gradient(180deg, color-mix(in srgb, var(--bg) 76%, var(--surface) 24%) 0%, color-mix(in srgb, var(--bg) 88%, black 12%) 100%)',
+          boxShadow: '0 10px 30px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.03)',
+        }}
+      >
         <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl border" style={{ borderColor: 'var(--border)', background: 'linear-gradient(180deg, var(--bg), var(--surface))' }}>
-            <span className="text-sm font-semibold" style={{ color: 'var(--t1)' }}>{initials}</span>
+          <div
+            className="flex h-11 w-11 items-center justify-center rounded-2xl border"
+            style={{
+              borderColor: 'color-mix(in srgb, var(--border) 86%, white 14%)',
+              background: 'linear-gradient(180deg, color-mix(in srgb, var(--bg) 78%, white 22%) 0%, color-mix(in srgb, var(--bg) 92%, black 8%) 100%)',
+              boxShadow: 'inset 0 1px 0 rgba(255,255,255,.05)',
+            }}
+          >
+            <span className="text-sm font-semibold" style={{ color: 'var(--t1)' }}>
+              {initials}
+            </span>
           </div>
+
           <div className="min-w-0">
-            <div className="text-sm font-semibold truncate">{displayName}</div>
-            <div className="text-xs truncate" style={{ color: 'var(--t4)' }}>{user?.email}</div>
+            <div className="truncate text-sm font-semibold" style={{ color: 'var(--t1)' }}>
+              {displayName}
+            </div>
+            <div className="truncate text-xs" style={{ color: 'var(--t4)' }}>
+              {user?.email}
+            </div>
           </div>
         </div>
 
-        <div className="mt-4 grid grid-cols-2 gap-2">
-          <div className="rounded-xl border p-3" style={{ borderColor: 'var(--border)', background: 'var(--bg)' }}>
-            <div className="text-[11px] uppercase tracking-[0.18em]" style={{ color: 'var(--t4)' }}>Status</div>
-            <div className="mt-1 text-sm font-semibold">Active</div>
+        <div className="mt-4 grid grid-cols-2 gap-2.5">
+          <div
+            className="rounded-xl border p-3"
+            style={{
+              borderColor: 'color-mix(in srgb, var(--border) 84%, white 16%)',
+              background: 'color-mix(in srgb, var(--bg) 90%, black 10%)',
+            }}
+          >
+            <div className="text-[11px] uppercase tracking-[0.18em]" style={{ color: 'var(--t4)' }}>
+              Status
+            </div>
+            <div className="mt-1 text-sm font-semibold" style={{ color: 'var(--t1)' }}>
+              Active
+            </div>
           </div>
-          <div className="rounded-xl border p-3" style={{ borderColor: 'var(--border)', background: 'var(--bg)' }}>
-            <div className="text-[11px] uppercase tracking-[0.18em]" style={{ color: 'var(--t4)' }}>Access</div>
-            <div className="mt-1 text-sm font-semibold">Web + Desktop</div>
+
+          <div
+            className="rounded-xl border p-3"
+            style={{
+              borderColor: 'color-mix(in srgb, var(--border) 84%, white 16%)',
+              background: 'color-mix(in srgb, var(--bg) 90%, black 10%)',
+            }}
+          >
+            <div className="text-[11px] uppercase tracking-[0.18em]" style={{ color: 'var(--t4)' }}>
+              Access
+            </div>
+            <div className="mt-1 text-sm font-semibold" style={{ color: 'var(--t1)' }}>
+              Web + Desktop
+            </div>
           </div>
         </div>
       </div>
 
-      <nav className="flex-1 p-3 overflow-y-auto">
-        <div className="text-[11px] font-semibold uppercase tracking-[0.28em] px-3 mb-2" style={{ color: 'var(--t4)' }}>Account</div>
-        {navItems.map(item => {
-          const Icon = item.icon
-          const active = pathname === item.href
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="group mb-1 flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium transition-all"
-              style={{
-                color: active ? 'var(--t1)' : 'var(--t3)',
-                background: active ? 'var(--bg)' : 'transparent',
-                border: active ? '1px solid var(--border)' : '1px solid transparent',
-                boxShadow: active ? '0 8px 24px rgba(0,0,0,.08)' : 'none',
-              }}
-            >
-              <Icon size={16} style={{ color: active ? 'var(--acc)' : 'var(--t4)' }} />
-              <span className="flex-1">{item.label}</span>
-              <ArrowRight size={14} style={{ color: active ? 'var(--acc)' : 'transparent' }} />
-            </Link>
-          )
-        })}
+      <nav className="flex-1 overflow-y-auto px-4 py-4">
+        <div
+          className="px-2 pb-2 text-[11px] font-semibold uppercase tracking-[0.28em]"
+          style={{ color: 'var(--t4)' }}
+        >
+          Account
+        </div>
+
+        <div className="space-y-1.5">
+          {navItems.map((item) => {
+            const Icon = item.icon
+            const active = pathname === item.href
+
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="group flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-medium transition-all duration-200"
+                style={{
+                  color: active ? 'var(--t1)' : 'var(--t2)',
+                  background: active
+                    ? 'linear-gradient(180deg, color-mix(in srgb, var(--bg) 72%, var(--surface) 28%) 0%, color-mix(in srgb, var(--bg) 90%, black 10%) 100%)'
+                    : 'transparent',
+                  border: active
+                    ? '1px solid color-mix(in srgb, var(--border) 80%, white 20%)'
+                    : '1px solid transparent',
+                  boxShadow: active ? '0 8px 24px rgba(0,0,0,.16), inset 0 1px 0 rgba(255,255,255,.03)' : 'none',
+                }}
+              >
+                <div
+                  className="flex h-9 w-9 items-center justify-center rounded-xl border transition-all"
+                  style={{
+                    borderColor: active
+                      ? 'color-mix(in srgb, var(--acc) 24%, var(--border) 76%)'
+                      : 'color-mix(in srgb, var(--border) 75%, transparent 25%)',
+                    background: active ? 'color-mix(in srgb, var(--acc) 10%, transparent)' : 'transparent',
+                  }}
+                >
+                  <Icon size={16} style={{ color: active ? 'var(--acc)' : 'var(--t4)' }} />
+                </div>
+
+                <span className="flex-1">{item.label}</span>
+
+                <ArrowRight size={14} style={{ color: active ? 'var(--acc)' : 'transparent' }} />
+              </Link>
+            )
+          })}
+        </div>
       </nav>
 
-      <div className="p-4 border-t" style={{ borderColor: 'var(--border)' }}>
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl border" style={{ borderColor: 'var(--border)', background: 'var(--bg)' }}>
-              <Settings2 size={16} style={{ color: 'var(--t4)' }} />
+      <div
+        className="border-t p-4"
+        style={{
+          borderColor: 'color-mix(in srgb, var(--border) 86%, white 14%)',
+          background: 'color-mix(in srgb, var(--surface) 96%, black 4%)',
+        }}
+      >
+        <div
+          className="mb-3 rounded-2xl border p-3"
+          style={{
+            borderColor: 'color-mix(in srgb, var(--border) 84%, white 16%)',
+            background: 'linear-gradient(180deg, color-mix(in srgb, var(--bg) 82%, var(--surface) 18%) 0%, color-mix(in srgb, var(--bg) 92%, black 8%) 100%)',
+          }}
+        >
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex min-w-0 items-center gap-3">
+              <div
+                className="flex h-10 w-10 items-center justify-center rounded-xl border"
+                style={{
+                  borderColor: 'color-mix(in srgb, var(--border) 84%, white 16%)',
+                  background: 'color-mix(in srgb, var(--bg) 88%, black 12%)',
+                }}
+              >
+                <Settings2 size={16} style={{ color: 'var(--t4)' }} />
+              </div>
+
+              <div className="min-w-0">
+                <div className="truncate text-xs font-semibold" style={{ color: 'var(--t1)' }}>
+                  {displayName}
+                </div>
+                <div className="truncate text-[11px]" style={{ color: 'var(--t4)' }}>
+                  Settings & theme
+                </div>
+              </div>
             </div>
-            <div>
-              <div className="text-xs font-semibold">{displayName}</div>
-              <div className="text-[11px]" style={{ color: 'var(--t4)' }}>Settings & theme</div>
-            </div>
+
+            <ThemeToggle />
           </div>
-          <ThemeToggle />
         </div>
-        <button onClick={handleSignOut} className="w-full rounded-xl border px-4 py-2.5 text-xs font-semibold transition-colors" style={{ color: 'var(--t2)', borderColor: 'var(--border)', background: 'var(--bg)' }}>
+
+        <button
+          onClick={handleSignOut}
+          className="w-full rounded-xl border px-4 py-3 text-sm font-semibold transition-all hover:opacity-95"
+          style={{
+            color: 'var(--t1)',
+            borderColor: 'color-mix(in srgb, var(--border) 86%, white 14%)',
+            background: 'color-mix(in srgb, var(--bg) 92%, black 8%)',
+            boxShadow: 'inset 0 1px 0 rgba(255,255,255,.03)',
+          }}
+        >
           <span className="inline-flex items-center justify-center gap-2">
-            <LogOut size={14} />
+            <LogOut size={15} />
             Sign out
           </span>
         </button>
       </div>
-    </>
+    </div>
   )
 
   return (
     <div className="min-h-screen flex" style={{ background: 'var(--bg)' }}>
-      <aside className="hidden lg:flex w-[286px] shrink-0 border-r flex-col" style={{ borderColor: 'var(--border)', background: 'var(--surface)' }}>
+      <aside
+        className="hidden lg:flex w-[320px] shrink-0 border-r"
+        style={{
+          borderColor: 'color-mix(in srgb, var(--border) 86%, white 14%)',
+          background: 'color-mix(in srgb, var(--surface) 94%, black 6%)',
+          boxShadow: '12px 0 40px rgba(0,0,0,.18)',
+        }}
+      >
         <SidebarContent />
       </aside>
 
-      <main className="flex-1 min-w-0">
-        <div className="sticky top-0 z-30 flex items-center justify-between border-b px-4 py-3 lg:hidden" style={{ borderColor: 'var(--border)', background: 'color-mix(in srgb, var(--surface) 88%, transparent)' }}>
+      <main className="min-w-0 flex-1">
+        <div
+          className="sticky top-0 z-30 flex items-center justify-between border-b px-4 py-3 lg:hidden"
+          style={{
+            borderColor: 'color-mix(in srgb, var(--border) 86%, white 14%)',
+            background: 'color-mix(in srgb, var(--surface) 94%, black 6%)',
+            backdropFilter: 'blur(16px)',
+            WebkitBackdropFilter: 'blur(16px)',
+          }}
+        >
           <Logo />
-          <button aria-label="Open dashboard menu" onClick={() => setMobileOpen(true)} className="flex h-10 w-10 items-center justify-center rounded-xl border" style={{ borderColor: 'var(--border)', background: 'var(--bg)', color: 'var(--t2)' }}>
+
+          <button
+            aria-label="Open dashboard menu"
+            onClick={() => setMobileOpen(true)}
+            className="flex h-10 w-10 items-center justify-center rounded-xl border"
+            style={{
+              borderColor: 'color-mix(in srgb, var(--border) 84%, white 16%)',
+              background: 'color-mix(in srgb, var(--bg) 88%, black 12%)',
+              color: 'var(--t2)',
+            }}
+          >
             <Menu size={18} />
           </button>
         </div>
 
         {mobileOpen && (
-          <div className="lg:hidden fixed inset-0 z-50">
-            <button aria-label="Close menu overlay" className="absolute inset-0" style={{ background: 'rgba(0,0,0,.48)' }} onClick={() => setMobileOpen(false)} />
-            <div className="absolute right-0 top-0 h-full w-[88vw] max-w-[360px] border-l flex flex-col" style={{ borderColor: 'var(--border)', background: 'var(--surface)', boxShadow: '-24px 0 48px rgba(0,0,0,.22)' }}>
-              <div className="flex items-center justify-between p-4 border-b" style={{ borderColor: 'var(--border)' }}>
-                <div className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em]" style={{ color: 'var(--t4)' }}>
+          <div className="fixed inset-0 z-50 lg:hidden">
+            <button
+              aria-label="Close menu overlay"
+              className="absolute inset-0"
+              style={{ background: 'rgba(0,0,0,.62)', backdropFilter: 'blur(6px)' }}
+              onClick={() => setMobileOpen(false)}
+            />
+
+            <div
+              className="absolute right-0 top-0 h-full w-[90vw] max-w-[380px] border-l"
+              style={{
+                borderColor: 'color-mix(in srgb, var(--border) 86%, white 14%)',
+                background: 'color-mix(in srgb, var(--surface) 96%, black 4%)',
+                boxShadow: '-24px 0 60px rgba(0,0,0,.35)',
+              }}
+            >
+              <div
+                className="flex items-center justify-between border-b px-4 py-4"
+                style={{
+                  borderColor: 'color-mix(in srgb, var(--border) 86%, white 14%)',
+                  background: 'color-mix(in srgb, var(--surface) 94%, black 6%)',
+                }}
+              >
+                <div
+                  className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.22em]"
+                  style={{ color: 'var(--t4)' }}
+                >
                   <Sparkles size={12} />
                   Navigation
                 </div>
-                <button aria-label="Close dashboard menu" onClick={() => setMobileOpen(false)} className="flex h-10 w-10 items-center justify-center rounded-xl border" style={{ borderColor: 'var(--border)', background: 'var(--bg)', color: 'var(--t2)' }}>
+
+                <button
+                  aria-label="Close dashboard menu"
+                  onClick={() => setMobileOpen(false)}
+                  className="flex h-10 w-10 items-center justify-center rounded-xl border"
+                  style={{
+                    borderColor: 'color-mix(in srgb, var(--border) 84%, white 16%)',
+                    background: 'color-mix(in srgb, var(--bg) 88%, black 12%)',
+                    color: 'var(--t2)',
+                  }}
+                >
                   <X size={18} />
                 </button>
               </div>
+
               <SidebarContent />
             </div>
           </div>
