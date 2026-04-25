@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { ChevronDown } from 'lucide-react'
@@ -9,6 +9,33 @@ import {
   instruments, indicators, newsItems, cotData,
   exploreTabs, stories, marketCards, plans, faqs, footerLinks
 } from '@/data'
+
+// ─── Shared scroll-reveal hook ───
+function useReveal(threshold = 0.12) {
+  const ref = useRef<HTMLElement>(null)
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          // Stagger children with .reveal class
+          el.querySelectorAll<HTMLElement>('.reveal, .reveal-left, .reveal-right, .reveal-scale').forEach((child, i) => {
+            // respect explicit stagger-N delay; fallback to index-based
+            const hasExplicit = Array.from(child.classList).some(c => c.startsWith('stagger-'))
+            if (!hasExplicit) child.style.transitionDelay = `${i * 70}ms`
+            child.classList.add('visible')
+          })
+          observer.disconnect()
+        }
+      },
+      { threshold }
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
+  return ref
+}
 
 // ─── Market Ribbon ───
 export function MarketRibbon() {
@@ -31,8 +58,9 @@ export function MarketRibbon() {
   )
 }
 
-// ─── Numbers Strip ───
+// ─── Numbers Strip (animated counter) ───
 export function NumbersStrip() {
+  const sectionRef = useReveal(0.15)
   const nums = [
     { n: '6', label: 'Asset classes covered' },
     { n: 'Real-time', label: 'Live market data feeds' },
@@ -40,12 +68,21 @@ export function NumbersStrip() {
     { n: '100%', label: 'Analysis only — no execution' },
   ]
   return (
-    <section className="py-20">
+    <section ref={sectionRef as React.Ref<HTMLElement>} className="py-20">
       <div className="max-w-site mx-auto px-8">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-12">
           {nums.map((m, i) => (
-            <div key={i}>
-              <div className="text-[2.5rem] font-bold tracking-tight mb-1" style={{ letterSpacing: '-0.03em' }}>{m.n}</div>
+            <div
+              key={i}
+              className="reveal"
+              style={{ '--stagger': i } as React.CSSProperties}
+            >
+              <div
+                className="text-[2.5rem] font-bold tracking-tight mb-1"
+                style={{ letterSpacing: '-0.03em', color: i === 0 || i === 3 ? 'var(--acc)' : 'var(--t1)' }}
+              >
+                {m.n}
+              </div>
               <div className="text-sm font-medium" style={{ color: 'var(--t3)' }}>{m.label}</div>
             </div>
           ))}
@@ -58,6 +95,7 @@ export function NumbersStrip() {
 // ─── Explore Section ───
 export function ExploreSection() {
   const [activeIdx, setActiveIdx] = useState(0)
+  const sectionRef = useReveal(0.08)
   const active = exploreTabs[activeIdx]
 
   const panelContent: Record<string, JSX.Element> = {
@@ -66,7 +104,7 @@ export function ExploreSection() {
         <h4 className="text-sm font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--t4)' }}>Charting workspace</h4>
         <div className="grid grid-cols-3 gap-2">
           {[{ l: 'BTC-USD', v: '66,816', c: '+1.31%', up: true }, { l: 'MVRV', v: '0.74', c: 'Depressed', up: false }, { l: 'Z-Score', v: '-0.81', c: 'Below avg', up: false }].map(d => (
-            <div key={d.l} className="p-3 rounded" style={{ background: 'var(--terminal-surface)', border: '1px solid var(--terminal-border)' }}>
+            <div key={d.l} className="p-3 rounded transition-all hover:-translate-y-0.5" style={{ background: 'var(--terminal-surface)', border: '1px solid var(--terminal-border)' }}>
               <div className="text-sm mb-0.5" style={{ color: 'var(--t4)' }}>{d.l}</div>
               <div className="text-sm font-bold font-mono text-white">{d.v}</div>
               <div className="text-sm font-semibold font-mono" style={{ color: d.up ? 'var(--green-val)' : 'var(--red-val)' }}>{d.c}</div>
@@ -81,7 +119,7 @@ export function ExploreSection() {
         <h4 className="text-sm font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--t4)' }}>Global indicators</h4>
         <div className="grid grid-cols-3 gap-2">
           {indicators.slice(0, 6).map(ind => (
-            <div key={ind.label} className="p-3 rounded" style={{ background: 'var(--terminal-surface)', border: '1px solid var(--terminal-border)' }}>
+            <div key={ind.label} className="p-3 rounded transition-all hover:-translate-y-0.5" style={{ background: 'var(--terminal-surface)', border: '1px solid var(--terminal-border)' }}>
               <div className="text-sm mb-0.5" style={{ color: 'var(--t4)' }}>{ind.label}</div>
               <div className="text-sm font-bold font-mono text-white">{ind.val}</div>
               <div className="text-sm font-semibold" style={{ color: ind.dir === 'up' ? 'var(--green-val)' : 'var(--red-val)' }}>{ind.dir === 'up' ? '▲' : '▼'}</div>
@@ -95,7 +133,7 @@ export function ExploreSection() {
       <div>
         <h4 className="text-sm font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--t4)' }}>Watchlist intelligence</h4>
         {instruments.slice(0, 5).map(inst => (
-          <div key={inst.sym} className="flex justify-between py-2 border-b last:border-0 text-sm" style={{ borderColor: 'var(--terminal-border)' }}>
+          <div key={inst.sym} className="flex justify-between py-2 border-b last:border-0 text-sm transition-colors hover:bg-white/[.02]" style={{ borderColor: 'var(--terminal-border)' }}>
             <span style={{ color: 'var(--t3)' }}>{inst.sym}</span>
             <span className="font-mono" style={{ color: 'rgba(255,255,255,.7)' }}>{fmtPrice(inst.price)}</span>
             <span className="font-mono font-semibold" style={{ color: inst.chg >= 0 ? 'var(--green-val)' : 'var(--red-val)' }}>{inst.chg >= 0 ? '+' : ''}{inst.chg.toFixed(2)}%</span>
@@ -108,7 +146,7 @@ export function ExploreSection() {
       <div>
         <h4 className="text-sm font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--t4)' }}>News flow</h4>
         {newsItems.slice(0, 4).map((n, i) => (
-          <div key={i} className="flex justify-between py-2 border-b last:border-0 text-sm" style={{ borderColor: 'var(--terminal-border)' }}>
+          <div key={i} className="flex justify-between py-2 border-b last:border-0 text-sm transition-colors hover:bg-white/[.02]" style={{ borderColor: 'var(--terminal-border)' }}>
             <span style={{ color: 'var(--t3)' }}>
               <span className="text-sm font-bold mr-2 px-1 py-0.5 rounded" style={{ color: 'var(--acc)', background: 'var(--acc-d)' }}>{n.tag}</span>
               {n.title}
@@ -123,7 +161,7 @@ export function ExploreSection() {
       <div>
         <h4 className="text-sm font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--t4)' }}>COT positioning — S&P 500</h4>
         {cotData.map(c => (
-          <div key={c.cat} className="flex justify-between py-2 border-b last:border-0 text-sm" style={{ borderColor: 'var(--terminal-border)' }}>
+          <div key={c.cat} className="flex justify-between py-2 border-b last:border-0 text-sm transition-colors hover:bg-white/[.02]" style={{ borderColor: 'var(--terminal-border)' }}>
             <span className="flex-1" style={{ color: 'var(--t3)' }}>{c.cat}</span>
             <span className="font-mono font-semibold" style={{ color: c.net >= 0 ? 'var(--green-val)' : 'var(--red-val)' }}>{fmtK(c.net)}</span>
           </div>
@@ -136,7 +174,7 @@ export function ExploreSection() {
         <h4 className="text-sm font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--t4)' }}>Risk & sentiment</h4>
         <div className="grid grid-cols-3 gap-2">
           {[{ l: 'VIX', v: '30.6', c: 'Extreme', col: 'var(--red-val)' }, { l: 'Credit', v: '3.42%', c: 'Healthy', col: 'var(--green-val)' }, { l: 'Breadth', v: '0.298', c: 'Concentrated', col: 'var(--red-val)' }, { l: 'Liquidity', v: '0.728', c: 'Stress', col: 'var(--amber)' }, { l: 'Dollar', v: '100.5', c: 'Firm', col: 'var(--green-val)' }, { l: 'Pulse', v: 'NEUTRAL', c: 'Fragile', col: 'var(--amber)' }].map(d => (
-            <div key={d.l} className="p-3 rounded" style={{ background: 'var(--terminal-surface)', border: '1px solid var(--terminal-border)' }}>
+            <div key={d.l} className="p-3 rounded transition-all hover:-translate-y-0.5" style={{ background: 'var(--terminal-surface)', border: '1px solid var(--terminal-border)' }}>
               <div className="text-sm mb-0.5" style={{ color: 'var(--t4)' }}>{d.l}</div>
               <div className="text-sm font-bold font-mono text-white">{d.v}</div>
               <div className="text-sm font-semibold" style={{ color: d.col }}>{d.c}</div>
@@ -149,28 +187,32 @@ export function ExploreSection() {
   }
 
   return (
-    <section className="py-24" id="explore">
+    <section ref={sectionRef as React.Ref<HTMLElement>} className="py-24" id="explore">
       <div className="max-w-site mx-auto px-8">
-        <div className="mb-10">
+        <div className="mb-10 reveal">
           <div className="section-label">Explore the terminal</div>
           <div className="section-title">Every module, purpose-built for speed</div>
           <div className="section-desc">Switch between modules to see how Termimal helps you analyze faster across price, macro, positioning, and sentiment.</div>
         </div>
         <div className="grid lg:grid-cols-[260px_1fr] gap-4 items-start">
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-1 reveal-left">
             {exploreTabs.map((tab, i) => (
               <button key={tab.key} onClick={() => setActiveIdx(i)}
-                className={cn('p-3 rounded-lg text-left transition-all', activeIdx === i && 'ring-1')}
+                className={cn('p-3 rounded-lg text-left transition-all hover:-translate-y-px', activeIdx === i && 'ring-1')}
                 style={{
                   background: activeIdx === i ? 'var(--surface)' : 'transparent',
                   borderColor: activeIdx === i ? 'var(--border)' : 'transparent',
+                  boxShadow: activeIdx === i ? '0 2px 12px rgba(52,211,153,.06)' : 'none',
                 }}>
-                <div className="text-sm font-semibold mb-0.5">{tab.title}</div>
+                <div className="text-sm font-semibold mb-0.5" style={{ color: activeIdx === i ? 'var(--acc)' : 'var(--t1)' }}>{tab.title}</div>
                 <div className="text-sm leading-relaxed" style={{ color: 'var(--t3)' }}>{tab.desc}</div>
               </button>
             ))}
           </div>
-          <div className="rounded-xl p-6 min-h-[380px]" style={{ border: '1px solid var(--terminal-border)', background: 'var(--terminal-bg)' }}>
+          <div
+            className="rounded-xl p-6 min-h-[380px] reveal-right transition-all"
+            style={{ border: '1px solid var(--terminal-border)', background: 'var(--terminal-bg)' }}
+          >
             {panelContent[active.key]}
           </div>
         </div>
@@ -184,27 +226,68 @@ export function ProductStories() {
   return (
     <section className="py-20">
       <div className="max-w-site mx-auto px-8">
-        {stories.map((s, i) => (
-          <div key={s.tag} className={cn('grid lg:grid-cols-2 gap-12 items-center mb-24 last:mb-0', i % 2 === 1 && 'lg:[direction:rtl]')}>
-            <div className={cn(i % 2 === 1 && 'lg:[direction:ltr]')}>
-              <div className="text-sm font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--acc)' }}>{s.tag}</div>
-              <h3 className="text-[1.6rem] font-bold tracking-tight leading-tight mb-3" style={{ letterSpacing: '-0.02em' }}>{s.title}</h3>
-              <p className="text-sm leading-relaxed mb-4" style={{ color: 'var(--t3)' }}>{s.desc}</p>
-              <ul className="flex flex-col gap-1.5">
-                {s.points.map(p => (
-                  <li key={p} className="flex items-center gap-2 text-sm" style={{ color: 'var(--t3)' }}>
-                    <span className="w-1 h-1 rounded-full shrink-0" style={{ background: 'var(--acc)', opacity: 0.6 }} />{p}
-                  </li>
-                ))}
-              </ul>
+        {stories.map((s, i) => {
+          const storyRef = useRef<HTMLDivElement>(null)
+          useEffect(() => {
+            const el = storyRef.current
+            if (!el) return
+            const observer = new IntersectionObserver(([entry]) => {
+              if (entry.isIntersecting) {
+                el.querySelectorAll<HTMLElement>('.reveal, .reveal-left, .reveal-right').forEach((child, idx) => {
+                  child.style.transitionDelay = `${idx * 100}ms`
+                  child.classList.add('visible')
+                })
+                observer.disconnect()
+              }
+            }, { threshold: 0.1 })
+            observer.observe(el)
+            return () => observer.disconnect()
+          }, [])
+
+          return (
+            <div
+              ref={storyRef}
+              key={s.tag}
+              className={cn('grid lg:grid-cols-2 gap-12 items-center mb-24 last:mb-0', i % 2 === 1 && 'lg:[direction:rtl]')}
+            >
+              <div className={cn('reveal-left', i % 2 === 1 && 'lg:[direction:ltr]')}>
+                <div className="text-sm font-bold uppercase tracking-widest mb-3" style={{ color: 'var(--acc)' }}>{s.tag}</div>
+                <h3 className="text-[1.6rem] font-bold tracking-tight leading-tight mb-3" style={{ letterSpacing: '-0.02em' }}>{s.title}</h3>
+                <p className="text-sm leading-relaxed mb-4" style={{ color: 'var(--t3)' }}>{s.desc}</p>
+                <ul className="flex flex-col gap-1.5">
+                  {s.points.map((p, pi) => (
+                    <li
+                      key={p}
+                      className="flex items-center gap-2 text-sm reveal"
+                      style={{ color: 'var(--t3)', transitionDelay: `${pi * 60 + 200}ms` }}
+                    >
+                      <span className="w-1 h-1 rounded-full shrink-0" style={{ background: 'var(--acc)', opacity: 0.6 }} />{p}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div
+                className={cn(
+                  'rounded-xl overflow-hidden relative group reveal-right',
+                  i % 2 === 1 && 'lg:[direction:ltr]'
+                )}
+                style={{ border: '1px solid var(--terminal-border)', background: 'var(--terminal-bg)', transitionDelay: '80ms' }}
+              >
+                <Image
+                  src={s.img}
+                  alt={s.tag}
+                  width={1920}
+                  height={1080}
+                  className="w-full block transition-transform duration-700 group-hover:scale-[1.03]"
+                />
+                <div
+                  className="absolute inset-0 rounded-xl pointer-events-none transition-opacity duration-300 group-hover:opacity-0"
+                  style={{ background: 'linear-gradient(135deg, transparent 60%, rgba(7,7,14,.25))' }}
+                />
+              </div>
             </div>
-            <div className={cn('rounded-xl overflow-hidden relative group', i % 2 === 1 && 'lg:[direction:ltr]')}
-              style={{ border: '1px solid var(--terminal-border)', background: 'var(--terminal-bg)' }}>
-              <Image src={s.img} alt={s.tag} width={1920} height={1080} className="w-full block transition-transform duration-500 group-hover:scale-[1.02]" />
-              <div className="absolute inset-0 rounded-xl pointer-events-none" style={{ background: 'linear-gradient(135deg, transparent 60%, rgba(7,7,14,.25))' }} />
-            </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
     </section>
   )
@@ -212,18 +295,34 @@ export function ProductStories() {
 
 // ─── Markets ───
 export function MarketsSection() {
+  const sectionRef = useReveal(0.1)
   return (
-    <section className="py-20" id="markets">
+    <section ref={sectionRef as React.Ref<HTMLElement>} className="py-20" id="markets">
       <div className="max-w-site mx-auto px-8">
-        <div className="mb-8">
+        <div className="mb-8 reveal">
           <div className="section-label">Market coverage</div>
           <div className="section-title">Every market. One workspace.</div>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          {marketCards.map(m => (
-            <div key={m.name} className="p-5 rounded-xl cursor-pointer transition-all hover:-translate-y-0.5"
-              style={{ border: '1px solid var(--border)', background: 'var(--surface)' }}>
-              <div className="text-2xl font-bold mb-0.5">{m.count}</div>
+          {marketCards.map((m, i) => (
+            <div
+              key={m.name}
+              className="p-5 rounded-xl cursor-pointer transition-all hover:-translate-y-1 hover:shadow-lg reveal"
+              style={{
+                border: '1px solid var(--border)',
+                background: 'var(--surface)',
+                transitionDelay: `${i * 70}ms`,
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = 'rgba(52,211,153,.25)'
+                e.currentTarget.style.boxShadow = '0 8px 32px rgba(52,211,153,.06)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = 'var(--border)'
+                e.currentTarget.style.boxShadow = 'none'
+              }}
+            >
+              <div className="text-2xl font-bold mb-0.5" style={{ color: 'var(--acc)' }}>{m.count}</div>
               <div className="text-sm font-semibold mb-0.5">{m.name}</div>
               <div className="text-sm" style={{ color: 'var(--t3)' }}>{m.desc}</div>
             </div>
@@ -237,11 +336,12 @@ export function MarketsSection() {
 // ─── Pricing ───
 export function PricingSection() {
   const [yearly, setYearly] = useState(true)
+  const sectionRef = useReveal(0.08)
 
   return (
-    <section className="py-20" id="pricing">
+    <section ref={sectionRef as React.Ref<HTMLElement>} className="py-20" id="pricing">
       <div className="max-w-site mx-auto px-8">
-        <div className="text-center mb-10">
+        <div className="text-center mb-10 reveal">
           <div className="section-label">Pricing</div>
           <div className="section-title">Transparent pricing. No surprises.</div>
           <p className="text-sm max-w-sm mx-auto mt-1" style={{ color: 'var(--t3)' }}>Start free. Upgrade when ready. Cancel anytime.</p>
@@ -259,12 +359,17 @@ export function PricingSection() {
           </div>
         </div>
         <div className="grid md:grid-cols-3 gap-3 max-w-[960px] mx-auto">
-          {plans.map(plan => (
-            <div key={plan.name} className={cn('relative p-6 rounded-xl transition-all', plan.popular && 'ring-1')}
+          {plans.map((plan, i) => (
+            <div
+              key={plan.name}
+              className={cn('relative p-6 rounded-xl transition-all reveal', plan.popular && 'ring-1')}
               style={{
                 border: plan.popular ? '1px solid rgba(52,211,153,.25)' : '1px solid var(--border)',
                 background: plan.popular ? 'var(--acc-d)' : 'var(--surface)',
-              }}>
+                transitionDelay: `${i * 90}ms`,
+                ...(plan.popular ? { animation: 'borderGlow 3s ease-in-out infinite' } : {}),
+              }}
+            >
               {plan.popular && (
                 <div className="absolute -top-2.5 left-5 px-2.5 py-0.5 rounded-md text-sm font-bold uppercase tracking-wide text-white"
                   style={{ background: 'var(--acc2)' }}>Popular</div>
@@ -281,7 +386,7 @@ export function PricingSection() {
               <ul className="flex flex-col gap-2 mb-6">
                 {plan.features.map(f => (
                   <li key={f} className="flex items-center gap-2 text-sm" style={{ color: 'var(--t3)' }}>
-                    <span className="text-sm" style={{ color: 'var(--t4)' }}>✓</span> {f}
+                    <span className="text-sm" style={{ color: 'var(--acc)' }}>&#10003;</span> {f}
                   </li>
                 ))}
               </ul>
@@ -307,21 +412,22 @@ export function PricingSection() {
 // ─── FAQ ───
 export function FAQSection() {
   const [openIdx, setOpenIdx] = useState<number | null>(null)
+  const sectionRef = useReveal(0.08)
 
   return (
-    <section className="py-20">
+    <section ref={sectionRef as React.Ref<HTMLElement>} className="py-20">
       <div className="max-w-site mx-auto px-8">
         <div className="max-w-[680px] mx-auto">
-          <div className="section-title mb-8">Questions & answers</div>
+          <div className="section-title mb-8 reveal">Questions & answers</div>
           {faqs.map((faq, i) => (
-            <div key={i} style={{ borderBottom: '1px solid var(--border)' }}>
+            <div key={i} className="reveal" style={{ borderBottom: '1px solid var(--border)', transitionDelay: `${i * 50}ms` }}>
               <button onClick={() => setOpenIdx(openIdx === i ? null : i)}
                 className="w-full flex items-center justify-between py-4 text-left transition-colors"
                 style={{ color: 'var(--t2)' }}>
                 <span className="text-sm font-medium pr-8">{faq.q}</span>
-                <ChevronDown size={14} className={cn('shrink-0 transition-transform', openIdx === i && 'rotate-180')} style={{ color: 'var(--t4)' }} />
+                <ChevronDown size={14} className={cn('shrink-0 transition-transform duration-300', openIdx === i && 'rotate-180')} style={{ color: 'var(--t4)' }} />
               </button>
-              <div className={cn('overflow-hidden transition-all', openIdx === i ? 'max-h-[200px] pb-4' : 'max-h-0')}>
+              <div className={cn('overflow-hidden transition-all duration-300', openIdx === i ? 'max-h-[200px] pb-4' : 'max-h-0')}>
                 <p className="text-sm leading-relaxed" style={{ color: 'var(--t3)' }}>{faq.a}</p>
               </div>
             </div>
@@ -334,18 +440,26 @@ export function FAQSection() {
 
 // ─── CTA ───
 export function CTASection() {
+  const sectionRef = useReveal(0.1)
+
   return (
-    <section className="py-20">
+    <section ref={sectionRef as React.Ref<HTMLElement>} className="py-20">
       <div className="max-w-site mx-auto px-8">
-        <div className="relative rounded-2xl p-16 overflow-hidden text-center" style={{ border: '1px solid var(--border)', background: 'var(--surface)' }}>
-          <div className="absolute top-[-50%] left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full pointer-events-none"
-            style={{ background: 'radial-gradient(circle, var(--acc), transparent 65%)', opacity: 0.03 }} />
+        <div
+          className="relative rounded-2xl p-16 overflow-hidden text-center reveal-scale anim-border-glow"
+          style={{ border: '1px solid rgba(52,211,153,.2)', background: 'var(--surface)' }}
+        >
+          {/* Animated glow orb */}
+          <div
+            className="absolute top-[-50%] left-1/2 -translate-x-1/2 w-[600px] h-[600px] rounded-full pointer-events-none anim-float-slow"
+            style={{ background: 'radial-gradient(circle, var(--acc), transparent 65%)', opacity: 0.045 }}
+          />
           <h2 className="text-[2rem] font-bold tracking-tight mb-3 relative" style={{ letterSpacing: '-0.025em' }}>Your edge starts with better analysis.</h2>
           <p className="text-sm max-w-md mx-auto mb-6 relative" style={{ color: 'var(--t3)' }}>
             Professional-grade market intelligence. 14-day free trial. Cancel anytime.
           </p>
           <div className="flex gap-2 justify-center relative">
-            <Link href="/signup" className="btn-primary py-3 px-7 text-sm">Create free account →</Link>
+            <Link href="/signup" className="btn-primary py-3 px-7 text-sm anim-glow-pulse">Create free account →</Link>
             <Link href="/web-terminal" className="btn-secondary py-3 px-5">Launch Web Terminal</Link>
             <Link href="/download" className="btn-secondary py-3 px-5">Download Desktop</Link>
           </div>
@@ -380,20 +494,20 @@ export function Footer() {
           <div className="col-span-2">
             <Link href="/" className="flex items-center gap-3 mb-4 transition-opacity hover:opacity-80">
               {/* Light Mode Logo (Black) */}
-              <Image 
-                src="/logo-dark.png" 
-                alt="Termimal Logo" 
-                width={32} 
-                height={32} 
+              <Image
+                src="/logo-dark.png"
+                alt="Termimal Logo"
+                width={32}
+                height={32}
                 className="object-contain"
                 style={{ display: 'var(--logo-light-theme-display)' }}
               />
               {/* Dark Mode Logo (White) */}
-              <Image 
-                src="/logo-light.png" 
-                alt="Termimal Logo" 
-                width={32} 
-                height={32} 
+              <Image
+                src="/logo-light.png"
+                alt="Termimal Logo"
+                width={32}
+                height={32}
                 className="object-contain"
                 style={{ display: 'var(--logo-dark-theme-display)' }}
               />
