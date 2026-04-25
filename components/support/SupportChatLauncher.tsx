@@ -14,15 +14,22 @@ declare global {
 
 let crispConfigured = false
 
+function callCrisp(action: string) {
+  window.$crisp = window.$crisp || []
+  window.$crisp.push(["do", action])
+}
+
 export function openSupportChat() {
   if (typeof window === "undefined") return
-  window.$crisp = window.$crisp || []
   try {
     Crisp.chat.show()
+  } catch {
+    callCrisp("chat:show")
+  }
+  try {
     Crisp.chat.open()
   } catch {
-    window.$crisp.push(["do", "chat:show"])
-    window.$crisp.push(["do", "chat:open"])
+    callCrisp("chat:open")
   }
 }
 
@@ -51,7 +58,11 @@ export default function SupportChatLauncher() {
     window.$crisp = window.$crisp || []
     window.CRISP_READY_TRIGGER = () => {
       setCrispReady(true)
-      try { Crisp.chat.hide() } catch { window.$crisp?.push(["do", "chat:hide"]) }
+      try {
+        Crisp.chat.hide()
+      } catch {
+        callCrisp("chat:hide")
+      }
     }
     Crisp.configure("d6ad7e7f-f6e7-4283-822b-1bad7920bfca", { autoload: true })
   }, [])
@@ -67,8 +78,12 @@ export default function SupportChatLauncher() {
   useEffect(() => {
     if (!crispReady) return
     try {
-      Crisp.chat.onChatOpened(() => { try { Crisp.chat.show() } catch {} })
-      Crisp.chat.onChatClosed(() => { try { Crisp.chat.hide() } catch { window.$crisp?.push(["do", "chat:hide"]) } })
+      Crisp.chat.onChatOpened(() => {
+        try { Crisp.chat.show() } catch { callCrisp("chat:show") }
+      })
+      Crisp.chat.onChatClosed(() => {
+        try { Crisp.chat.hide() } catch { callCrisp("chat:hide") }
+      })
     } catch {}
   }, [crispReady])
 
@@ -88,7 +103,23 @@ export default function SupportChatLauncher() {
         }
       `}</style>
       <div className="pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 translate-x-[-72px] whitespace-nowrap rounded-full border px-3 py-1.5 text-xs font-semibold opacity-0 transition-all duration-200 group-hover:opacity-100" style={{ borderColor: "color-mix(in srgb, var(--border) 84%, white 16%)", background: "color-mix(in srgb, var(--surface) 96%, black 4%)", color: "var(--t1)", boxShadow: "0 10px 30px rgba(0,0,0,.25)" }}>Support</div>
-      <button type="button" aria-label="Open support chat" data-i18n-key="nav.support" onClick={openSupportChat} className="flex items-center justify-center rounded-full border transition-all duration-200 hover:scale-[1.04] active:scale-[0.98]" style={{ width: 56, height: 56, borderColor: "rgba(52,211,153,.22)", background: "linear-gradient(180deg, rgba(16,185,129,.20) 0%, rgba(5,150,105,.30) 100%)", color: "#d1fae5", boxShadow: "0 16px 38px rgba(6, 95, 70, .34), inset 0 1px 0 rgba(255,255,255,.06), 0 0 0 1px rgba(16,185,129,.08)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}>
+      <button
+        type="button"
+        aria-label="Open support chat"
+        data-i18n-key="nav.support"
+        onClick={openSupportChat}
+        className="flex items-center justify-center rounded-full border transition-all duration-200 hover:scale-[1.04] active:scale-[0.98]"
+        style={{
+          width: 56,
+          height: 56,
+          borderColor: "rgba(52,211,153,.22)",
+          background: "linear-gradient(180deg, rgba(16,185,129,.20) 0%, rgba(5,150,105,.30) 100%)",
+          color: "#d1fae5",
+          boxShadow: "0 16px 38px rgba(6, 95, 70, .34), inset 0 1px 0 rgba(255,255,255,.06), 0 0 0 1px rgba(16,185,129,.08)",
+          backdropFilter: "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)",
+        }}
+      >
         <Headphones size={22} strokeWidth={2} />
       </button>
     </div>
