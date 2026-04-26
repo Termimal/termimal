@@ -7,8 +7,9 @@ type PageProps = {
 
 export default async function Page({ params }: PageProps) {
   const { id } = await params
-  const supabase = createClient()
+  const supabase = await createClient()
   const { data: report, error } = await supabase.from("reports").select("*").eq("id", id).single()
   if (error || !report) notFound()
   return <main><pre>{JSON.stringify(report, null, 2)}</pre></main>
 }
+
