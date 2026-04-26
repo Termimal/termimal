@@ -1,4 +1,3 @@
-@'
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
@@ -55,9 +54,7 @@ export default function SupportChatLauncher() {
         data: { user },
       } = await supabase.auth.getUser()
 
-      if (!cancelled) {
-        setUser(user ?? null)
-      }
+      if (!cancelled) setUser(user ?? null)
     }
 
     loadUser()
@@ -88,9 +85,7 @@ export default function SupportChatLauncher() {
       if (hasIframe) {
         crispReady = true
         setIsReady(true)
-
         try { Crisp.chat.hide() } catch { pushCrisp("chat:hide") }
-
         window.clearInterval(timer)
       }
     }, 500)
@@ -165,4 +160,3 @@ export default function SupportChatLauncher() {
     </div>
   )
 }
-'@ | Set-Content -LiteralPath "components/support/SupportChatLauncher.tsx"
