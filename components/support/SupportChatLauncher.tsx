@@ -23,16 +23,19 @@ function pushCrisp(action: string) {
 export function openSupportChat() {
   if (typeof window === "undefined") return
   window.$crisp = window.$crisp || []
+  console.log("openSupportChat clicked")
+
   pushCrisp("chat:show")
   pushCrisp("chat:open")
-  try { Crisp.chat.show() } catch {}
-  try { Crisp.chat.open() } catch {}
+
+  try { Crisp.chat.show() } catch (e) { console.error("Crisp chat.show failed", e) }
+  try { Crisp.chat.open() } catch (e) { console.error("Crisp chat.open failed", e) }
 
   window.setTimeout(() => {
     pushCrisp("chat:show")
     pushCrisp("chat:open")
-    try { Crisp.chat.show() } catch {}
-    try { Crisp.chat.open() } catch {}
+    try { Crisp.chat.show() } catch (e) { console.error("Crisp delayed chat.show failed", e) }
+    try { Crisp.chat.open() } catch (e) { console.error("Crisp delayed chat.open failed", e) }
   }, 250)
 }
 
@@ -115,7 +118,7 @@ export default function SupportChatLauncher() {
   if (!mounted) return null
 
   return (
-    <div className="hidden md:block fixed bottom-5 right-5 z-[80] group">
+    <div className="hidden md:block fixed bottom-5 right-5 z-[9999] pointer-events-none">
       <style jsx global>{`
         .crisp-client .cc-tlyw,
         .crisp-client [class*="launcher"],
@@ -143,8 +146,12 @@ export default function SupportChatLauncher() {
       <button
         type="button"
         aria-label="Open support chat"
-        onClick={openSupportChat}
-        className="flex items-center justify-center rounded-full border transition-all duration-200 hover:scale-[1.04] active:scale-[0.98]"
+        onClick={() => {
+          console.log("support button clicked")
+          alert("clicked")
+          openSupportChat()
+        }}
+        className="pointer-events-auto flex items-center justify-center rounded-full border transition-all duration-200 hover:scale-[1.04] active:scale-[0.98]"
         style={{
           width: 56,
           height: 56,
