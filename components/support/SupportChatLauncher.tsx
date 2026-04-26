@@ -1,3 +1,4 @@
+@'
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
@@ -27,7 +28,8 @@ export function openSupportChat() {
   pushCrisp("chat:open")
   try { Crisp.chat.show() } catch {}
   try { Crisp.chat.open() } catch {}
-  setTimeout(() => {
+
+  window.setTimeout(() => {
     pushCrisp("chat:show")
     pushCrisp("chat:open")
     try { Crisp.chat.show() } catch {}
@@ -46,43 +48,70 @@ export default function SupportChatLauncher() {
   }, [])
 
   useEffect(() => {
-    const loadUser = async () => {
+    let cancelled = false
+
+    async function loadUser() {
       const {
         data: { user },
       } = await supabase.auth.getUser()
-      setUser(user ?? null)
+
+      if (!cancelled) {
+        setUser(user ?? null)
+      }
     }
+
     loadUser()
+
+    return () => {
+      cancelled = true
+    }
   }, [supabase])
 
   useEffect(() => {
     if (typeof window === "undefined") return
+
     window.$crisp = window.$crisp || []
+
     if (crispConfigured) {
       setIsReady(crispReady)
       return
     }
+
     crispConfigured = true
     Crisp.configure("d6ad7e7f-f6e7-4283-822b-1bad7920bfca", { autoload: true })
+
     const timer = window.setInterval(() => {
-      const hasIframe = !!document.querySelector('iframe[src*="crisp.chat"], iframe[srg*="crisp"]')
+      const hasIframe = !!document.querySelector(
+        'iframe[src*="crisp.chat"], iframe[src*="crisp"]'
+      )
+
       if (hasIframe) {
         crispReady = true
         setIsReady(true)
+
         try { Crisp.chat.hide() } catch { pushCrisp("chat:hide") }
+
         window.clearInterval(timer)
       }
     }, 500)
+
     return () => window.clearInterval(timer)
   }, [])
 
   useEffect(() => {
     if (!isReady || !user) return
+
     const email = user?.email ?? null
-    const name = user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email?.split("@")[0] || null
+    const name =
+      user?.user_metadata?.full_name ||
+      user?.user_metadata?.name ||
+      user?.email?.split("@")[0] ||
+      null
+
     if (email) {
       try { Crisp.user.setEmail(email) } catch {}
     }
+
     if (name) {
       try { Crisp.user.setNickname(name) } catch {}
     }
@@ -103,12 +132,37 @@ export default function SupportChatLauncher() {
           visibility: hidden !important;
         }
       `}</style>
-      <div className="pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 translate-x-[-72px] whitespace-nowrap rounded-full border px-3 py-1.5 text-xs font-semibold opacity-0 transition-all duration-200 group-hover:opacity-100" style={{ borderColor: "color-mix(in srgb, var(--border) 84%, white 16%)", background: "color-mix(in srgb, var(--surface) 96%, black 4%)", color: "var(--t1)", boxShadow: "0 10px 30px rgba(0,0,0,.25)" }}>
+
+      <div
+        className="pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 translate-x-[-72px] whitespace-nowrap rounded-full border px-3 py-1.5 text-xs font-semibold opacity-0 transition-all duration-200 group-hover:opacity-100"
+        style={{
+          borderColor: "color-mix(in srgb, var(--border) 84%, white 16%)",
+          background: "color-mix(in srgb, var(--surface) 96%, black 4%)",
+          color: "var(--t1)",
+          boxShadow: "0 10px 30px rgba(0,0,0,.25)",
+        }}
+      >
         Support
       </div>
-      <button type="button" aria-label="Open support chat" onClick={openSupportChat} className="flex items-center justify-center rounded-full border transition-all duration-200 hover:scale-[1.04] active:scale-[0.98]" style={{ width: 56, height: 56, borderColor: "rgba(52,211,153,.22)", background: "linear-gradient(180deg, rgba(16,185,129,.20) 0%, rgba(5,150,105,.30) 100%)", color: "#d1fae5", backdropFilter: "blur(12px)" }}>
+
+      <button
+        type="button"
+        aria-label="Open support chat"
+        onClick={openSupportChat}
+        className="flex items-center justify-center rounded-full border transition-all duration-200 hover:scale-[1.04] active:scale-[0.98]"
+        style={{
+          width: 56,
+          height: 56,
+          borderColor: "rgba(52,211,153,.22)",
+          background:
+            "linear-gradient(180deg, rgba(16,185,129,.20) 0%, rgba(5,150,105,.30) 100%)",
+          color: "#d1fae5",
+          backdropFilter: "blur(12px)",
+        }}
+      >
         <Headphones size={22} strokeWidth={2} />
       </button>
     </div>
   )
 }
+'@ | Set-Content -LiteralPath "components/support/SupportChatLauncher.tsx"

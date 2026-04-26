@@ -1,41 +1,43 @@
 'use client'
-
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { ChevronDown } from 'lucide-react'
 import { createClient } from '@supabase/supabase-js'
-
 type FAQ = {
   id: string
   question: string
   answer: string
   is_active: boolean
 }
-
 export default function HomeFaq() {
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  const supabase = useMemo(
+    () =>
+      createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      ),
+    []
   )
-
   const [faqs, setFaqs] = useState<FAQ[]>([])
   const [openId, setOpenId] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
-
   useEffect(() => {
+    let cancelled = false
     async function loadFaqs() {
       const { data } = await supabase
         .from('faqs')
         .select('*')
         .eq('is_active', true)
         .order('created_at', { ascending: true })
-
-      if (data) setFaqs(data)
-      setLoading(false)
+      if (!cancelled) {
+        if (data) setFaqs(data)
+        setLoading(false)
+      }
     }
-
     loadFaqs()
+    return () => {
+      cancelled = true
+    }
   }, [supabase])
-
   if (loading) {
     return (
       <section className="py-20">
@@ -45,9 +47,7 @@ export default function HomeFaq() {
       </section>
     )
   }
-
   if (faqs.length === 0) return null
-
   return (
     <section className="py-20">
       <div className="mx-auto max-w-4xl px-6">
@@ -57,12 +57,10 @@ export default function HomeFaq() {
             Clear answers about the platform, research, pricing, and how Termimal works.
           </p>
         </div>
-
         <div className="space-y-4">
           {faqs.map((faq) => {
             const isOpen = openId === faq.id
             const chevronClass = isOpen ? 'transition-transform rotate-180' : 'transition-transform'
-
             return (
               <div
                 key={faq.id}
@@ -83,7 +81,6 @@ export default function HomeFaq() {
                     style={{ color: 'var(--t3)' }}
                   />
                 </button>
-
                 {isOpen && (
                   <div
                     className="px-6 pb-6 text-base leading-7"
