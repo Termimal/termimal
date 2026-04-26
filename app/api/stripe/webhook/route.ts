@@ -7,7 +7,8 @@ import Stripe from 'stripe'
 
 export async function POST(request: Request) {
   const body = await request.text()
-  const signature = headers().get('Stripe-Signature') as string
+  const headerList = await headers()
+  const signature = headerList.get('Stripe-Signature') as string
 
   let event: Stripe.Event
 
@@ -134,3 +135,5 @@ function getPlanFromPrice(priceId: string): 'free' | 'pro' | 'premium' {
   if (priceId.includes('premium')) return 'premium'
   return 'free'
 }
+
+
