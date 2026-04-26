@@ -1,5 +1,2 @@
-﻿import { redirect } from "next/navigation"
-
-export default function ContactPage() {
-  redirect("/support")
-}
+import { redirect } from "next/navigation"
+export default function ContactPage() { redirect("/support") }
