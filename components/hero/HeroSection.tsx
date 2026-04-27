@@ -96,21 +96,32 @@ export default function HeroSection() {
               ))}
             </div>
 
-            {/* Heading */}
+            {/*
+              SEO: Primary brand H1 — exact brand name for Google site-name recognition.
+              Visually styled small so it complements rather than competes with the hero headline.
+            */}
             <h1
+              className="hero-reveal reveal text-sm font-bold tracking-[0.25em] uppercase mb-3"
+              style={{ color: 'var(--acc)', transitionDelay: '120ms' }}
+            >
+              Termimal
+            </h1>
+
+            {/* Hero display headline — now an <h2> so heading hierarchy is preserved */}
+            <h2
               className="hero-reveal reveal text-[2.4rem] leading-[1.08] font-bold tracking-tight mb-4"
               style={{ letterSpacing: '-0.03em', transitionDelay: '160ms' }}
             >
               See the market<br />faster, clearer,<br />
               <span style={{ color: 'var(--acc)' }}>deeper.</span>
-            </h1>
+            </h2>
 
-            {/* Subtext */}
+            {/* Branded subtext paragraph — mentions Termimal naturally */}
             <p
               className="hero-reveal reveal text-sm leading-relaxed mb-6 max-w-[320px]"
               style={{ color: 'var(--t3)', transitionDelay: '240ms' }}
             >
-              One terminal for price, macro, positioning, and sentiment. Professional-grade analysis without brokerage complexity.
+              Termimal is a professional-grade market analysis terminal—one platform for price, macro, positioning, and sentiment—without the complexity of a traditional brokerage.
             </p>
 
             {/* CTA buttons */}
