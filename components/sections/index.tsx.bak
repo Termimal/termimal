@@ -120,7 +120,7 @@ const footerUrlMap: Record<string, string> = {
   'Web Terminal': '/web-terminal', 'Desktop App': '/download', 'Features': '/features',
   'Markets': '/#markets', 'Pricing': '/pricing', 'Status': '/status', 'Help Center': '/support',
   'About': '/about', 'Careers': '/careers', 'Affiliates': '/affiliates', 'Refer a Friend': '/refer',
-  'Terms': '/terms', 'Privacy': '/privacy', 'Cookies': '/cookies', 'Risk Disclaimer': '/risk-disclaimer', 'Refund Policy': '/refund-policy', 'Sitemap': '/sitemap.xml',
+  'Terms': '/terms', 'Privacy': '/privacy', 'Cookies': '/cookies', 'Risk Disclaimer': '/risk-disclaimer', 'Refund Policy': '/refund-policy',
 }
 function footerLinkUrl(label: string) { return footerUrlMap[label] || '#' }
 
@@ -158,4 +158,3 @@ export function Footer() {
     </footer>
   )
 }
-

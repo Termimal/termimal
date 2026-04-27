@@ -183,8 +183,7 @@ export const stories: Story[] = [
 
 export const footerLinks = {
   product: ['Web Terminal', 'Desktop App', 'Features', 'Markets', 'Pricing', 'Status'],
-  resources: ['Help Center', 'Sitemap'],
+  resources: ['Help Center'],
   company: ['About', 'Careers', 'Affiliates', 'Refer a Friend'],
   legal: ['Terms', 'Privacy', 'Cookies', 'Risk Disclaimer', 'Refund Policy'],
 }
-
