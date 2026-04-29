@@ -1,0 +1,233 @@
+/* ═══════════════════════════════════════════════════════════
+   TERMIMAL — Original Dark Terminal
+   ═══════════════════════════════════════════════════════════ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Design Tokens ────────────────────────────────────────── */
+:root {
+  /* Backgrounds */
+  --bg-0:  #0b0e11;
+  --bg-1:  #0e1117;
+  --bg-2:  #161b22;
+  --bg-3:  #1c2128;
+  --bg-h:  #1c2128;
+
+  /* Borders */
+  --border-0: #21262d;
+  --border-1: #30363d;
+  --border-2: #30363d;
+
+  /* Text */
+  --t-1: #e6edf3;
+  --t-2: #c9d1d9;
+  --t-3: #8b949e;
+  --t-4: #484f58;
+  --t-5: #30363d;
+
+  /* Signals */
+  --up:   #3fb950;
+  --dn:   #f85149;
+  --blue: #388bfd;
+  --warn: #d29922;
+  --info: #388bfd;
+
+  /* Flash */
+  --up-flash:   rgba(63,185,80,0.28);
+  --down-flash: rgba(248,81,73,0.28);
+
+  /* Spacing + fonts */
+  --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px;
+  --sp-5: 20px; --sp-6: 24px; --sp-8: 32px;
+  --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --mono: 'SF Mono', 'Fira Code', Menlo, Consolas, monospace;
+  --up-bg: rgba(63,185,80,0.08);
+  --dn-bg: rgba(248,81,73,0.06);
+}
+
+html, body, #root {
+  background: var(--bg-1);
+  color: var(--t-2);
+  font-family: var(--font);
+  font-size: 13px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.01em;
+}
+
+/* All numeric cells should feel tabular */
+.tnum, [data-tnum] {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* ── Price-flash animation (IBKR/TV signature) ───────────── */
+@keyframes flash-up   { 0% { background: var(--up-flash);   } 100% { background: transparent; } }
+@keyframes flash-down { 0% { background: var(--down-flash); } 100% { background: transparent; } }
+.flash-up   { animation: flash-up   500ms ease-out; }
+.flash-down { animation: flash-down 500ms ease-out; }
+
+/* ── Live pulse dot ──────────────────────────────────────── */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.4; }
+}
+.pulse-dot { animation: pulse-dot 1.8s ease-in-out infinite; }
+
+/* ── Skeleton shimmer ────────────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.04) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1200ms linear infinite;
+}
+
+/* ── Scrollbars — minimal institutional ──────────────────── */
+::-webkit-scrollbar       { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-1); border-radius: 5px; border: 2px solid var(--bg-0); }
+::-webkit-scrollbar-thumb:hover { background: var(--border-2); }
+
+/* ── Focus rings ─────────────────────────────────────────── */
+button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 1px var(--blue);
+}
+
+/* ── Reset ────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+#root { height: 100%; }
+
+/* ── Typography — numbers are primary, text is secondary ─── */
+.font-mono { font-family: var(--mono); }
+table, [style*="monospace"] { font-variant-numeric: tabular-nums; }
+
+/* ── Inputs — flat, minimal ──────────────────────────────── */
+input, select, textarea {
+  background: var(--bg-0);
+  border: 1px solid var(--border-1);
+  color: var(--t-1);
+  border-radius: 4px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-family: var(--font);
+  outline: none;
+  transition: border-color 120ms ease-out, box-shadow 120ms ease-out;
+}
+input:focus, select:focus, textarea:focus { border-color: var(--blue); box-shadow: 0 0 0 1px var(--blue); }
+input[type="number"], input[type="date"] { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+/* ── Buttons — no decoration ─────────────────────────────── */
+button { font-family: var(--font); cursor: pointer; transition: background 120ms ease-out, color 120ms ease-out, border-color 120ms ease-out; }
+
+/* ── Tables — strict alignment ───────────────────────────── */
+table { border-collapse: collapse; width: 100%; }
+th { font-weight: 500; text-align: left; }
+td, th { padding: 0 8px; height: 26px; }
+
+/* ── TradingView attribution hide ────────────────────────── */
+.tv-lightweight-charts a[href*="tradingview"] { display: none !important; }
+.tv-lightweight-charts, .tv-lightweight-charts * { cursor: crosshair !important; }
+.tv-lightweight-charts [class*="price-scale"] { cursor: ns-resize !important; }
+
+/* ── Selection ───────────────────────────────────────────── */
+::selection { background: rgba(41,98,255,0.25); color: var(--t-1); }
+
+/* ── Institutional Typography Classes ────────────────────── */
+.sec-title {
+  font-size: 11px; font-weight: 500; color: var(--t-3);
+  text-transform: uppercase; letter-spacing: 0.6px;
+  padding-bottom: 6px; margin-bottom: 8px;
+  border-bottom: 1px solid var(--border-1);
+}
+.metric-label { font-size: 11px; color: var(--t-3); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+.metric-value { font-size: 14px; font-weight: 500; font-family: var(--mono); color: var(--t-1); font-variant-numeric: tabular-nums; }
+.metric-value-lg { font-size: 18px; font-weight: 500; font-family: var(--mono); color: var(--t-1); font-variant-numeric: tabular-nums; }
+
+/* ── Panel styling ───────────────────────────────────────── */
+.panel { background: var(--bg-1); border: 1px solid var(--border-1); border-radius: 4px; padding: 12px; }
+.panel-header {
+  font-size: 11px; font-weight: 500; color: var(--t-3);
+  text-transform: uppercase; letter-spacing: 0.6px;
+  padding: 0 12px; height: 32px; display: flex; align-items: center;
+  border-bottom: 1px solid var(--border-1);
+}
+
+/* ── Status chips ────────────────────────────────────────── */
+.chip { display: inline-flex; align-items: center; gap: 3px; font-size: 10px; font-weight: 500; padding: 2px 6px; border-radius: 3px; letter-spacing: 0.3px; }
+.chip-up { color: var(--up); background: rgba(38,166,154,0.12); }
+.chip-dn { color: var(--dn); background: rgba(239,83,80,0.12); }
+.chip-warn { color: var(--warn); background: rgba(240,173,78,0.12); }
+.chip-blue { color: var(--blue); background: rgba(41,98,255,0.12); }
+
+
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+/* ── Polymarket tab — dedicated design tokens ──────────────── */
+.pm-scope {
+  --pm-bg-app:        #0a0a0a;
+  --pm-bg-panel:      #0d1117;
+  --pm-bg-elevated:   #161b22;
+  --pm-border-subtle: #21262d;
+  --pm-border-prom:   #30363d;
+  --pm-text-primary:  #f0f6fc;
+  --pm-text-secondary:#c9d1d9;
+  --pm-text-muted:    #8b949e;
+  --pm-text-tertiary: #6e7681;
+  --pm-text-disabled: #484f58;
+  --pm-up:            #2ea043;
+  --pm-up-fill:       rgba(46,160,67,0.12);
+  --pm-down:          #da3633;
+  --pm-down-fill:     rgba(218,54,51,0.12);
+  --pm-accent:        #388bfd;
+  --pm-accent-text:   #58a6ff;
+  --pm-warning:       #d29922;
+  --pm-row-zebra:     rgba(255,255,255,0.015);
+  --pm-row-hover:     rgba(56,139,253,0.06);
+  --pm-row-selected:  rgba(56,139,253,0.12);
+  --pm-font-ui:       system-ui, -apple-system, "Segoe UI", sans-serif;
+  --pm-font-mono:     'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace;
+  --pm-motion:        120ms ease-out;
+}
+
+/* Progress bar sweep (loading indicator) */
+@keyframes pm-progress-sweep {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(400%); }
+}
+.pm-progress-bar {
+  position: relative;
+  height: 1px;
+  background: transparent;
+  overflow: hidden;
+}
+.pm-progress-bar::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 25%;
+  height: 100%;
+  background: var(--pm-accent);
+  animation: pm-progress-sweep 1200ms linear infinite;
+}
+
+/* Tick flash */
+@keyframes pm-flash-up   { 0% { background: rgba(46,160,67,0.28); } 100% { background: transparent; } }
+@keyframes pm-flash-down { 0% { background: rgba(218,54,51,0.28); } 100% { background: transparent; } }
+.pm-flash-up   { animation: pm-flash-up   400ms ease-out; }
+.pm-flash-down { animation: pm-flash-down 400ms ease-out; }
+
+/* Zebra odd rows */
+.pm-row-zebra:nth-child(odd) { background: var(--pm-row-zebra); }
+
+/* Hover state */
+.pm-hoverable { transition: background-color 80ms ease-out; }
+.pm-hoverable:hover { background: var(--pm-row-hover) !important; }
+
