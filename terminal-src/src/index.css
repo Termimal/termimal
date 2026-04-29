@@ -51,7 +51,8 @@ html, body, #root {
   background: var(--bg-1);
   color: var(--t-2);
   font-family: var(--font);
-  font-size: 15px;
+  /* Base bumped 15 -> 16 so any rem/em-based child rules grow with it. */
+  font-size: 16px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -60,7 +61,31 @@ html, body, #root {
   width: 100%;
 }
 html, body { margin: 0; padding: 0; }
-#root { min-height: 100vh; }
+
+/* The Bloomberg-style design uses many absolute pixel font sizes
+   (10–12px inline) by design for institutional density. On a normal
+   monitor this can read tiny — apply a small CSS zoom on the root
+   so the whole interface scales proportionally without per-component
+   refactoring. Override this with `--terminal-zoom` if a user wants
+   to tune density. */
+:root { --terminal-zoom: 1.1; }
+#root {
+  min-height: 100vh;
+  zoom: var(--terminal-zoom);
+}
+
+/* Firefox <126 didn't ship `zoom`. Fall back to a transform-based
+   scale on the body for those releases. (Modern Firefox now has
+   native `zoom` so this branch is mostly historical.) */
+@supports not (zoom: 1) {
+  #root {
+    zoom: unset;
+    transform: scale(var(--terminal-zoom));
+    transform-origin: top left;
+    width: calc(100% / var(--terminal-zoom));
+    height: calc(100% / var(--terminal-zoom));
+  }
+}
 
 /* All numeric cells should feel tabular */
 .tnum, [data-tnum] {
