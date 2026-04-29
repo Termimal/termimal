@@ -21,7 +21,7 @@ export const T = {
   // Semantic
   up:       '#3fb950',
   dn:       '#f85149',
-  accent:   '#34d399',
+  accent:   '#388bfd',
   warn:     '#d29922',
 
   upBg:     'rgba(63,185,80,0.08)',

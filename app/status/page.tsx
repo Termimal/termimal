@@ -1,4 +1,4 @@
-﻿"use client"
+"use client"
 import { useEffect, useState } from "react"
 import Link from "next/link"
 
@@ -31,8 +31,8 @@ export default function StatusPage() {
       <div className="mx-auto max-w-4xl px-4 py-16">
         <div className="mb-14 flex flex-col items-center text-center">
           <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full"
-            style={{ background: "rgba(16,185,129,.10)", border: "2px solid rgba(52,211,153,.22)" }}>
-            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#34d399" strokeWidth="2.5" strokeLinecap="round"><path d="M20 6L9 17l-5-5"/></svg>
+            style={{ background: "rgba(16,185,129,.10)", border: "2px solid rgba(56,139,253,.22)" }}>
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#388bfd" strokeWidth="2.5" strokeLinecap="round"><path d="M20 6L9 17l-5-5"/></svg>
           </div>
           <h1 className="text-3xl font-semibold" style={{ letterSpacing: "-0.03em" }}>All Systems Operational</h1>
           <p className="mt-2 text-sm" style={{ color: "var(--t3)" }}>
@@ -53,14 +53,14 @@ export default function StatusPage() {
                 background: i % 2 === 0 ? "var(--bg)" : "color-mix(in srgb, var(--surface) 60%, var(--bg) 40%)"
               }}>
               <div className="flex items-center gap-3">
-                <div className="h-2 w-2 rounded-full" style={{ background: "#34d399", boxShadow: "0 0 6px rgba(52,211,153,.6)" }} />
+                <div className="h-2 w-2 rounded-full" style={{ background: "#388bfd", boxShadow: "0 0 6px rgba(56,139,253,.6)" }} />
                 <span className="text-sm font-medium">{s.name}</span>
               </div>
               <div className="flex items-center gap-5">
                 <span className="hidden text-xs sm:block" style={{ color: "var(--t3)" }}>{s.latency}</span>
                 <span className="hidden text-xs sm:block" style={{ color: "var(--t3)" }}>{s.uptime} uptime</span>
                 <span className="rounded-full px-2.5 py-0.5 text-xs font-semibold"
-                  style={{ background: "rgba(16,185,129,.12)", color: "#34d399" }}>Operational</span>
+                  style={{ background: "rgba(16,185,129,.12)", color: "#388bfd" }}>Operational</span>
               </div>
             </div>
           ))}
@@ -75,7 +75,7 @@ export default function StatusPage() {
           <div className="flex gap-0.5">
             {Array.from({ length: 90 }, (_, i) => (
               <div key={i} className="flex-1 rounded-[2px]"
-                style={{ height: 28, background: "rgba(52,211,153,.40)" }} />
+                style={{ height: 28, background: "rgba(56,139,253,.40)" }} />
             ))}
           </div>
           <div className="mt-2 flex justify-between text-xs" style={{ color: "var(--t4)" }}>
@@ -89,7 +89,7 @@ export default function StatusPage() {
           <div className="mt-6 flex flex-col items-center py-6 text-center">
             <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl"
               style={{ background: "rgba(16,185,129,.10)" }}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#34d399" strokeWidth="2" strokeLinecap="round"><path d="M20 6L9 17l-5-5"/></svg>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#388bfd" strokeWidth="2" strokeLinecap="round"><path d="M20 6L9 17l-5-5"/></svg>
             </div>
             <p className="text-sm font-medium">No incidents in the last 90 days</p>
             <p className="mt-1 text-xs" style={{ color: "var(--t3)" }}>All systems have been running smoothly.</p>

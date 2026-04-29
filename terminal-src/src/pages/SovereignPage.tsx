@@ -126,7 +126,7 @@ const SOVEREIGN_POSTURE = [
 // ═══════════════════════════════════════════════════════════
 
 function FreshnessTag({ freshness }: { freshness: string }) {
-  const col = freshness === 'live' ? '#3fb950' : freshness === 'daily' ? '#34d399' : freshness === 'monthly' ? '#d29922' : '#484f58'
+  const col = freshness === 'live' ? '#3fb950' : freshness === 'daily' ? '#388bfd' : freshness === 'monthly' ? '#d29922' : '#484f58'
   return <span style={{ fontSize: 8, color: col, border: `1px solid ${col}33`, padding: '0 4px', marginLeft: 4, fontWeight: 500, verticalAlign: 'middle' }}>{freshness.toUpperCase()}</span>
 }
 
@@ -144,7 +144,7 @@ function SectionTitle({ children, right }: { children: string; right?: React.Rea
 // ═══════════════════════════════════════════════════════════
 
 function BackLink({ onClick, label }: { onClick: () => void; label: string }) {
-  return <span onClick={onClick} style={{ fontSize: 13, color: '#34d399', cursor: 'pointer' }}>← {label}</span>
+  return <span onClick={onClick} style={{ fontSize: 13, color: '#388bfd', cursor: 'pointer' }}>← {label}</span>
 }
 
 // ── Country Yield Detail ──
@@ -185,10 +185,10 @@ function CountryYieldView({ row, usRow, macro, onBack }: { row: YieldRow; usRow:
         ))}
         {/* US curve — dashed reference */}
         {usVals[0] != null && usVals[1] != null && (
-          <polyline fill="none" stroke="#34d399" strokeWidth={1.2} strokeDasharray="5 4" opacity={0.35}
+          <polyline fill="none" stroke="#388bfd" strokeWidth={1.2} strokeDasharray="5 4" opacity={0.35}
             points={usVals.map((v, i) => v != null ? `${toX(i)},${toY(v)}` : '').filter(Boolean).join(' ')} />
         )}
-        {usVals.map((v, i) => v != null ? <circle key={`u${i}`} cx={toX(i)} cy={toY(v)} r={3} fill="#34d399" opacity={0.35} /> : null)}
+        {usVals.map((v, i) => v != null ? <circle key={`u${i}`} cx={toX(i)} cy={toY(v)} r={3} fill="#388bfd" opacity={0.35} /> : null)}
         {/* Country curve — solid */}
         {vals[0] != null && vals[1] != null && (
           <polyline fill="none" stroke="#c9d1d9" strokeWidth={2}
@@ -198,7 +198,7 @@ function CountryYieldView({ row, usRow, macro, onBack }: { row: YieldRow; usRow:
         {/* Value labels on country */}
         {vals.map((v, i) => v != null ? <text key={`v${i}`} x={toX(i)} y={toY(v) - 10} textAnchor="middle" fill="#c9d1d9" fontSize={11} fontWeight={600} fontFamily={mono}>{v.toFixed(2)}%</text> : null)}
         {/* US labels — subtle */}
-        {usVals.map((v, i) => v != null ? <text key={`uv${i}`} x={toX(i)} y={toY(v) + 16} textAnchor="middle" fill="#34d399" fontSize={9} opacity={0.45} fontFamily={mono}>{v.toFixed(2)}</text> : null)}
+        {usVals.map((v, i) => v != null ? <text key={`uv${i}`} x={toX(i)} y={toY(v) + 16} textAnchor="middle" fill="#388bfd" fontSize={9} opacity={0.45} fontFamily={mono}>{v.toFixed(2)}</text> : null)}
         {/* Tenor labels */}
         {tenors.map((t, i) => <text key={t} x={toX(i)} y={H - 6} textAnchor="middle" fill="#8b949e" fontSize={10}>{t}</text>)}
       </svg>
@@ -247,7 +247,7 @@ function CountryYieldView({ row, usRow, macro, onBack }: { row: YieldRow; usRow:
       {hasHistory ? (<>
         <div style={{ fontSize: 10, color: '#484f58', marginBottom: 6 }}>YIELD HISTORY <span style={{ color: '#30363d' }}>— FRED daily</span></div>
         <TvLineChart title="" sub="" unit="%" dec={2} height={350} lines={[
-          { label: '10Y', color: '#34d399', data: us10y_h },
+          { label: '10Y', color: '#388bfd', data: us10y_h },
           { label: '2Y', color: '#d29922', data: us2y_h },
           ...(us3m_h.length > 0 ? [{ label: '3M', color: '#8b949e', data: us3m_h }] : []),
         ]} />
@@ -257,7 +257,7 @@ function CountryYieldView({ row, usRow, macro, onBack }: { row: YieldRow; usRow:
           <div style={{ flex: 1 }}>{renderCurveShape()}</div>
           <div style={{ width: 160, fontSize: 10, lineHeight: 2, paddingTop: 12, flexShrink: 0 }}>
             <div><span style={{ display: 'inline-block', width: 16, height: 2, background: '#c9d1d9', verticalAlign: 'middle', marginRight: 6 }} /><span style={{ color: '#8b949e' }}>{row.flag}</span></div>
-            <div><span style={{ display: 'inline-block', width: 16, height: 0, borderTop: '1.5px dashed #34d399', opacity: 0.4, verticalAlign: 'middle', marginRight: 6 }} /><span style={{ color: '#484f58' }}>US</span></div>
+            <div><span style={{ display: 'inline-block', width: 16, height: 0, borderTop: '1.5px dashed #388bfd', opacity: 0.4, verticalAlign: 'middle', marginRight: 6 }} /><span style={{ color: '#484f58' }}>US</span></div>
             <div style={{ marginTop: 10, color: '#30363d', fontSize: 9, lineHeight: 1.5 }}>No daily history for {row.country}.<br />Shape from {row.asOf} snapshot.</div>
           </div>
         </div>
@@ -330,7 +330,7 @@ function SpreadDetailView({ spread, macro, onBack }: { spread: SpreadPair; macro
       </div>
       {hasData ? (
         <TvLineChart title="" sub="" unit="%" dec={2} height={350}
-          lines={[{ label: 'US 10Y', color: '#34d399', data: us10y_h }]}
+          lines={[{ label: 'US 10Y', color: '#388bfd', data: us10y_h }]}
           refs={otherY10 > 0 ? [{ val: otherY10, color: '#d29922', label: `${otherFlag} 10Y`, dash: true }] : []}
         />
       ) : (
@@ -475,7 +475,7 @@ export function SovereignPage() {
           {[...yields].sort((a, b) => b.y10 - a.y10).map(r => {
             const maxY = 5.0
             const pct = Math.max(0, Math.min(100, (r.y10 / maxY) * 100))
-            const barCol = r.y10 > 4 ? '#f85149' : r.y10 > 2.5 ? '#d29922' : r.y10 > 1 ? '#34d399' : '#3fb950'
+            const barCol = r.y10 > 4 ? '#f85149' : r.y10 > 2.5 ? '#d29922' : r.y10 > 1 ? '#388bfd' : '#3fb950'
             return (
               <div key={r.flag} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 3 }}>
                 <span style={{ fontSize: 9, color: '#484f58', width: 20, textAlign: 'right', flexShrink: 0 }}>{r.flag}</span>
@@ -607,13 +607,13 @@ export function SovereignPage() {
             <div style={{ fontSize: 9, color: '#484f58', marginBottom: 4 }}>Supply Composition</div>
             <div style={{ display: 'flex', height: 8, marginBottom: 6, overflow: 'hidden' }}>
               {STABLECOIN_DATA.map((s, i) => {
-                const cols = ['#34d399', '#3fb950', '#d29922', '#8957e5']
+                const cols = ['#388bfd', '#3fb950', '#d29922', '#8957e5']
                 return <div key={s.name} style={{ width: `${(s.supply / totalStable) * 100}%`, background: cols[i], opacity: 0.6 }} title={`${s.name}: $${s.supply}B`} />
               })}
             </div>
             <div style={{ display: 'flex', gap: 12, fontSize: 8, color: '#484f58', marginBottom: 8 }}>
               {STABLECOIN_DATA.map((s, i) => {
-                const cols = ['#34d399', '#3fb950', '#d29922', '#8957e5']
+                const cols = ['#388bfd', '#3fb950', '#d29922', '#8957e5']
                 return <span key={s.name}><span style={{ display: 'inline-block', width: 6, height: 6, background: cols[i], opacity: 0.6, marginRight: 3, verticalAlign: 'middle' }} />{s.name.split(' ')[0]} {((s.supply / totalStable) * 100).toFixed(0)}%</span>
               })}
             </div>
@@ -641,7 +641,7 @@ export function SovereignPage() {
           </div>
           {SOVEREIGN_POSTURE.map(sp => {
             const stanceCol = sp.stance === 'Permissive' || sp.stance === 'Progressive' ? '#3fb950'
-              : sp.stance === 'Regulated' || sp.stance === 'Structured' ? '#34d399'
+              : sp.stance === 'Regulated' || sp.stance === 'Structured' ? '#388bfd'
               : sp.stance === 'Restrictive' ? '#f85149' : '#d29922'
             return (
               <div key={sp.country} style={{ padding: '6px 0', borderBottom: '1px solid #161b22' }}>
@@ -790,7 +790,7 @@ export function SovereignPage() {
 
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10, marginBottom: 14 }}>
                 {[
-                  { l: 'SUPPLY', v: `$${stableDetail.supply}B`, c: '#34d399' },
+                  { l: 'SUPPLY', v: `$${stableDetail.supply}B`, c: '#388bfd' },
                   { l: '30D Δ', v: `${stableDetail.change30d > 0 ? '+' : ''}${stableDetail.change30d.toFixed(1)}%`, c: stableDetail.change30d > 0 ? '#3fb950' : stableDetail.change30d < 0 ? '#f85149' : '#484f58' },
                   { l: '12M Δ', v: `${isUp ? '+' : ''}$${yoyChange.toFixed(1)}B (${yoyPct >= 0 ? '+' : ''}${yoyPct.toFixed(1)}%)`, c: isUp ? '#3fb950' : '#f85149' },
                   { l: 'PEG', v: stableDetail.peg, c: '#c9d1d9' },
@@ -814,14 +814,14 @@ export function SovereignPage() {
                   )
                 })}
                 <path d={area} fill={isFlat ? 'rgba(139,148,158,0.08)' : isUp ? 'rgba(56,139,253,0.14)' : 'rgba(248,81,73,0.12)'} />
-                <path d={path} stroke={isFlat ? '#8b949e' : isUp ? '#34d399' : '#f85149'} strokeWidth={1.8} fill="none" />
+                <path d={path} stroke={isFlat ? '#8b949e' : isUp ? '#388bfd' : '#f85149'} strokeWidth={1.8} fill="none" />
                 {hist.map((v, i) => (
-                  <circle key={i} cx={xFor(i)} cy={yFor(v)} r={2.2} fill={isFlat ? '#8b949e' : isUp ? '#34d399' : '#f85149'} />
+                  <circle key={i} cx={xFor(i)} cy={yFor(v)} r={2.2} fill={isFlat ? '#8b949e' : isUp ? '#388bfd' : '#f85149'} />
                 ))}
                 {STABLE_MONTHS.map((m, i) => (
                   <text key={m} x={xFor(i)} y={PAD.t + ch + 16} fontSize={9} fill="#484f58" textAnchor="middle" fontFamily={mono}>{m}</text>
                 ))}
-                <text x={xFor(hist.length - 1) - 4} y={yFor(last) - 8} fontSize={10} fill={isFlat ? '#8b949e' : isUp ? '#34d399' : '#f85149'} textAnchor="end" fontWeight={600} fontFamily={mono}>${last}B</text>
+                <text x={xFor(hist.length - 1) - 4} y={yFor(last) - 8} fontSize={10} fill={isFlat ? '#8b949e' : isUp ? '#388bfd' : '#f85149'} textAnchor="end" fontWeight={600} fontFamily={mono}>${last}B</text>
               </svg>
 
               <div style={{ marginTop: 12, padding: '8px 10px', background: '#0a0d12', border: '1px solid #161b22', fontSize: 10, color: '#8b949e', lineHeight: 1.5 }}>

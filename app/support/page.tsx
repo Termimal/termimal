@@ -14,7 +14,7 @@ export default function SupportPage() {
             <h1 className="mt-3 text-3xl font-semibold sm:text-4xl" style={{ letterSpacing: "-0.03em" }}>Need help with billing, access, or your account?</h1>
             <p className="mt-4 max-w-2xl text-base leading-7" style={{ color: "var(--t2)" }}>Use live chat for product support, billing questions, login problems, account access, and partnership routing.</p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <button type="button" onClick={openSupportChat} className="rounded-2xl px-5 py-3 text-sm font-semibold" style={{ background: "linear-gradient(180deg, rgba(16,185,129,.18) 0%, rgba(5,150,105,.28) 100%)", color: "#d1fae5", border: "1px solid rgba(52,211,153,.16)" }}>Open support chat</button>
+              <button type="button" onClick={openSupportChat} className="rounded-2xl px-5 py-3 text-sm font-semibold" style={{ background: "linear-gradient(180deg, rgba(16,185,129,.18) 0%, rgba(31,111,235,.28) 100%)", color: "#d1fae5", border: "1px solid rgba(56,139,253,.16)" }}>Open support chat</button>
               <a href="mailto:hello@termimal.com" className="rounded-2xl border px-5 py-3 text-sm font-semibold" style={{ borderColor: "color-mix(in srgb, var(--border) 84%, white 16%)", color: "var(--t1)" }}>Email support</a>
             </div>
           </div>

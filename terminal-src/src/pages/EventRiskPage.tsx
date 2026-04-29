@@ -28,22 +28,22 @@ interface EventItem {
 
 const CATEGORIES = ['All', 'Central Bank', 'Macro', 'Geopolitical', 'Markets', 'Regulatory']
 
-const IMPACT_COLORS: Record<Impact, string> = { Critical:'#f85149', High:'#d29922', Medium:'#34d399', Low:'#484f58' }
+const IMPACT_COLORS: Record<Impact, string> = { Critical:'#f85149', High:'#d29922', Medium:'#388bfd', Low:'#484f58' }
 const RELIABILITY_COLORS: Record<Reliability, string> = { High:'#3fb950', Medium:'#d29922', Low:'#f85149' }
 
 function impactRank(i: Impact): number { return { Critical:4, High:3, Medium:2, Low:1 }[i] }
 
 // ─── Momentum ────────────────────────────────────────────
 function getMomentum(history: number[]): { label: string; color: string } {
-  if (history.length < 4) return { label: 'Market-priced', color: '#34d399' }
+  if (history.length < 4) return { label: 'Market-priced', color: '#388bfd' }
   const recent = history.slice(-4)
   const older = history.slice(-8, -4)
-  if (older.length === 0) return { label: 'Market-priced', color: '#34d399' }
+  if (older.length === 0) return { label: 'Market-priced', color: '#388bfd' }
   const rA = recent.reduce((a, b) => a + b, 0) / recent.length
   const oA = older.reduce((a, b) => a + b, 0) / older.length
   const d = rA - oA
   if (d > 2) return { label: 'Rising risk', color: '#d29922' }
-  if (d < -2) return { label: 'Falling risk', color: '#34d399' }
+  if (d < -2) return { label: 'Falling risk', color: '#388bfd' }
   return { label: 'Stable outlook', color: '#484f58' }
 }
 
@@ -245,7 +245,7 @@ function DeltaChip({ val }: { val: number }) {
 
 function SortIcon({ active, dir }: { active: boolean; dir: 'asc' | 'desc' }) {
   if (!active) return <span style={{ color:'#21262d', fontSize:8, marginLeft:2 }}>&#8597;</span>
-  return <span style={{ color:'#34d399', fontSize:8, marginLeft:2 }}>{dir === 'asc' ? '↑' : '↓'}</span>
+  return <span style={{ color:'#388bfd', fontSize:8, marginLeft:2 }}>{dir === 'asc' ? '↑' : '↓'}</span>
 }
 
 function ImpactLabel({ impact }: { impact: Impact }) {
@@ -345,7 +345,7 @@ function EventDetail({ event, onBack }: { event: EventItem; onBack: () => void }
   return (
     <div style={{ padding:'20px 24px' }}>
       {/* Back nav */}
-      <span onClick={onBack} style={{ fontSize:12, color:'#34d399', cursor:'pointer', letterSpacing:'0.01em' }}>← Event Risk Monitor</span>
+      <span onClick={onBack} style={{ fontSize:12, color:'#388bfd', cursor:'pointer', letterSpacing:'0.01em' }}>← Event Risk Monitor</span>
 
       {/* Header */}
       <div style={{ marginTop:14, display:'flex', alignItems:'flex-start', gap:16 }}>
@@ -398,7 +398,7 @@ function EventDetail({ event, onBack }: { event: EventItem; onBack: () => void }
       </div>
       {event.history.length > 2 ? (
         <TvLineChart title="" sub="" unit="%" dec={0} height={320} fill
-          lines={[{ label:'Probability', color:'#34d399', data:event.history }]}
+          lines={[{ label:'Probability', color:'#388bfd', data:event.history }]}
           refs={[{ val:50, color:'#21262d', label:'50%', dash:true }]} />
       ) : (
         <div style={{ height:200, background:'#0e1117', border:'1px solid #21262d', display:'flex', alignItems:'center', justifyContent:'center', gap:40 }}>
@@ -406,7 +406,7 @@ function EventDetail({ event, onBack }: { event: EventItem; onBack: () => void }
           <div style={{ textAlign:'center' }}>
             <svg width="120" height="120" viewBox="0 0 120 120">
               <circle cx="60" cy="60" r="50" fill="none" stroke="#21262d" strokeWidth="8" />
-              <circle cx="60" cy="60" r="50" fill="none" stroke="#34d399" strokeWidth="8"
+              <circle cx="60" cy="60" r="50" fill="none" stroke="#388bfd" strokeWidth="8"
                 strokeDasharray={`${2 * Math.PI * 50 * event.probability / 100} ${2 * Math.PI * 50}`}
                 strokeLinecap="round" transform="rotate(-90 60 60)" />
               <text x="60" y="55" textAnchor="middle" fill="#c9d1d9" fontSize="24" fontWeight="700" fontFamily="'SF Mono',monospace">{event.probability}%</text>
@@ -427,7 +427,7 @@ function EventDetail({ event, onBack }: { event: EventItem; onBack: () => void }
             </div>
             {(event as any)._url && (
               <a href={(event as any)._url} target="_blank" rel="noopener noreferrer"
-                style={{ fontSize:10, color:'#34d399', textDecoration:'none' }}>
+                style={{ fontSize:10, color:'#388bfd', textDecoration:'none' }}>
                 View on Polymarket →
               </a>
             )}
@@ -623,15 +623,15 @@ export function EventRiskPage() {
           <button key={c} onClick={() => setCat(c)}
             style={{ padding:'5px 14px', fontSize:10, cursor:'pointer', border:'none', background:'transparent',
               color:cat === c ? '#c9d1d9' : '#484f58', fontWeight:cat === c ? 500 : 400,
-              borderBottom:cat === c ? '2px solid #34d399' : '2px solid transparent', transition:'color 0.1s' }}>
+              borderBottom:cat === c ? '2px solid #388bfd' : '2px solid transparent', transition:'color 0.1s' }}>
             {c}
           </button>
         ))}
         <div style={{ marginLeft:'auto', paddingRight:8, display:'flex', alignItems:'center', gap:4 }}>
           <span style={{ fontSize:10, color:'#30363d' }}>⌕</span>
           <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Filter events"
-            style={{ background:'transparent', border:'none', borderBottom:`1px solid ${search ? '#34d399' : '#21262d'}`, color:'#c9d1d9', fontSize:10, padding:'4px 2px', width: search ? 130 : 90, outline:'none', fontFamily:mono, transition:'width 0.2s, border-color 0.2s' }}
-            onFocus={e => { e.currentTarget.style.width = '130px'; e.currentTarget.style.borderBottomColor = '#34d399' }}
+            style={{ background:'transparent', border:'none', borderBottom:`1px solid ${search ? '#388bfd' : '#21262d'}`, color:'#c9d1d9', fontSize:10, padding:'4px 2px', width: search ? 130 : 90, outline:'none', fontFamily:mono, transition:'width 0.2s, border-color 0.2s' }}
+            onFocus={e => { e.currentTarget.style.width = '130px'; e.currentTarget.style.borderBottomColor = '#388bfd' }}
             onBlur={e => { if (!search) { e.currentTarget.style.width = '90px'; e.currentTarget.style.borderBottomColor = '#21262d' } }}
           />
         </div>

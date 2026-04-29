@@ -258,7 +258,7 @@ export function TvCandleChart({ data, height = 500, showVolume = true, chartType
       }
 
       if (hasInd('sma20')) addLine('#f0b429', calcSMA(data.close, 20))
-      if (hasInd('sma50')) addLine('#34d399', calcSMA(data.close, 50))
+      if (hasInd('sma50')) addLine('#388bfd', calcSMA(data.close, 50))
       if (hasInd('sma200')) addLine('#da3633', calcSMA(data.close, 200))
       if (hasInd('ema20')) addLine('#d29922', calcEMA(data.close, 20), 1, LineStyle.Dashed)
       if (hasInd('ema50')) addLine('#58a6ff', calcEMA(data.close, 50), 1, LineStyle.Dashed)

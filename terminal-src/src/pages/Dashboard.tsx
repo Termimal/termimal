@@ -555,7 +555,7 @@ export function Dashboard() {
           <button key={m.id} onClick={() => setSearchParams({ mode: m.id })}
             style={{ padding: '4px 14px', fontSize: 10, border: 'none', cursor: 'pointer',
               background: mode === m.id ? '#161b22' : 'transparent', color: mode === m.id ? '#c9d1d9' : '#484f58',
-              fontWeight: mode === m.id ? 600 : 400, borderBottom: mode === m.id ? '2px solid #34d399' : '2px solid transparent' }}>
+              fontWeight: mode === m.id ? 600 : 400, borderBottom: mode === m.id ? '2px solid #388bfd' : '2px solid transparent' }}>
             {m.label}
           </button>
         ))}

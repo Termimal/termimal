@@ -22,7 +22,7 @@ export const PM = {
   upFill: 'rgba(46,160,67,0.12)',
   down: '#da3633',
   downFill: 'rgba(218,54,51,0.12)',
-  accent: '#34d399',
+  accent: '#388bfd',
   accentText: '#58a6ff',
   warning: '#d29922',
   grid: 'rgba(139,148,158,0.08)',

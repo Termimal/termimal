@@ -85,7 +85,7 @@ export function Indicators() {
     const chg = cur - prv
     return (
       <div style={{ padding: '20px 24px' }}>
-        <span onClick={() => { setChartRow(null) }} style={{ fontSize: 13, color: '#34d399', cursor: 'pointer' }}>← {sel.name} by Country</span>
+        <span onClick={() => { setChartRow(null) }} style={{ fontSize: 13, color: '#388bfd', cursor: 'pointer' }}>← {sel.name} by Country</span>
         <div style={{ marginTop: 12, display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
           <span style={{ fontSize: 28 }}>{chartRow.flag}</span>
           <div>
@@ -101,7 +101,7 @@ export function Indicators() {
         </div>
 
         {loading ? <div style={{ height: 350, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#8b949e' }}>Loading...</div>
-         : chartData ? <TvLineChart title="" sub={sel.unit} dec={2} height={350} fill dates={chartData.dates} lines={[{ label: sel.name, color: '#34d399', data: chartData.values }]} refs={[]} />
+         : chartData ? <TvLineChart title="" sub={sel.unit} dec={2} height={350} fill dates={chartData.dates} lines={[{ label: sel.name, color: '#388bfd', data: chartData.values }]} refs={[]} />
          : <div style={{ height: 350, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#8b949e' }}>No data</div>}
         <div style={{ marginTop: 16, fontSize: 13, color: '#8b949e', lineHeight: 1.6 }}>{sel.desc}</div>
       </div>
@@ -112,7 +112,7 @@ export function Indicators() {
   if (sel) {
     return (
       <div style={{ padding: '20px 24px' }}>
-        <span onClick={() => setSel(null)} style={{ fontSize: 13, color: '#34d399', cursor: 'pointer' }}>← Global Indicators</span>
+        <span onClick={() => setSel(null)} style={{ fontSize: 13, color: '#388bfd', cursor: 'pointer' }}>← Global Indicators</span>
         <div style={{ fontSize: 15, fontWeight: 500, color: '#c9d1d9', marginTop: 8, marginBottom: 12 }}>{sel.name} <span style={{ fontSize: 13, color: '#8b949e', fontWeight: 400 }}>by Country</span></div>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead><tr>
@@ -168,7 +168,7 @@ export function Indicators() {
               return (
               <div key={ind.name} onClick={() => setSel(ind)}
                 style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '4px 0', cursor: 'pointer', borderBottom: '1px solid #161b22' }}
-                onMouseEnter={e => { (e.currentTarget.children[0] as HTMLElement).style.color = '#34d399' }}
+                onMouseEnter={e => { (e.currentTarget.children[0] as HTMLElement).style.color = '#388bfd' }}
                 onMouseLeave={e => { (e.currentTarget.children[0] as HTMLElement).style.color = '#8b949e' }}>
                 <span style={{ fontSize: 12, color: '#8b949e', transition: 'color 0.06s' }}>{ind.name}</span>
                 <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>

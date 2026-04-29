@@ -78,7 +78,7 @@ export default function Navbar() {
             {navLinks.map((link) => {
               const isActive = isLinkActive(link.href)
               return (
-                <Link key={link.key} href={link.href} onClick={closeMenu} className="rounded-xl px-3 py-3 text-[15px] font-semibold transition-all" style={{ color: isActive ? "var(--acc)" : "var(--t1)", backgroundColor: isActive ? "var(--acc-d)" : "transparent", border: `1px solid ${isActive ? "rgba(52,211,153,.12)" : "transparent"}` }}>
+                <Link key={link.key} href={link.href} onClick={closeMenu} className="rounded-xl px-3 py-3 text-[15px] font-semibold transition-all" style={{ color: isActive ? "var(--acc)" : "var(--t1)", backgroundColor: isActive ? "var(--acc-d)" : "transparent", border: `1px solid ${isActive ? "rgba(56,139,253,.12)" : "transparent"}` }}>
                   {link.name}
                 </Link>
               )

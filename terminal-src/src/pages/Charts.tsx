@@ -415,7 +415,7 @@ export function Charts() {
               style={{
                 height: 28, width: 120, padding: '0 10px',
                 background: '#0b0f14',
-                border: `1px solid ${symSearch ? '#34d399' : '#21262d'}`,
+                border: `1px solid ${symSearch ? '#388bfd' : '#21262d'}`,
                 borderRadius: 2,
                 color: '#c9d1d9', fontSize: 12, fontWeight: 600, fontFamily: mono,
                 letterSpacing: '0.3px', outline: 'none',
@@ -542,7 +542,7 @@ export function Charts() {
                             <span style={{ fontSize: 11, color: active ? '#c9d1d9' : '#8b949e' }}>{ind.label}</span>
                             <span style={{
                               width: 20, height: 12, borderRadius: 6,
-                              background: active ? '#34d399' : '#21262d',
+                              background: active ? '#388bfd' : '#21262d',
                               position: 'relative', transition: 'all 120ms ease-out',
                             }}>
                               <span style={{

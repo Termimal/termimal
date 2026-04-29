@@ -1,4 +1,4 @@
-﻿"use client"
+"use client"
 import { useState } from "react"
 import Link from "next/link"
 
@@ -60,7 +60,7 @@ export default function AffiliatesPage() {
                 borderColor: "color-mix(in srgb, var(--border) 84%, white 16%)",
                 background: "var(--surface)",
               }}>
-              <div className="mb-3 text-2xl font-bold" style={{ color: "rgba(52,211,153,.45)" }}>{s.num}</div>
+              <div className="mb-3 text-2xl font-bold" style={{ color: "rgba(56,139,253,.45)" }}>{s.num}</div>
               <div className="mb-2 text-sm font-semibold">{s.title}</div>
               <p className="text-xs leading-6" style={{ color: "var(--t3)" }}>{s.body}</p>
             </div>
@@ -84,11 +84,11 @@ export default function AffiliatesPage() {
                   <span className="text-sm font-medium">{t.label}</span>
                   {t.badge && (
                     <span className="rounded-full px-2 py-0.5 text-xs font-semibold"
-                      style={{ background: "rgba(16,185,129,.12)", color: "#34d399" }}>{t.badge}</span>
+                      style={{ background: "rgba(16,185,129,.12)", color: "#388bfd" }}>{t.badge}</span>
                   )}
                 </div>
                 <span className="text-xs" style={{ color: "var(--t3)" }}>{t.threshold}</span>
-                <span className="text-sm font-semibold" style={{ color: "#34d399" }}>{t.commission}</span>
+                <span className="text-sm font-semibold" style={{ color: "#388bfd" }}>{t.commission}</span>
                 <span className="text-xs" style={{ color: "var(--t3)" }}>{t.payout}</span>
               </div>
             ))}
@@ -105,8 +105,8 @@ export default function AffiliatesPage() {
           {sent ? (
             <div className="flex flex-col items-center py-8 text-center">
               <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full"
-                style={{ background: "rgba(16,185,129,.12)", border: "2px solid rgba(52,211,153,.22)" }}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#34d399" strokeWidth="2.5" strokeLinecap="round"><path d="M20 6L9 17l-5-5"/></svg>
+                style={{ background: "rgba(16,185,129,.12)", border: "2px solid rgba(56,139,253,.22)" }}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#388bfd" strokeWidth="2.5" strokeLinecap="round"><path d="M20 6L9 17l-5-5"/></svg>
               </div>
               <h2 className="text-lg font-semibold">Application submitted!</h2>
               <p className="mt-2 text-sm" style={{ color: "var(--t2)" }}>Your email client has opened with a pre-filled message. Hit send and we'll be in touch within 3 business days.</p>
@@ -150,9 +150,9 @@ export default function AffiliatesPage() {
               </div>
               <button type="submit" className="w-full rounded-2xl py-3 text-sm font-semibold transition-all hover:brightness-110"
                 style={{
-                  background: "linear-gradient(180deg, rgba(16,185,129,.20) 0%, rgba(5,150,105,.30) 100%)",
+                  background: "linear-gradient(180deg, rgba(16,185,129,.20) 0%, rgba(31,111,235,.30) 100%)",
                   color: "#d1fae5",
-                  border: "1px solid rgba(52,211,153,.18)",
+                  border: "1px solid rgba(56,139,253,.18)",
                 }}>
                 Submit application
               </button>

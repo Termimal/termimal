@@ -2,34 +2,37 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Palette aligned to the Web Terminal (Bloomberg / institutional dark).
+   Primary accent is blue #388bfd to match the terminal exactly. Reds /
+   greens are used only for up/down P&L signals, never for branding. */
 :root,
 [data-theme="dark"] {
-  --bg: #07070e;
-  --bg2: #0c0c16;
-  --bg3: #111119;
-  --surface: rgba(255, 255, 255, 0.05);
-  --border: rgba(255, 255, 255, 0.12);
-  --bh: rgba(255, 255, 255, 0.25);
-  --t1: #f0f0f2;
-  --t2: rgba(255, 255, 255, 0.76);
-  --t3: rgba(255, 255, 255, 0.58);
-  --t4: rgba(255, 255, 255, 0.34);
-  --acc: #34d399;
-  --acc2: #059669;
-  --acc-d: rgba(52, 211, 153, 0.07);
-  --blue: #60a5fa;
-  --red: #f87171;
-  --amber: #fbbf24;
+  --bg: #0e1117;          /* terminal --bg-1 */
+  --bg2: #161b22;         /* terminal --bg-2 */
+  --bg3: #1c2128;         /* terminal --bg-3 */
+  --surface: rgba(255, 255, 255, 0.04);
+  --border: #21262d;       /* terminal --border-0 */
+  --bh: #30363d;           /* terminal --border-1 */
+  --t1: #e6edf3;           /* terminal --t-1 */
+  --t2: #c9d1d9;           /* terminal --t-2 */
+  --t3: #8b949e;           /* terminal --t-3 */
+  --t4: #484f58;           /* terminal --t-4 */
+  --acc: #388bfd;          /* terminal --blue (primary) */
+  --acc2: #1f6feb;         /* hover/pressed blue */
+  --acc-d: rgba(56, 139, 253, 0.10);
+  --blue: #388bfd;
+  --red: #f85149;          /* terminal --dn */
+  --amber: #d29922;        /* terminal --warn */
   --purple: #a78bfa;
-  --green-val: #34d399;
-  --red-val: #f87171;
-  --nav-bg: rgba(7, 7, 14, 0.90);
-  --card: rgba(255, 255, 255, 0.04);
-  --terminal-bg: #0a0a14;
-  --terminal-border: rgba(255, 255, 255, 0.12);
-  --terminal-surface: rgba(255, 255, 255, 0.05);
-  --terminal-hover: rgba(255, 255, 255, 0.1);
-  
+  --green-val: #3fb950;    /* terminal --up */
+  --red-val: #f85149;      /* terminal --dn */
+  --nav-bg: rgba(14, 17, 23, 0.92);
+  --card: #161b22;
+  --terminal-bg: #0e1117;
+  --terminal-border: #21262d;
+  --terminal-surface: rgba(255, 255, 255, 0.04);
+  --terminal-hover: rgba(255, 255, 255, 0.06);
+
   /* DARK MODE: Show white logo, hide black logo */
   --logo-light-theme-display: none;
   --logo-dark-theme-display: block;
@@ -46,22 +49,22 @@
   --t2: rgba(0, 0, 0, 0.78);
   --t3: rgba(0, 0, 0, 0.62);
   --t4: rgba(0, 0, 0, 0.40);
-  --acc: #059669;
-  --acc2: #047857;
-  --acc-d: rgba(5, 150, 105, 0.07);
-  --blue: #2563eb;
+  --acc: #1f6feb;          /* terminal blue, slightly darker for light bg */
+  --acc2: #0a58ca;
+  --acc-d: rgba(31, 111, 235, 0.10);
+  --blue: #1f6feb;
   --red: #dc2626;
   --amber: #d97706;
   --purple: #7c3aed;
-  --green-val: #059669;
+  --green-val: #1a7f37;    /* readable green on white */
   --red-val: #dc2626;
-  --nav-bg: rgba(245, 245, 247, 0.90);
+  --nav-bg: rgba(245, 245, 247, 0.92);
   --card: rgba(0, 0, 0, 0.04);
   --terminal-bg: #1a1a24;
   --terminal-border: rgba(255, 255, 255, 0.15);
   --terminal-surface: rgba(255, 255, 255, 0.06);
   --terminal-hover: rgba(255, 255, 255, 0.1);
-  
+
   /* LIGHT MODE: Show black logo, hide white logo */
   --logo-light-theme-display: block;
   --logo-dark-theme-display: none;
@@ -83,7 +86,7 @@ body {
 }
 
 ::selection {
-  background: rgba(52, 211, 153, 0.25);
+  background: rgba(56,139,253,0.25);
 }
 
 ::-webkit-scrollbar {
@@ -130,8 +133,8 @@ body {
 }
 
 @keyframes glowPulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); }
-  50%       { box-shadow: 0 0 28px 4px rgba(52, 211, 153, 0.18); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(56,139,253,0); }
+  50%       { box-shadow: 0 0 28px 4px rgba(56,139,253,0.18); }
 }
 
 @keyframes badgePulse {
@@ -150,8 +153,8 @@ body {
 }
 
 @keyframes borderGlow {
-  0%, 100% { border-color: rgba(52, 211, 153, 0.18); }
-  50%       { border-color: rgba(52, 211, 153, 0.42); }
+  0%, 100% { border-color: rgba(56,139,253,0.18); }
+  50%       { border-color: rgba(56,139,253,0.42); }
 }
 
 @keyframes counterUp {
@@ -261,7 +264,7 @@ body {
 
 /* Shimmer for skeleton / highlight */
 .anim-shimmer {
-  background: linear-gradient(90deg, transparent 0%, rgba(52,211,153,0.08) 50%, transparent 100%);
+  background: linear-gradient(90deg, transparent 0%, rgba(56,139,253,0.08) 50%, transparent 100%);
   background-size: 400px 100%;
   animation: shimmerSweep 2.8s linear infinite;
 }

@@ -115,8 +115,8 @@ const CATEGORY_OF: Record<string, Category> = {
 const CATEGORY_ORDER: Category[] = ['PROFITABILITY', 'CASH FLOW', 'BALANCE SHEET', 'VALUATION', 'MARKET RISK', 'BANK METRICS', 'OTHER']
 
 const SECTOR_META: Record<SectorKey, { label: string; emoji: string; color: string; warning?: string }> = {
-  normal:   { label: 'Standard — Industry / Consumer / Mature Tech', emoji: '', color: '#34d399' },
-  cyclical: { label: 'Cyclical — Auto / Materials / Shipping / Steel', emoji: '', color: '#34d399', warning: 'WARNING: ratios at cycle peak are misleading — analyze over 3-5 years' },
+  normal:   { label: 'Standard — Industry / Consumer / Mature Tech', emoji: '', color: '#388bfd' },
+  cyclical: { label: 'Cyclical — Auto / Materials / Shipping / Steel', emoji: '', color: '#388bfd', warning: 'WARNING: ratios at cycle peak are misleading — analyze over 3-5 years' },
   tech:     { label: 'Tech / Growth — AI / Quantum / Biotech', emoji: '', color: '#3fb950', warning: 'WARNING: not yet profitable — FCF burn and cash runway are priority' },
   bank:     { label: 'Bank / Financial — special case', emoji: '', color: '#7c4dff', warning: 'Different analysis: NPL + CET1 + NIM + P/B×ROE. Debt/EBITDA NOT RELEVANT here.' },
 }
@@ -475,7 +475,7 @@ export function FundamentalPanel({ defaultSym = 'AAPL' }: { defaultSym?: string 
       {/* ── Header ─── */}
       <div style={{ display:'flex', alignItems:'center', gap:12, padding:'9px 14px', borderBottom:'1px solid #21262d', flexWrap:'wrap' }}>
 
-        <span style={{ fontSize:10, color:'#34d399', fontWeight:700, letterSpacing:0.6 }}>FUNDAMENTAL ANALYSIS</span>
+        <span style={{ fontSize:10, color:'#388bfd', fontWeight:700, letterSpacing:0.6 }}>FUNDAMENTAL ANALYSIS</span>
 
         {/* Ticker input */}
         <div style={{ display:'flex', alignItems:'center', gap:6 }}>
@@ -483,9 +483,9 @@ export function FundamentalPanel({ defaultSym = 'AAPL' }: { defaultSym?: string 
             onKeyDown={e => e.key === 'Enter' && setSym(input)}
             style={{ background:'#161b22', border:'1px solid #21262d', color:'#c9d1d9', fontSize:11, fontWeight:700, padding:'3px 8px', width:85, outline:'none', fontFamily:"inherit" }} />
           <button onClick={() => setSym(input)}
-            style={{ fontSize:8, color:'#34d399', border:'1px solid #34d39944', background:'transparent', padding:'3px 8px', cursor:'pointer' }}>GO</button>
+            style={{ fontSize:8, color:'#388bfd', border:'1px solid #388bfd44', background:'transparent', padding:'3px 8px', cursor:'pointer' }}>GO</button>
           <button onClick={() => navigate(`/ticker/${sym}`)}
-            style={{ fontSize:8, color:'#34d399', border:'1px solid #34d39944', background:'transparent', padding:'3px 8px', cursor:'pointer' }}>OPEN →</button>
+            style={{ fontSize:8, color:'#388bfd', border:'1px solid #388bfd44', background:'transparent', padding:'3px 8px', cursor:'pointer' }}>OPEN →</button>
         </div>
 
         {/* Auto-detected sector badge */}
@@ -543,7 +543,7 @@ export function FundamentalPanel({ defaultSym = 'AAPL' }: { defaultSym?: string 
         <span style={{ fontSize:8, color:'#8b949e' }}>TRY:</span>
         {['AAPL','NVDA','JPM','TSLA','SNOW','XOM','CAT','AMZN'].map(t => (
           <button key={t} onClick={() => { setInput(t); setSym(t) }}
-            style={{ fontSize:8, color: detectSector(t) === 'bank' ? '#7c4dff' : detectSector(t) === 'tech' ? '#3fb950' : detectSector(t) === 'cyclical' ? '#34d399' : '#34d399',
+            style={{ fontSize:8, color: detectSector(t) === 'bank' ? '#7c4dff' : detectSector(t) === 'tech' ? '#3fb950' : detectSector(t) === 'cyclical' ? '#388bfd' : '#388bfd',
               border:`1px solid currentColor`, background:'transparent', padding:'1px 7px', cursor:'pointer', opacity: sym === t ? 1 : 0.5 }}>
             {t}
           </button>

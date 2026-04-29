@@ -39,7 +39,7 @@ function savePositions(id: string, p: Position[]) { localStorage.setItem(posKey(
 })()
 
 const SECTORS: Record<string,string> = { AAPL:'Tech',MSFT:'Tech',NVDA:'Tech',GOOGL:'Tech',META:'Tech',AMZN:'Tech',AMD:'Tech',PLTR:'Tech',TSLA:'Auto',JPM:'Finance',BAC:'Finance',GS:'Finance',XOM:'Energy',CVX:'Energy',JNJ:'Health',PFE:'Health',UNH:'Health',WMT:'Consumer',KO:'Consumer',PG:'Consumer',CAT:'Industrial' }
-const SCOL: Record<string,string> = { Tech:'#34d399',Finance:'#d29922',Energy:'#f85149',Auto:'#3fb950',Health:'#7c4dff',Consumer:'#00bcd4',Industrial:'#8bc34a',Other:'#8b949e' }
+const SCOL: Record<string,string> = { Tech:'#388bfd',Finance:'#d29922',Energy:'#f85149',Auto:'#3fb950',Health:'#7c4dff',Consumer:'#00bcd4',Industrial:'#8bc34a',Other:'#8b949e' }
 const mono = "'SF Mono', Menlo, Consolas, monospace"
 const fmtUsd = (n: number) => (n>=0?'':'-')+'$'+Math.abs(n).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})
 const fmtShort = (n: number) => { const a=Math.abs(n),s=n<0?'-':''; return a>=1e6?`${s}$${(a/1e6).toFixed(2)}M`:a>=1000?`${s}$${(a/1000).toFixed(1)}K`:`${s}$${a.toFixed(2)}` }
@@ -58,7 +58,7 @@ function PositionSizer({ portfolioValue }: { portfolioValue: number }) {
         <div><div style={{fontSize:10,color:'#8b949e',marginBottom:3}}>Stop Loss</div><input value={stopPrice} onChange={e=>setStopPrice(e.target.value)} type="number" step="0.01" placeholder="145.00" style={{...inp,width:90}}/></div>
       </div>
       {valid&&<div style={{display:'flex',gap:12,fontSize:11,flexWrap:'wrap'}}>
-        <span style={{color:'#34d399'}}>Shares: <b>{shares}</b></span>
+        <span style={{color:'#388bfd'}}>Shares: <b>{shares}</b></span>
         <span style={{color:'#c9d1d9'}}>Size: <b>${posSize.toLocaleString(undefined,{maximumFractionDigits:0})}</b> ({(posSize/pf*100).toFixed(1)}%)</span>
         <span style={{color:'#f85149'}}>Max Risk: <b>${maxRisk.toFixed(0)}</b></span>
         <span style={{color:'#3fb950'}}>1R: ${(ep+rps).toFixed(2)} · 2R: ${(ep+rps*2).toFixed(2)} · 3R: ${(ep+rps*3).toFixed(2)}</span>
@@ -81,7 +81,7 @@ function PortfolioHub({ metas, onSelect, onCreate, onDelete, prices }: { metas: 
     <div style={{padding:'20px 24px'}}>
       <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:20}}>
         <span style={{fontSize:15,fontWeight:600,color:'#c9d1d9',letterSpacing:'0.03em'}}>PORTFOLIOS</span>
-        <button onClick={()=>setCreating(true)} style={{fontSize:11,padding:'6px 14px',background:'#34d399',color:'#fff',border:'none',cursor:'pointer',borderRadius:2,fontWeight:500}}>+ New Portfolio</button>
+        <button onClick={()=>setCreating(true)} style={{fontSize:11,padding:'6px 14px',background:'#388bfd',color:'#fff',border:'none',cursor:'pointer',borderRadius:2,fontWeight:500}}>+ New Portfolio</button>
       </div>
       {creating&&(
         <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,.6)',zIndex:1000,display:'flex',alignItems:'center',justifyContent:'center'}} onClick={()=>setCreating(false)}>
@@ -91,7 +91,7 @@ function PortfolioHub({ metas, onSelect, onCreate, onDelete, prices }: { metas: 
             <input autoFocus value={newName} onChange={e=>setNewName(e.target.value)} onKeyDown={e=>{if(e.key==='Enter')submit();if(e.key==='Escape')setCreating(false)}} placeholder="e.g. Tech Growth, Dividends, Swing Trades…" style={{width:'100%',background:'#0e1117',border:'1px solid #21262d',color:'#c9d1d9',fontSize:13,padding:'8px 10px',outline:'none',borderRadius:2,boxSizing:'border-box'}}/>
             <div style={{display:'flex',gap:8,marginTop:16,justifyContent:'flex-end'}}>
               <button onClick={()=>setCreating(false)} style={{fontSize:11,padding:'6px 14px',background:'transparent',color:'#8b949e',border:'1px solid #30363d',cursor:'pointer',borderRadius:2}}>Cancel</button>
-              <button onClick={submit} style={{fontSize:11,padding:'6px 14px',background:'#34d399',color:'#fff',border:'none',cursor:'pointer',borderRadius:2}}>Create</button>
+              <button onClick={submit} style={{fontSize:11,padding:'6px 14px',background:'#388bfd',color:'#fff',border:'none',cursor:'pointer',borderRadius:2}}>Create</button>
             </div>
           </div>
         </div>
@@ -100,7 +100,7 @@ function PortfolioHub({ metas, onSelect, onCreate, onDelete, prices }: { metas: 
         ? <div style={{textAlign:'center',padding:'60px 20px',background:'#0e1117',border:'1px solid #21262d'}}>
             <div style={{fontSize:14,color:'#c9d1d9',marginBottom:6}}>No portfolios yet</div>
             <div style={{fontSize:11,color:'#484f58',marginBottom:20}}>Create your first portfolio to start tracking performance</div>
-            <button onClick={()=>setCreating(true)} style={{fontSize:12,padding:'8px 20px',background:'#34d399',color:'#fff',border:'none',cursor:'pointer',borderRadius:2}}>+ Create Portfolio</button>
+            <button onClick={()=>setCreating(true)} style={{fontSize:12,padding:'8px 20px',background:'#388bfd',color:'#fff',border:'none',cursor:'pointer',borderRadius:2}}>+ Create Portfolio</button>
           </div>
         : <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))',gap:12}}>
             {cards.map(c=>(
@@ -236,7 +236,7 @@ function PortfolioDetail({ meta, onBack, prices }: { meta: PortfolioMeta; onBack
     <div style={{padding:'16px 20px',minHeight:'100%'}}>
       {/* Back */}
       <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:16}}>
-        <button onClick={onBack} style={{fontSize:12,color:'#34d399',background:'none',border:'none',cursor:'pointer',padding:0}}>← Portfolios</button>
+        <button onClick={onBack} style={{fontSize:12,color:'#388bfd',background:'none',border:'none',cursor:'pointer',padding:0}}>← Portfolios</button>
         <span style={{color:'#30363d'}}>/</span>
         <span style={{fontSize:13,fontWeight:600,color:'#c9d1d9'}}>{meta.name}</span>
       </div>
@@ -278,7 +278,7 @@ function PortfolioDetail({ meta, onBack, prices }: { meta: PortfolioMeta; onBack
                 <div key={label}><div style={{fontSize:10,color:'#8b949e',marginBottom:3}}>{label}</div><input value={val} onChange={e=>(setter as any)(e.target.value)} placeholder={ph} style={{...inp,width}}/></div>
               ))}
               <div><div style={{fontSize:10,color:'#8b949e',marginBottom:3}}>Date</div><input type="date" value={date} onChange={e=>setDate(e.target.value)} style={{...inp,width:120}}/></div>
-              <button onClick={add} style={{padding:'6px 16px',background:'#34d399',color:'#fff',border:'none',cursor:'pointer',fontSize:12,borderRadius:2}}>Add</button>
+              <button onClick={add} style={{padding:'6px 16px',background:'#388bfd',color:'#fff',border:'none',cursor:'pointer',fontSize:12,borderRadius:2}}>Add</button>
             </div>
           )}
           {addMode==='watchlist'&&(

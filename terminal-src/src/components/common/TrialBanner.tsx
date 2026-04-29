@@ -49,7 +49,7 @@ export function TrialBanner() {
         flexWrap: 'wrap',
       }}
     >
-      <span aria-hidden style={{ color: '#34d399', fontWeight: 700 }}>·</span>
+      <span aria-hidden style={{ color: '#388bfd', fontWeight: 700 }}>·</span>
       <span style={{ flex: 1, minWidth: 240 }}>
         <span style={{ fontWeight: 600, color: '#f0f6fc' }}>Termimal {PLAN_PRICES.pro.label} — the professional baseline.</span>
         <span style={{ color: '#8b949e', marginLeft: 8 }}>
@@ -63,7 +63,7 @@ export function TrialBanner() {
         style={{
           padding: '4px 12px',
           fontSize: 10, fontWeight: 700, fontFamily: mono,
-          background: '#34d399', color: '#fff',
+          background: '#388bfd', color: '#fff',
           textDecoration: 'none',
           letterSpacing: 0.4, textTransform: 'uppercase',
         }}

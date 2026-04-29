@@ -138,7 +138,7 @@ export default function BillingPage() {
                   <td className="py-3 font-mono" style={{ color: 'var(--t2)' }}>{new Date(inv.created_at).toLocaleDateString()}</td>
                   <td className="py-3 text-right font-mono" style={{ color: 'var(--t2)' }}>${inv.amount}</td>
                   <td className="py-3 text-right">
-                    <span className="px-2 py-0.5 rounded text-sm font-semibold" style={{ color: 'var(--green-val)', background: 'rgba(52,211,153,.1)' }}>{inv.status}</span>
+                    <span className="px-2 py-0.5 rounded text-sm font-semibold" style={{ color: 'var(--green-val)', background: 'rgba(56,139,253,.1)' }}>{inv.status}</span>
                   </td>
                   <td className="py-3 text-right">
                     {inv.invoice_url && <a href={inv.invoice_url} target="_blank" className="text-sm font-medium" style={{ color: 'var(--acc)' }}>View</a>}

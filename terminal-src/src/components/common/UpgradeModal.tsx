@@ -76,7 +76,7 @@ function Cell({ value, accent }: { value: boolean | string; accent: boolean }) {
     return <span style={{ color: accent ? '#c9d1d9' : '#8b949e', fontFamily: mono, fontSize: 10 }}>{value}</span>
   }
   if (value) {
-    return <span aria-label="Included" title="Included" style={{ color: accent ? '#34d399' : '#3fb950', fontFamily: mono, fontWeight: 600 }}>✓</span>
+    return <span aria-label="Included" title="Included" style={{ color: accent ? '#388bfd' : '#3fb950', fontFamily: mono, fontWeight: 600 }}>✓</span>
   }
   return <span aria-label="Locked" title="Locked" style={{ color: '#30363d', fontFamily: mono }}>✕</span>
 }
@@ -171,10 +171,10 @@ export function UpgradeModal({
               <div key={p} style={{ textAlign: 'center', padding: '0 8px' }}>
                 <div style={{
                   fontSize: 9, fontWeight: 700, letterSpacing: 1.4, textTransform: 'uppercase',
-                  color: isRec ? '#34d399' : '#8b949e',
+                  color: isRec ? '#388bfd' : '#8b949e',
                   marginBottom: 4,
                 }}>
-                  {price.label}{isRec && <span style={{ marginLeft: 6, color: '#34d399', fontSize: 8 }}>· RECOMMENDED</span>}
+                  {price.label}{isRec && <span style={{ marginLeft: 6, color: '#388bfd', fontSize: 8 }}>· RECOMMENDED</span>}
                 </div>
                 <div style={{ fontSize: 16, fontWeight: 600, color: '#f0f6fc', fontFamily: mono }}>
                   {price.monthly === 0 ? `${PLAN_CURRENCY}0` : `${PLAN_CURRENCY}${price.yearly.toFixed(2)}`}
@@ -245,7 +245,7 @@ export function UpgradeModal({
               href={upgradeHref}
               target="_top"
               rel="noopener"
-              style={{ padding: '8px 18px', fontSize: 10, fontWeight: 700, background: '#34d399', color: '#fff', textDecoration: 'none', fontFamily: mono, letterSpacing: 0.5, textTransform: 'uppercase' }}
+              style={{ padding: '8px 18px', fontSize: 10, fontWeight: 700, background: '#388bfd', color: '#fff', textDecoration: 'none', fontFamily: mono, letterSpacing: 0.5, textTransform: 'uppercase' }}
             >
               Upgrade to {recPrice.label}
             </a>

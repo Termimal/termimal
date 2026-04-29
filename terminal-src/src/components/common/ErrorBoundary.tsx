@@ -72,7 +72,7 @@ export class ErrorBoundary extends React.Component<{ children: React.ReactNode }
               style={{
                 padding: '8px 16px', fontSize: 12, fontFamily: mono, fontWeight: 700,
                 textTransform: 'uppercase', letterSpacing: 0.5,
-                background: '#34d399', color: '#fff', border: 'none', cursor: 'pointer',
+                background: '#388bfd', color: '#fff', border: 'none', cursor: 'pointer',
               }}
             >
               Retry

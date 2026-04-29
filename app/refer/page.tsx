@@ -56,8 +56,8 @@ export default function ReferPage() {
         </div>
         <div className="flex min-h-[80vh] flex-col items-center justify-center px-4 text-center">
           <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full"
-            style={{ background: "rgba(16,185,129,.10)", border: "2px solid rgba(52,211,153,.20)" }}>
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#34d399" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            style={{ background: "rgba(16,185,129,.10)", border: "2px solid rgba(56,139,253,.20)" }}>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#388bfd" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
           </div>
           <h1 className="text-2xl font-semibold" style={{ letterSpacing: "-0.03em" }}>Sign in to refer friends</h1>
           <p className="mt-3 max-w-sm text-sm leading-7" style={{ color: "var(--t2)" }}>
@@ -65,9 +65,9 @@ export default function ReferPage() {
           </p>
           <Link href="/login" className="mt-8 rounded-2xl px-6 py-3 text-sm font-semibold"
             style={{
-              background: "linear-gradient(180deg, rgba(16,185,129,.20) 0%, rgba(5,150,105,.30) 100%)",
+              background: "linear-gradient(180deg, rgba(16,185,129,.20) 0%, rgba(31,111,235,.30) 100%)",
               color: "#d1fae5",
-              border: "1px solid rgba(52,211,153,.18)",
+              border: "1px solid rgba(56,139,253,.18)",
             }}>
             Sign in
           </Link>
@@ -93,8 +93,8 @@ export default function ReferPage() {
 
         <div className="mt-10 rounded-2xl border p-6"
           style={{
-            borderColor: "rgba(52,211,153,.18)",
-            background: "linear-gradient(180deg, rgba(16,185,129,.07) 0%, rgba(5,150,105,.12) 100%)",
+            borderColor: "rgba(56,139,253,.18)",
+            background: "linear-gradient(180deg, rgba(16,185,129,.07) 0%, rgba(31,111,235,.12) 100%)",
           }}>
           <div className="mb-1 text-xs font-semibold uppercase tracking-[0.18em]" style={{ color: "var(--t4)" }}>Your referral code</div>
           <div className="mt-2 flex items-center gap-3">
@@ -125,8 +125,8 @@ export default function ReferPage() {
               className="shrink-0 rounded-xl px-4 py-2.5 text-xs font-semibold transition-all"
               style={{
                 background: copied ? "rgba(16,185,129,.20)" : "var(--surface)",
-                color: copied ? "#34d399" : "var(--t1)",
-                border: `1px solid ${copied ? "rgba(52,211,153,.25)" : "color-mix(in srgb, var(--border) 84%, white 16%)"}`,
+                color: copied ? "#388bfd" : "var(--t1)",
+                border: `1px solid ${copied ? "rgba(56,139,253,.25)" : "color-mix(in srgb, var(--border) 84%, white 16%)"}`,
                 opacity: referralLink ? 1 : 0.4,
               }}>
               {copied ? "Copied!" : "Copy"}
@@ -145,7 +145,7 @@ export default function ReferPage() {
                 borderColor: "color-mix(in srgb, var(--border) 84%, white 16%)",
                 background: "var(--surface)",
               }}>
-              <div className="mb-2 text-xl font-bold" style={{ color: "rgba(52,211,153,.40)" }}>{s.n}</div>
+              <div className="mb-2 text-xl font-bold" style={{ color: "rgba(56,139,253,.40)" }}>{s.n}</div>
               <div className="mb-1 text-sm font-semibold">{s.t}</div>
               <p className="text-xs leading-6" style={{ color: "var(--t3)" }}>{s.b}</p>
             </div>

@@ -45,7 +45,7 @@ export default function HeroSection() {
               style={{
                 color: 'var(--acc)',
                 background: 'var(--acc-d)',
-                border: '1px solid rgba(52,211,153,.1)',
+                border: '1px solid rgba(56,139,253,.1)',
               }}
             >
               <Radio size={10} /> Live market analysis

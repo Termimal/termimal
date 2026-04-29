@@ -76,7 +76,7 @@ export function OnboardingTour() {
         zIndex: 9999,
         width: 360,
         background: '#161b22',
-        border: '1px solid #34d39944',
+        border: '1px solid #388bfd44',
         boxShadow: '0 12px 40px #00000060',
         fontFamily: mono,
         color: '#c9d1d9',
@@ -84,7 +84,7 @@ export function OnboardingTour() {
     >
       <div style={{ padding: 14 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
-          <span style={{ fontSize: 9, color: '#34d399', fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase' }}>
+          <span style={{ fontSize: 9, color: '#388bfd', fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase' }}>
             Welcome to Termimal · Step {step + 1} of {STEPS.length}
           </span>
           <button
@@ -106,7 +106,7 @@ export function OnboardingTour() {
               <span
                 key={i}
                 aria-hidden
-                style={{ width: 18, height: 2, background: i <= step ? '#34d399' : '#21262d' }}
+                style={{ width: 18, height: 2, background: i <= step ? '#388bfd' : '#21262d' }}
               />
             ))}
           </div>
@@ -129,7 +129,7 @@ export function OnboardingTour() {
               onClick={onCta}
               style={{
                 padding: '5px 12px', fontSize: 10, fontFamily: mono, fontWeight: 700, letterSpacing: 0.5,
-                background: '#34d399', color: '#fff',
+                background: '#388bfd', color: '#fff',
                 border: 'none', cursor: 'pointer',
               }}
             >

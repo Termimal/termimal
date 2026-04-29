@@ -227,13 +227,13 @@ export default function ProfilePage() {
           style={{
             background: message.toLowerCase().includes('error') || message.toLowerCase().includes('invalid')
               ? 'rgba(248,113,113,.1)'
-              : 'rgba(52,211,153,.1)',
+              : 'rgba(56,139,253,.1)',
             color: message.toLowerCase().includes('error') || message.toLowerCase().includes('invalid')
               ? 'var(--red-val)'
               : 'var(--green-val)',
             border: message.toLowerCase().includes('error') || message.toLowerCase().includes('invalid')
               ? '1px solid rgba(248,113,113,.18)'
-              : '1px solid rgba(52,211,153,.18)',
+              : '1px solid rgba(56,139,253,.18)',
           }}
         >
           {message}

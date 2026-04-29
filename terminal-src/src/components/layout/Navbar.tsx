@@ -418,14 +418,14 @@ export function Navbar() {
                   <span key={c.k} onClick={()=>{setSearchCat(c.k);onSearch(query,c.k)}}
                     style={{padding:'5px 10px',fontSize:10,cursor:'pointer',flexShrink:0,
                       color:searchCat===c.k?'#c9d1d9':'#484f58',fontWeight:searchCat===c.k?500:400,
-                      borderBottom:searchCat===c.k?'1px solid #34d399':'1px solid transparent'}}>{c.l}</span>
+                      borderBottom:searchCat===c.k?'1px solid #388bfd':'1px solid transparent'}}>{c.l}</span>
                 ))}
               </div>
               {/* Results */}
               <div style={{ flex: 1, overflowY: 'auto' }}>
               {hits.length === 0 ? (
                 <div style={{ padding: 16, textAlign: 'center', fontSize: 11, color: '#484f58' }}>
-                  {query ? <>No results for "{query}" · <button onClick={() => goTo(query.toUpperCase())} style={{ color: '#34d399', background: 'none', border: 'none', cursor: 'pointer', fontSize: 11 }}>Try {query.toUpperCase()}</button></> : 'Type to search'}
+                  {query ? <>No results for "{query}" · <button onClick={() => goTo(query.toUpperCase())} style={{ color: '#388bfd', background: 'none', border: 'none', cursor: 'pointer', fontSize: 11 }}>Try {query.toUpperCase()}</button></> : 'Type to search'}
                 </div>
               ) : hits.map((t, i) => (
                 <div key={t.s} onClick={() => goTo(t.s)} onMouseEnter={() => setSel(i)}
@@ -470,8 +470,8 @@ export function Navbar() {
               width: 28, height: 28, display: 'flex', alignItems: 'center', justifyContent: 'center',
               cursor: 'pointer', fontSize: 9, fontWeight: 600, letterSpacing: '0.02em',
               color: acctOpen ? '#c9d1d9' : '#8b949e',
-              background: acctOpen ? '#34d399' : '#161b22',
-              border: `1px solid ${acctOpen ? '#34d399' : '#21262d'}`,
+              background: acctOpen ? '#388bfd' : '#161b22',
+              border: `1px solid ${acctOpen ? '#388bfd' : '#21262d'}`,
               transition: 'all 0.1s',
             }}
             onMouseEnter={e => { if (!acctOpen) { e.currentTarget.style.borderColor = '#30363d'; e.currentTarget.style.color = '#c9d1d9' } }}
@@ -573,8 +573,8 @@ export function Navbar() {
                 transition: 'color 120ms ease-out, background 120ms ease-out', position: 'relative',
                 background: active ? '#161b22' : 'transparent',
                 color: active ? '#f0f6fc' : '#8b949e',
-                borderBottom: active ? '2px solid #34d399' : '2px solid transparent',
-                borderLeft: isDragOver ? '2px solid #34d399' : 'none',
+                borderBottom: active ? '2px solid #388bfd' : '2px solid transparent',
+                borderLeft: isDragOver ? '2px solid #388bfd' : 'none',
                 letterSpacing: 0.2,
                 opacity: dragIdx === idx ? 0.5 : 1,
               }}
@@ -657,9 +657,9 @@ export function Navbar() {
                     }}
                     style={{
                       display: 'block', padding: '12px 18px',
-                      fontSize: 14, color: active ? '#34d399' : '#c9d1d9',
+                      fontSize: 14, color: active ? '#388bfd' : '#c9d1d9',
                       background: active ? '#161b22' : 'transparent',
-                      borderLeft: active ? '3px solid #34d399' : '3px solid transparent',
+                      borderLeft: active ? '3px solid #388bfd' : '3px solid transparent',
                       textDecoration: 'none',
                     }}
                   >
@@ -673,7 +673,7 @@ export function Navbar() {
               <a href="/" style={{ display: 'block', padding: '12px 18px', fontSize: 13, color: '#8b949e', textDecoration: 'none' }}>← Back to termimal.com</a>
               <a href="/dashboard/profile" style={{ display: 'block', padding: '12px 18px', fontSize: 13, color: '#8b949e', textDecoration: 'none' }}>Profile</a>
               <a href="/dashboard/billing" style={{ display: 'block', padding: '12px 18px', fontSize: 13, color: '#8b949e', textDecoration: 'none' }}>Subscription &amp; billing</a>
-              <a href="/pricing" style={{ display: 'block', padding: '12px 18px', fontSize: 13, color: '#34d399', textDecoration: 'none' }}>Upgrade plan</a>
+              <a href="/pricing" style={{ display: 'block', padding: '12px 18px', fontSize: 13, color: '#388bfd', textDecoration: 'none' }}>Upgrade plan</a>
               <a href="/support" style={{ display: 'block', padding: '12px 18px', fontSize: 13, color: '#8b949e', textDecoration: 'none' }}>Help &amp; contact</a>
               <a
                 href="#"

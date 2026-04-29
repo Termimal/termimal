@@ -201,7 +201,7 @@ export function Settings() {
 
       {/* Header */}
       <div style={{ marginBottom: 16 }}>
-        <div style={{ fontSize: 13, fontWeight: 600, color: '#34d399', letterSpacing: '0.12em', marginBottom: 4 }}>
+        <div style={{ fontSize: 13, fontWeight: 600, color: '#388bfd', letterSpacing: '0.12em', marginBottom: 4 }}>
           ⚙ API CONFIGURATION
         </div>
         <div style={{ fontSize: 9, color: '#8b949e', lineHeight: 1.7 }}>
@@ -229,7 +229,7 @@ export function Settings() {
             <div key={api.id} style={{
               background: '#0e1117',
               border: `1px solid ${stored ? '#3fb95033' : '#21262d'}`,
-              borderTop: `2px solid ${stored ? '#3fb950' : '#34d399'}`,
+              borderTop: `2px solid ${stored ? '#3fb950' : '#388bfd'}`,
               padding: '14px 16px',
             }}>
               {/* API name + status */}
@@ -282,7 +282,7 @@ export function Settings() {
                   </button>
                   <button onClick={() => startEdit(api.id)}
                     title="Replace saved key"
-                    style={{ padding: '5px 12px', fontSize: 9, background: '#34d39918', border: '1px solid #34d39944', color: '#34d399', cursor: 'pointer' }}>
+                    style={{ padding: '5px 12px', fontSize: 9, background: '#388bfd18', border: '1px solid #388bfd44', color: '#388bfd', cursor: 'pointer' }}>
                     Replace
                   </button>
                 </div>
@@ -315,7 +315,7 @@ export function Settings() {
                     }}
                   />
                   <button onClick={() => saveKey(api.id)}
-                    style={{ padding: '5px 14px', fontSize: 9, background: isSaved ? '#3fb95020' : '#34d39918', border: `1px solid ${isSaved ? '#3fb95055' : '#34d39944'}`, color: isSaved ? '#3fb950' : '#34d399', cursor: 'pointer' }}>
+                    style={{ padding: '5px 14px', fontSize: 9, background: isSaved ? '#3fb95020' : '#388bfd18', border: `1px solid ${isSaved ? '#3fb95055' : '#388bfd44'}`, color: isSaved ? '#3fb950' : '#388bfd', cursor: 'pointer' }}>
                     {isSaved ? '▲ SAVED' : 'SAVE'}
                   </button>
                   {editing && (
@@ -331,7 +331,7 @@ export function Settings() {
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
                 <div style={{ fontSize: 7.5, color: '#8b949e' }}>
                   Get a free key: <a href={api.docs} target="_blank" rel="noreferrer noopener"
-                    style={{ color: '#34d399', textDecoration: 'none' }}>{api.url}</a>
+                    style={{ color: '#388bfd', textDecoration: 'none' }}>{api.url}</a>
                 </div>
                 {stored && !editing && (
                   inConfirmClear ? (
@@ -360,7 +360,7 @@ export function Settings() {
 
       {/* Data source map table */}
       <div style={{ marginBottom: 16 }}>
-        <div style={{ fontSize: 10, fontWeight: 600, color: '#34d399', letterSpacing: 0.6, marginBottom: 10 }}>
+        <div style={{ fontSize: 10, fontWeight: 600, color: '#388bfd', letterSpacing: 0.6, marginBottom: 10 }}>
           DATA SOURCE MAP — METRIC → SOURCE → FREQUENCY → REQUIRED KEY
         </div>
         <div style={{ border: '1px solid #21262d', overflow: 'hidden' }}>
@@ -398,7 +398,7 @@ export function Settings() {
 
       {/* How it works */}
       <div style={{ padding: '12px 16px', background: '#0e1117', border: '1px solid #21262d', fontSize: 9, color: '#8b949e', lineHeight: 1.8 }}>
-        <div style={{ color: '#34d399', fontWeight: 600, marginBottom: 8 }}>HOW IT WORKS</div>
+        <div style={{ color: '#388bfd', fontWeight: 600, marginBottom: 8 }}>HOW IT WORKS</div>
         <div>1. You save your keys here (stored in your browser, never transmitted).</div>
         <div>2. The Python backend reads them from the local config endpoint.</div>
         <div>3. Hourly / daily jobs fetch real data and cache it.</div>
@@ -416,7 +416,7 @@ export function Settings() {
           <div style={{ fontSize: 11, color: '#8b949e', marginBottom: 2 }}>Account</div>
           <div style={{ fontSize: 10, color: '#484f58' }}>Profile, billing, and security on the main site</div>
         </div>
-        <a href="/" target="_top" rel="noopener" style={{ fontSize: 10, padding: '5px 12px', background: 'transparent', color: '#34d399', border: '1px solid #21262d', textDecoration: 'none' }}>
+        <a href="/" target="_top" rel="noopener" style={{ fontSize: 10, padding: '5px 12px', background: 'transparent', color: '#388bfd', border: '1px solid #21262d', textDecoration: 'none' }}>
           Open termimal.com
         </a>
       </div>

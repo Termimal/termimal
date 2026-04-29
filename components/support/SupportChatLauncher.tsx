@@ -61,9 +61,9 @@ export default function SupportChatLauncher() {
         style={{
           width: 56,
           height: 56,
-          borderColor: "rgba(52,211,153,.22)",
+          borderColor: "rgba(56,139,253,.22)",
           background:
-            "linear-gradient(180deg, rgba(16,185,129,.20) 0%, rgba(5,150,105,.30) 100%)",
+            "linear-gradient(180deg, rgba(16,185,129,.20) 0%, rgba(31,111,235,.30) 100%)",
           color: "#d1fae5",
           backdropFilter: "blur(12px)",
         }}

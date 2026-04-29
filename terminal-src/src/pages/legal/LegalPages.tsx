@@ -47,7 +47,7 @@ export function TermsPage() {
   return (
     <LegalShell title="Terms of Service" lastUpdated="28 April 2026">
       <Section title="1. Introduction & Parties">
-        <p>These Terms of Service (&quot;Terms&quot;) form a binding agreement between you and the operator of Termimal (&quot;Termimal&quot;, &quot;we&quot;, &quot;us&quot;). The Terms govern your access to and use of the Termimal web terminal, desktop app, APIs, and any related services (collectively, the &quot;Service&quot;). By creating an account or otherwise using the Service you confirm that you have read, understood, and accepted these Terms and our <Link to="/privacy" style={{ color: '#34d399' }}>Privacy Policy</Link>.</p>
+        <p>These Terms of Service (&quot;Terms&quot;) form a binding agreement between you and the operator of Termimal (&quot;Termimal&quot;, &quot;we&quot;, &quot;us&quot;). The Terms govern your access to and use of the Termimal web terminal, desktop app, APIs, and any related services (collectively, the &quot;Service&quot;). By creating an account or otherwise using the Service you confirm that you have read, understood, and accepted these Terms and our <Link to="/privacy" style={{ color: '#388bfd' }}>Privacy Policy</Link>.</p>
       </Section>
 
       <Section title="2. Eligibility">
@@ -59,7 +59,7 @@ export function TermsPage() {
       </Section>
 
       <Section title="4. Accounts & Security">
-        <p>You must provide accurate information, keep your credentials confidential, enable two-factor authentication where offered, and notify us immediately at <a href="mailto:security@termimal.com" style={{ color: '#34d399' }}>security@termimal.com</a> of any unauthorised access. We may suspend accounts we reasonably believe are compromised or in breach of these Terms.</p>
+        <p>You must provide accurate information, keep your credentials confidential, enable two-factor authentication where offered, and notify us immediately at <a href="mailto:security@termimal.com" style={{ color: '#388bfd' }}>security@termimal.com</a> of any unauthorised access. We may suspend accounts we reasonably believe are compromised or in breach of these Terms.</p>
       </Section>
 
       <Section title="5. Subscriptions, Billing & Cancellation">
@@ -87,11 +87,11 @@ export function TermsPage() {
       </Section>
 
       <Section title="11. Governing Law">
-        <p>These Terms are governed by the laws applicable to the operating entity&apos;s registered seat. Mandatory consumer-protection laws of your country of residence in the EU/EEA still apply. EU/EEA consumers may use the Commission&apos;s online dispute resolution platform at <a href="https://ec.europa.eu/consumers/odr" target="_blank" rel="noopener noreferrer" style={{ color: '#34d399' }}>ec.europa.eu/consumers/odr</a>.</p>
+        <p>These Terms are governed by the laws applicable to the operating entity&apos;s registered seat. Mandatory consumer-protection laws of your country of residence in the EU/EEA still apply. EU/EEA consumers may use the Commission&apos;s online dispute resolution platform at <a href="https://ec.europa.eu/consumers/odr" target="_blank" rel="noopener noreferrer" style={{ color: '#388bfd' }}>ec.europa.eu/consumers/odr</a>.</p>
       </Section>
 
       <Section title="12. Contact">
-        <p>Questions about these Terms? Email <a href="mailto:legal@termimal.com" style={{ color: '#34d399' }}>legal@termimal.com</a>.</p>
+        <p>Questions about these Terms? Email <a href="mailto:legal@termimal.com" style={{ color: '#388bfd' }}>legal@termimal.com</a>.</p>
       </Section>
     </LegalShell>
   )
@@ -104,7 +104,7 @@ export function PrivacyPage() {
   return (
     <LegalShell title="Privacy Policy" lastUpdated="28 April 2026">
       <Section title="1. Data Controller">
-        <p>The data controller responsible for personal data processed by Termimal is the entity operating the Service. You can reach our privacy team at <a href="mailto:privacy@termimal.com" style={{ color: '#34d399' }}>privacy@termimal.com</a>.</p>
+        <p>The data controller responsible for personal data processed by Termimal is the entity operating the Service. You can reach our privacy team at <a href="mailto:privacy@termimal.com" style={{ color: '#388bfd' }}>privacy@termimal.com</a>.</p>
       </Section>
 
       <Section title="2. What we collect">
@@ -114,7 +114,7 @@ export function PrivacyPage() {
           <li><strong>Product data:</strong> watchlists, saved workspaces, alerts, paper-trading positions, theme preference.</li>
           <li><strong>Technical data:</strong> IP address, browser, device, operating system, log files, request timestamps.</li>
           <li><strong>Communications:</strong> support tickets, feedback, email correspondence.</li>
-          <li><strong>Cookies:</strong> see our <Link to="/cookies" style={{ color: '#34d399' }}>Cookie Policy</Link>.</li>
+          <li><strong>Cookies:</strong> see our <Link to="/cookies" style={{ color: '#388bfd' }}>Cookie Policy</Link>.</li>
         </Ul>
       </Section>
 
@@ -156,9 +156,9 @@ export function PrivacyPage() {
           <li><strong>Portability</strong> — receive your data in a machine-readable format.</li>
           <li><strong>Objection</strong> — object to processing based on legitimate interests.</li>
           <li><strong>Withdraw consent</strong> — at any time, without affecting prior lawful processing.</li>
-          <li><strong>Lodge a complaint</strong> with your supervisory authority. In France this is the <a href="https://www.cnil.fr" target="_blank" rel="noopener noreferrer" style={{ color: '#34d399' }}>CNIL</a>.</li>
+          <li><strong>Lodge a complaint</strong> with your supervisory authority. In France this is the <a href="https://www.cnil.fr" target="_blank" rel="noopener noreferrer" style={{ color: '#388bfd' }}>CNIL</a>.</li>
         </Ul>
-        <p style={{ marginTop: 12 }}>Exercise these rights by emailing <a href="mailto:privacy@termimal.com" style={{ color: '#34d399' }}>privacy@termimal.com</a>. We respond within 30 days.</p>
+        <p style={{ marginTop: 12 }}>Exercise these rights by emailing <a href="mailto:privacy@termimal.com" style={{ color: '#388bfd' }}>privacy@termimal.com</a>. We respond within 30 days.</p>
       </Section>
 
       <Section title="8. Security">
@@ -200,7 +200,7 @@ export function CookiesPage() {
       </Section>
 
       <Section title="4. Third-party cookies">
-        <p>Some cookies are set by third parties acting as our processors — auth provider, payment processor (Stripe checkout pages), support chat, analytics. They are bound by data-processing agreements and only act on our instructions. Stripe sets its own cookies during checkout — review the <a href="https://stripe.com/cookies-policy/legal" target="_blank" rel="noopener noreferrer" style={{ color: '#34d399' }}>Stripe Cookie Policy</a>.</p>
+        <p>Some cookies are set by third parties acting as our processors — auth provider, payment processor (Stripe checkout pages), support chat, analytics. They are bound by data-processing agreements and only act on our instructions. Stripe sets its own cookies during checkout — review the <a href="https://stripe.com/cookies-policy/legal" target="_blank" rel="noopener noreferrer" style={{ color: '#388bfd' }}>Stripe Cookie Policy</a>.</p>
       </Section>
 
       <Section title="5. Global Privacy Control">
@@ -273,14 +273,14 @@ export function SecurityPage() {
       </Section>
 
       <Section title="Reporting a vulnerability">
-        <p>If you discover a security issue affecting Termimal, please email <a href="mailto:security@termimal.com" style={{ color: '#34d399' }}>security@termimal.com</a> with:</p>
+        <p>If you discover a security issue affecting Termimal, please email <a href="mailto:security@termimal.com" style={{ color: '#388bfd' }}>security@termimal.com</a> with:</p>
         <Ul>
           <li>A clear description of the issue.</li>
           <li>Reproduction steps and any required prerequisites.</li>
           <li>The impact you observed (data exposure, account takeover, etc.).</li>
           <li>Your name or handle if you want to be acknowledged.</li>
         </Ul>
-        <p style={{ marginTop: 12 }}>Our machine-readable disclosure record is at <a href="/.well-known/security.txt" style={{ color: '#34d399' }}>/.well-known/security.txt</a>.</p>
+        <p style={{ marginTop: 12 }}>Our machine-readable disclosure record is at <a href="/.well-known/security.txt" style={{ color: '#388bfd' }}>/.well-known/security.txt</a>.</p>
       </Section>
 
       <Section title="Response timeline">

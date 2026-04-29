@@ -61,7 +61,7 @@ export function MethodologyExpander({
         onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
       >
         <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <span aria-hidden style={{ color: '#34d399' }}>i</span>
+          <span aria-hidden style={{ color: '#388bfd' }}>i</span>
           {title}
         </span>
         <span aria-hidden style={{ color: '#484f58', transform: open ? 'rotate(180deg)' : 'none' }}>▾</span>
@@ -101,8 +101,8 @@ export function MethodologyExpander({
                     style={{
                       flex: '0 0 16px',
                       height: 16,
-                      background: '#34d39922',
-                      color: '#34d399',
+                      background: '#388bfd22',
+                      color: '#388bfd',
                       fontSize: 9,
                       fontWeight: 600,
                       textAlign: 'center',

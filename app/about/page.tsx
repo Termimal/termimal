@@ -86,7 +86,7 @@ export default function AboutPage() {
                 background: "var(--surface)",
               }}>
               <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full text-sm font-bold"
-                style={{ background: "rgba(16,185,129,.14)", color: "#34d399" }}>
+                style={{ background: "rgba(16,185,129,.14)", color: "#388bfd" }}>
                 {f.initials}
               </div>
               <div className="text-sm font-semibold">{f.name}</div>

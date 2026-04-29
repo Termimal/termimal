@@ -53,13 +53,13 @@ export default function TerminalLite() {
     candles.forEach((c, i) => {
       const x = i * (cw + 1) + 10
       const bull = c.c >= c.o
-      ctx.strokeStyle = bull ? '#34d399' : '#f87171'
+      ctx.strokeStyle = bull ? '#388bfd' : '#f87171'
       ctx.lineWidth = 0.5
       ctx.beginPath()
       ctx.moveTo(x + cw / 2, yScale(c.h))
       ctx.lineTo(x + cw / 2, yScale(c.l))
       ctx.stroke()
-      ctx.fillStyle = bull ? '#34d399' : '#f87171'
+      ctx.fillStyle = bull ? '#388bfd' : '#f87171'
       const top = yScale(Math.max(c.o, c.c))
       const bot = yScale(Math.min(c.o, c.c))
       ctx.fillRect(x, top, cw, Math.max(bot - top, 1))
@@ -93,7 +93,7 @@ export default function TerminalLite() {
     }}>
       {/* glow border */}
       <div className="absolute -inset-px rounded-xl pointer-events-none z-0"
-        style={{ background: 'linear-gradient(135deg, rgba(52,211,153,.08), transparent 40%, transparent 60%, rgba(96,165,250,.06))' }} />
+        style={{ background: 'linear-gradient(135deg, rgba(56,139,253,.08), transparent 40%, transparent 60%, rgba(96,165,250,.06))' }} />
 
       {/* Top bar */}
       <div className="relative z-10 flex items-center justify-between px-3 py-2 border-b" style={{ borderColor: 'var(--terminal-border)', background: 'rgba(0,0,0,.3)' }}>
@@ -146,7 +146,7 @@ export default function TerminalLite() {
                     className={cn('px-1.5 py-0.5 text-sm font-mono font-semibold rounded transition-all')}
                     style={{
                       color: activeTF === tf ? 'var(--acc)' : 'var(--t4)',
-                      background: activeTF === tf ? 'rgba(52,211,153,.1)' : 'transparent',
+                      background: activeTF === tf ? 'rgba(56,139,253,.1)' : 'transparent',
                     }}
                     onClick={() => { setActiveTF(tf); drawChart() }}>
                     {tf}

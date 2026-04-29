@@ -30,9 +30,9 @@
   /* Signals */
   --up:   #3fb950;
   --dn:   #f85149;
-  --blue: #34d399;
+  --blue: #388bfd;
   --warn: #d29922;
-  --info: #34d399;
+  --info: #388bfd;
 
   /* Flash */
   --up-flash:   rgba(63,185,80,0.28);
@@ -190,7 +190,7 @@ td, th { padding: 0 8px; height: 26px; }
   --pm-up-fill:       rgba(46,160,67,0.12);
   --pm-down:          #da3633;
   --pm-down-fill:     rgba(218,54,51,0.12);
-  --pm-accent:        #34d399;
+  --pm-accent:        #388bfd;
   --pm-accent-text:   #58a6ff;
   --pm-warning:       #d29922;
   --pm-row-zebra:     rgba(255,255,255,0.015);

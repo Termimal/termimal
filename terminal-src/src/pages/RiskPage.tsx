@@ -277,13 +277,13 @@ function MonteCarloFan({ beta }: { beta: number }) {
     <div>
       <svg viewBox={`0 0 ${W2} ${H2}`} style={{ width: '100%', display: 'block' }}>
         {/* Zone fills */}
-        <path d={makeArea(5, 95)}  fill="#34d399" opacity="0.04" />
-        <path d={makeArea(25, 75)} fill="#34d399" opacity="0.07" />
+        <path d={makeArea(5, 95)}  fill="#388bfd" opacity="0.04" />
+        <path d={makeArea(25, 75)} fill="#388bfd" opacity="0.07" />
         {/* Band lines */}
-        <path d={makeLine(5)}  fill="none" stroke="#34d399" strokeWidth="0.8" opacity="0.3" strokeDasharray="3,2" />
-        <path d={makeLine(95)} fill="none" stroke="#34d399" strokeWidth="0.8" opacity="0.3" strokeDasharray="3,2" />
-        <path d={makeLine(25)} fill="none" stroke="#34d399" strokeWidth="1" opacity="0.5" />
-        <path d={makeLine(75)} fill="none" stroke="#34d399" strokeWidth="1" opacity="0.5" />
+        <path d={makeLine(5)}  fill="none" stroke="#388bfd" strokeWidth="0.8" opacity="0.3" strokeDasharray="3,2" />
+        <path d={makeLine(95)} fill="none" stroke="#388bfd" strokeWidth="0.8" opacity="0.3" strokeDasharray="3,2" />
+        <path d={makeLine(25)} fill="none" stroke="#388bfd" strokeWidth="1" opacity="0.5" />
+        <path d={makeLine(75)} fill="none" stroke="#388bfd" strokeWidth="1" opacity="0.5" />
         <path d={makeLine(50)} fill="none" stroke="#3fb950" strokeWidth="1.8" />
         {/* Ref line -20% */}
         <line x1={P.l} y1={yS(80)} x2={W2 - P.r} y2={yS(80)} stroke="#f85149" strokeWidth="0.8" strokeDasharray="4,3" />
@@ -319,7 +319,7 @@ const SCENARIOS = [
   { name: 'SEVERE',   prob: 8,  ret: '-25%',  dd: '-35%', vol: 'Very high',     liq: 'Stress',    col: '#e05030' },
   { name: 'BEARISH',  prob: 20, ret: '-12%',  dd: '-18%', vol: 'High +40%',     liq: 'Tight',     col: '#d29922' },
   { name: 'BASE',     prob: 40, ret: '+5%',   dd: '-8%',  vol: 'Normal',        liq: 'Normal',    col: '#8b949e' },
-  { name: 'BULLISH',  prob: 22, ret: '+18%',  dd: '-4%',  vol: 'Low -20%',      liq: 'Ample',     col: '#34d399' },
+  { name: 'BULLISH',  prob: 22, ret: '+18%',  dd: '-4%',  vol: 'Low -20%',      liq: 'Ample',     col: '#388bfd' },
   { name: 'BEST',     prob: 7,  ret: '+35%',  dd: '-2%',  vol: 'Very low',      liq: 'Perfect',   col: '#3fb950' },
 ]
 
@@ -470,7 +470,7 @@ export function RiskPage() {
             {[30, 60, 90, 180, 365, 730, 1825, 3650, 99999].map(d => (
               <button key={d} onClick={() => setTsZoom(d)}
                 style={{ padding: '2px 8px', fontSize: 8, cursor: 'pointer', border: '1px solid', background: tsZoom === d ? '#161b22' : 'transparent',
-                  borderColor: tsZoom === d ? '#34d399' : '#21262d', color: tsZoom === d ? '#34d399' : '#8b949e', transition: 'all 0.15s' }}>
+                  borderColor: tsZoom === d ? '#388bfd' : '#21262d', color: tsZoom === d ? '#388bfd' : '#8b949e', transition: 'all 0.15s' }}>
                 {d <= 180 ? `${d}D` : d === 365 ? '1Y' : d === 730 ? '2Y' : d === 1825 ? '5Y' : d === 3650 ? '10Y' : 'MAX'}
               </button>
             ))}
@@ -541,7 +541,7 @@ export function RiskPage() {
           ))}
         </div>
         {/* Detail toggle */}
-        <div onClick={() => setShowDetail(!showDetail)} style={{ fontSize: 9, color: '#34d399', cursor: 'pointer', padding: '4px 0' }}>
+        <div onClick={() => setShowDetail(!showDetail)} style={{ fontSize: 9, color: '#388bfd', cursor: 'pointer', padding: '4px 0' }}>
           {showDetail ? 'Hide details' : 'Show scenario details'}
         </div>
         {showDetail && (

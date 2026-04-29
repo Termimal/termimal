@@ -72,7 +72,7 @@ export function MacroPage() {
   const [vixOpen, setVixOpen] = useState(false)
   const vixDataMap = {
     us: { data: vix_h, label: 'VIX (S&P 500)', color: '#d29922' },
-    eu: { data: vstoxx_vol, label: 'Euro STOXX 50 Vol', color: '#34d399' },
+    eu: { data: vstoxx_vol, label: 'Euro STOXX 50 Vol', color: '#388bfd' },
     jp: { data: nikkei_vol, label: 'Nikkei 225 Vol', color: '#f85149' },
     cn: { data: hsi_vol, label: 'Hang Seng Vol', color: '#3fb950' },
   }
@@ -131,7 +131,7 @@ export function MacroPage() {
               <button key={id} onClick={() => setView(id)}
                 style={{ padding: '4px 14px', fontSize: 10, cursor: 'pointer', background: 'transparent', border: 'none',
                   color: view === id ? '#c9d1d9' : '#484f58', fontWeight: view === id ? 500 : 400,
-                  borderBottom: view === id ? '2px solid #34d399' : '2px solid transparent' }}>
+                  borderBottom: view === id ? '2px solid #388bfd' : '2px solid transparent' }}>
                 {label}
               </button>
             ))}
@@ -196,7 +196,7 @@ export function MacroPage() {
           sub="US10Y · US2Y · US3M"
           unit="%" dec={2} height={260}
           lines={[
-            { label: 'US10Y', color: '#34d399', data: us10y_h },
+            { label: 'US10Y', color: '#388bfd', data: us10y_h },
             { label: 'US2Y',  color: '#3fb950', data: us2y_h },
             { label: 'US3M',  color: '#7c4dff', data: us3m_h },
           ]}
@@ -248,7 +248,7 @@ export function MacroPage() {
             <div onClick={() => setVixOpen(!vixOpen)}
               style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 4,
                 padding: '2px 8px', fontSize: 11, fontWeight: 600, color: '#c9d1d9', background: vixOpen ? '#1c2128' : 'transparent',
-                border: `1px solid ${vixOpen ? '#34d39944' : 'transparent'}`, transition: 'all 0.15s' }}
+                border: `1px solid ${vixOpen ? '#388bfd44' : 'transparent'}`, transition: 'all 0.15s' }}
               onMouseEnter={e => { if (!vixOpen) { e.currentTarget.style.background = '#161b22'; e.currentTarget.style.borderColor = '#21262d' } }}
               onMouseLeave={e => { if (!vixOpen) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'transparent' } }}>
               {activeVix.label} <span style={{ fontSize: 8, color: '#484f58' }}>▾</span>
@@ -268,8 +268,8 @@ export function MacroPage() {
                 <div key={opt.k} onClick={() => { setVixRegion(opt.k); setVixOpen(false) }}
                   style={{ padding: '7px 14px', fontSize: 10, cursor: 'pointer', 
                     color: vixRegion === opt.k ? '#c9d1d9' : '#8b949e',
-                    background: vixRegion === opt.k ? '#34d39918' : 'transparent', 
-                    borderLeft: vixRegion === opt.k ? '2px solid #34d399' : '2px solid transparent',
+                    background: vixRegion === opt.k ? '#388bfd18' : 'transparent', 
+                    borderLeft: vixRegion === opt.k ? '2px solid #388bfd' : '2px solid transparent',
                     transition: 'all 0.1s' }}
                   onMouseEnter={e => { if (vixRegion !== opt.k) e.currentTarget.style.background = '#1c2128' }}
                   onMouseLeave={e => { if (vixRegion !== opt.k) e.currentTarget.style.background = 'transparent' }}>
@@ -334,7 +334,7 @@ export function MacroPage() {
           sub=">$90 inflation pressure · >$100 economic shock"
           unit="$" dec={1} height={160}
           lines={[
-            { label: 'WTI', color: '#34d399', data: wti_h },
+            { label: 'WTI', color: '#388bfd', data: wti_h },
             { label: 'Brent', color: '#8b949e', data: brent_h },
           ]}
           refs={[

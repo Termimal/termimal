@@ -1,4 +1,4 @@
-﻿"use client"
+"use client"
 import { useState } from "react"
 import Link from "next/link"
 import { openSupportChat } from "@/components/support/SupportChatLauncher"
@@ -108,8 +108,8 @@ export default function HelpPage() {
 
         <div className="rounded-2xl border p-8 text-center"
           style={{
-            borderColor: "rgba(52,211,153,.16)",
-            background: "linear-gradient(180deg, rgba(16,185,129,.08) 0%, rgba(5,150,105,.14) 100%)",
+            borderColor: "rgba(56,139,253,.16)",
+            background: "linear-gradient(180deg, rgba(16,185,129,.08) 0%, rgba(31,111,235,.14) 100%)",
           }}>
           <h2 className="text-lg font-semibold">Still need help?</h2>
           <p className="mt-2 text-sm" style={{ color: "var(--t2)" }}>Our support team is available via live chat and typically responds in under 2 minutes.</p>
@@ -118,9 +118,9 @@ export default function HelpPage() {
               onClick={openSupportChat}
               className="rounded-2xl px-5 py-3 text-sm font-semibold"
               style={{
-                background: "linear-gradient(180deg, rgba(16,185,129,.20) 0%, rgba(5,150,105,.30) 100%)",
+                background: "linear-gradient(180deg, rgba(16,185,129,.20) 0%, rgba(31,111,235,.30) 100%)",
                 color: "#d1fae5",
-                border: "1px solid rgba(52,211,153,.18)",
+                border: "1px solid rgba(56,139,253,.18)",
               }}>
               Open live chat
             </button>

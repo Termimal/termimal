@@ -42,7 +42,7 @@ export default function AlertsPage() {
               <tr key={a.id} style={{ borderTop: '1px solid var(--border)' }}>
                 <td className="p-4 font-semibold">{a.instrument}</td>
                 <td className="p-4" style={{ color: 'var(--t2)' }}>{a.condition} {a.value}</td>
-                <td className="p-4"><span className="px-2 py-0.5 rounded text-sm font-semibold" style={{ color: a.status === 'active' ? 'var(--green-val)' : 'var(--amber)', background: a.status === 'active' ? 'rgba(52,211,153,.1)' : 'rgba(251,191,36,.1)' }}>{a.status}</span></td>
+                <td className="p-4"><span className="px-2 py-0.5 rounded text-sm font-semibold" style={{ color: a.status === 'active' ? 'var(--green-val)' : 'var(--amber)', background: a.status === 'active' ? 'rgba(56,139,253,.1)' : 'rgba(251,191,36,.1)' }}>{a.status}</span></td>
               </tr>
             ))}</tbody>
           </table>
