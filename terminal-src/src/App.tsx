@@ -35,6 +35,7 @@ import { OnboardingTour } from '@/components/common/OnboardingTour'
 import { PaywallGate } from '@/components/common/PaywallGate'
 import { UpgradeModalHost } from '@/components/common/UpgradeModalHost'
 import { TrialBanner } from '@/components/common/TrialBanner'
+import { ConnectionBanner } from '@/components/common/ConnectionBanner'
 
 
 function TickerRoute() {
@@ -74,6 +75,7 @@ function Layout({ children }: { children: React.ReactNode }) {
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden', background: '#0e1117' }}>
       <OnboardingTour />
       <Navbar />
+      <ConnectionBanner />
       <TrialBanner />
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
         <main style={{ flex: 1, overflow: 'auto', minWidth: 0, background: '#0e1117' }}>

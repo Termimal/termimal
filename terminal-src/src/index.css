@@ -51,12 +51,16 @@ html, body, #root {
   background: var(--bg-1);
   color: var(--t-2);
   font-family: var(--font);
-  font-size: 13px;
-  line-height: 1.45;
+  font-size: 15px;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.005em;
+  height: 100%;
+  width: 100%;
 }
+html, body { margin: 0; padding: 0; }
+#root { min-height: 100vh; }
 
 /* All numeric cells should feel tabular */
 .tnum, [data-tnum] {

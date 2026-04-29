@@ -13,7 +13,7 @@ export default function Navbar() {
 
   const navLinks = [
     { key: "nav.platform", name: "Platform", href: "/platform" },
-    { key: "nav.features", name: "Features", href: "/platform" },
+    { key: "nav.features", name: "Features", href: "/features" },
     { key: "nav.markets", name: "Markets", href: "/#markets" },
     { key: "nav.pricing", name: "Pricing", href: "/pricing" },
     { key: "nav.webTerminal", name: "Web Terminal", href: "/terminal" },

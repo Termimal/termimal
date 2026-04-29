@@ -36,4 +36,7 @@ next-env.d.ts
 *.pem
 *.key
 *.p12
-nterminal-src/dist/n
+
+# Vite SPA build artifact (rebuilt by terminal-src/npm run build)
+terminal-src/dist/
+terminal-src/node_modules/

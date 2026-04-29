@@ -168,6 +168,34 @@ export function Navbar() {
     .map(s => s[0]?.toUpperCase() ?? '')
     .join('') || 'U'
 
+  // ── Responsive viewport tracking ────────────────────────
+  const [viewportWidth, setViewportWidth] = useState<number>(() =>
+    typeof window !== 'undefined' ? window.innerWidth : 1280,
+  )
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const onResize = () => setViewportWidth(window.innerWidth)
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
+  const isMobile = viewportWidth < 900   // below tablet portrait
+  const isTablet = viewportWidth < 1200  // squeeze the tab row a bit
+
+  // Hamburger drawer state
+  const [drawerOpen, setDrawerOpen] = useState(false)
+  // Close drawer when navigating
+  useEffect(() => {
+    if (drawerOpen) setDrawerOpen(false)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.pathname])
+  // Lock body scroll while drawer is open
+  useEffect(() => {
+    if (!drawerOpen) return
+    const prev = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => { document.body.style.overflow = prev }
+  }, [drawerOpen])
+
   const [openTabs, setOpenTabs] = useState<string[]>(() => {
     try {
       const s = localStorage.getItem('ft-tabs')
@@ -332,18 +360,37 @@ export function Navbar() {
   return (
     <div style={{ flexShrink: 0 }}>
       {/* ── Top bar ── */}
-      <div style={{ display: 'flex', alignItems: 'center', height: 44, background: '#161b22', borderBottom: '1px solid #21262d', padding: '0 12px', gap: 10 }}>
+      <div style={{ display: 'flex', alignItems: 'center', height: 48, background: '#161b22', borderBottom: '1px solid #21262d', padding: '0 12px', gap: 10 }}>
+        {/* Mobile hamburger — opens slide-out drawer */}
+        {isMobile && (
+          <button
+            type="button"
+            aria-label="Open menu"
+            aria-expanded={drawerOpen}
+            onClick={() => setDrawerOpen(true)}
+            style={{
+              width: 36, height: 36, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+              gap: 4, background: 'transparent', border: '1px solid #21262d', borderRadius: 4, cursor: 'pointer', padding: 0,
+            }}
+          >
+            <span style={{ width: 16, height: 2, background: '#c9d1d9', borderRadius: 1 }} />
+            <span style={{ width: 16, height: 2, background: '#c9d1d9', borderRadius: 1 }} />
+            <span style={{ width: 16, height: 2, background: '#c9d1d9', borderRadius: 1 }} />
+          </button>
+        )}
         {/* Back-to-website link (hard navigation — breaks out of /terminal SPA basename) */}
-        <a
-          href="/"
-          title="Back to termimal.com"
-          style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '4px 8px', textDecoration: 'none', color: '#8b949e', fontSize: 11, border: '1px solid #21262d', borderRadius: 2, marginRight: 4 }}
-          onMouseEnter={e => { e.currentTarget.style.color = '#c9d1d9'; e.currentTarget.style.borderColor = '#30363d' }}
-          onMouseLeave={e => { e.currentTarget.style.color = '#8b949e'; e.currentTarget.style.borderColor = '#21262d' }}
-        >
-          <span aria-hidden style={{ fontSize: 11 }}>←</span>
-          <span style={{ fontSize: 10, letterSpacing: 0.3 }}>Site</span>
-        </a>
+        {!isMobile && (
+          <a
+            href="/"
+            title="Back to termimal.com"
+            style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '4px 8px', textDecoration: 'none', color: '#8b949e', fontSize: 12, border: '1px solid #21262d', borderRadius: 2, marginRight: 4 }}
+            onMouseEnter={e => { e.currentTarget.style.color = '#c9d1d9'; e.currentTarget.style.borderColor = '#30363d' }}
+            onMouseLeave={e => { e.currentTarget.style.color = '#8b949e'; e.currentTarget.style.borderColor = '#21262d' }}
+          >
+            <span aria-hidden style={{ fontSize: 12 }}>←</span>
+            <span style={{ fontSize: 11, letterSpacing: 0.3 }}>Site</span>
+          </a>
+        )}
         {/* Logo — also hard-navigates home */}
         <a
           href="/"
@@ -352,9 +399,10 @@ export function Navbar() {
           <span style={{ fontSize: 13, fontWeight: 600, color: '#c9d1d9', letterSpacing: 0.4 }}>TERMIMAL</span>
           <span title="Build version" style={{ fontSize: 8, color: '#484f58', marginLeft: 4, fontFamily: "'SF Mono', Menlo, Consolas, monospace" }}>v6.9</span>
         </a>
-        <div style={{ width: 1, height: 20, background: '#21262d' }} />
-        {/* Search */}
-        <div ref={searchBoxRef} style={{ position: 'relative', width: 240 }}>
+        {!isMobile && <div style={{ width: 1, height: 20, background: '#21262d' }} />}
+        {/* Search — narrows on tablet, hides on phone */}
+        {!isMobile && (
+        <div ref={searchBoxRef} style={{ position: 'relative', width: isTablet ? 180 : 240 }}>
           <div style={{ position: 'relative' }}>
             <svg style={{ position: 'absolute', left: 8, top: '50%', transform: 'translateY(-50%)', width: 13, height: 13 }} fill="none" viewBox="0 0 24 24" stroke="#8b949e"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
             <input ref={inputRef} value={query} onChange={e => onSearch(e.target.value)}
@@ -392,22 +440,28 @@ export function Navbar() {
             </div>
           )}
         </div>
+        )}
         <div style={{ flex: 1 }} />
-        <div style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '3px 8px', borderRadius: 2, fontSize: 10, fontWeight: 500, color: regCol, background: regCol + '15' }}>
-          <span style={{ width: 5, height: 5, borderRadius: '50%', background: regCol }} className="pulse-dot" /> {regime}
+        {/* Regime + connection + clock — hidden on mobile to save horizontal room */}
+        {!isMobile && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '3px 8px', borderRadius: 2, fontSize: 11, fontWeight: 500, color: regCol, background: regCol + '15' }}>
+          <span style={{ width: 6, height: 6, borderRadius: '50%', background: regCol }} className="pulse-dot" /> {regime}
         </div>
+        )}
         <div
           title={
             apiOnline ? 'Backend reachable.'
               : apiOffline ? 'Backend unreachable. Check VITE_BACKEND_URL or try again.'
               : 'Trying to reach the backend...'
           }
-          style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 10, color: apiOnline ? '#3fb950' : apiOffline ? '#f85149' : '#d29922' }}
+          style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 11, color: apiOnline ? '#3fb950' : apiOffline ? '#f85149' : '#d29922' }}
         >
-          <span style={{ width: 5, height: 5, borderRadius: '50%', background: apiOnline ? '#3fb950' : apiOffline ? '#f85149' : '#d29922' }} />
-          {apiOnline ? 'Live' : apiOffline ? 'Offline' : 'Connecting...'}
+          <span style={{ width: 6, height: 6, borderRadius: '50%', background: apiOnline ? '#3fb950' : apiOffline ? '#f85149' : '#d29922' }} />
+          {!isMobile && (apiOnline ? 'Live' : apiOffline ? 'Offline' : 'Connecting...')}
         </div>
-        <span style={{ fontSize: 11, color: '#484f58', fontFamily: "'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace", fontVariantNumeric: 'tabular-nums', letterSpacing: 0.3 }}>{clock}</span>
+        {!isMobile && (
+        <span style={{ fontSize: 12, color: '#484f58', fontFamily: "'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace", fontVariantNumeric: 'tabular-nums', letterSpacing: 0.3 }}>{clock}</span>
+        )}
 
         {/* ═══ Account Menu ═══ */}
         <div ref={acctRef} style={{ position: 'relative', marginLeft: 4 }}>
@@ -496,8 +550,9 @@ export function Navbar() {
         </div>
       </div>
 
-      {/* ── Tab bar with drag-to-reorder ── */}
-      <div style={{ display: 'flex', alignItems: 'stretch', height: 42, background: '#0e1117', borderBottom: '1px solid #21262d', paddingLeft: 6 }}>
+      {/* ── Tab bar with drag-to-reorder — hidden on mobile (use hamburger) ── */}
+      {!isMobile && (
+      <div style={{ display: 'flex', alignItems: 'stretch', height: 42, background: '#0e1117', borderBottom: '1px solid #21262d', paddingLeft: 6, overflowX: 'auto' }}>
         {openTabs.map((tabPath, idx) => {
           const page = ALL_PAGES.find(p => p.path === tabPath)
           if (!page) return null
@@ -544,6 +599,97 @@ export function Navbar() {
             onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#8b949e' }}>+</div>
         </div>
       </div>
+      )}
+
+      {/* ── Mobile hamburger drawer ── */}
+      {drawerOpen && (
+        <div
+          role="dialog"
+          aria-label="Mobile navigation"
+          aria-modal="true"
+          onClick={() => setDrawerOpen(false)}
+          style={{
+            position: 'fixed', inset: 0, zIndex: 9000,
+            background: 'rgba(0,0,0,0.55)',
+          }}
+        >
+          <div
+            onClick={e => e.stopPropagation()}
+            style={{
+              position: 'absolute', top: 0, left: 0, bottom: 0,
+              width: 'min(86vw, 320px)',
+              background: '#0e1117',
+              borderRight: '1px solid #21262d',
+              display: 'flex', flexDirection: 'column',
+              boxShadow: '4px 0 20px rgba(0,0,0,0.5)',
+              overflowY: 'auto',
+            }}
+          >
+            {/* Header */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', borderBottom: '1px solid #21262d' }}>
+              <span style={{ fontSize: 14, fontWeight: 600, color: '#c9d1d9', letterSpacing: 0.4 }}>TERMIMAL</span>
+              <button
+                type="button"
+                aria-label="Close menu"
+                onClick={() => setDrawerOpen(false)}
+                style={{ background: 'transparent', border: 'none', color: '#8b949e', fontSize: 22, cursor: 'pointer', padding: '0 4px', lineHeight: 1 }}
+              >
+                ×
+              </button>
+            </div>
+            {/* User identity */}
+            <div style={{ padding: '14px 16px', borderBottom: '1px solid #21262d' }}>
+              <div style={{ fontSize: 13, color: '#c9d1d9', fontWeight: 500 }}>{displayName}</div>
+              <div style={{ fontSize: 11, color: '#8b949e', marginTop: 2 }}>{authUser.email ?? 'Not signed in'}</div>
+            </div>
+            {/* Navigation list */}
+            <nav style={{ flex: 1, padding: '8px 0' }}>
+              {ALL_PAGES.map(p => {
+                const active = location.pathname === p.path
+                return (
+                  <a
+                    key={p.path}
+                    href={p.path === '/' ? '/terminal' : `/terminal${p.path}`}
+                    onClick={(e) => {
+                      e.preventDefault()
+                      navigate(p.path)
+                      setDrawerOpen(false)
+                    }}
+                    style={{
+                      display: 'block', padding: '12px 18px',
+                      fontSize: 14, color: active ? '#34d399' : '#c9d1d9',
+                      background: active ? '#161b22' : 'transparent',
+                      borderLeft: active ? '3px solid #34d399' : '3px solid transparent',
+                      textDecoration: 'none',
+                    }}
+                  >
+                    {p.label}
+                  </a>
+                )
+              })}
+            </nav>
+            {/* Account / billing / site */}
+            <div style={{ borderTop: '1px solid #21262d', padding: '8px 0' }}>
+              <a href="/" style={{ display: 'block', padding: '12px 18px', fontSize: 13, color: '#8b949e', textDecoration: 'none' }}>← Back to termimal.com</a>
+              <a href="/dashboard/profile" style={{ display: 'block', padding: '12px 18px', fontSize: 13, color: '#8b949e', textDecoration: 'none' }}>Profile</a>
+              <a href="/dashboard/billing" style={{ display: 'block', padding: '12px 18px', fontSize: 13, color: '#8b949e', textDecoration: 'none' }}>Subscription &amp; billing</a>
+              <a href="/pricing" style={{ display: 'block', padding: '12px 18px', fontSize: 13, color: '#34d399', textDecoration: 'none' }}>Upgrade plan</a>
+              <a href="/support" style={{ display: 'block', padding: '12px 18px', fontSize: 13, color: '#8b949e', textDecoration: 'none' }}>Help &amp; contact</a>
+              <a
+                href="#"
+                onClick={async (e) => {
+                  e.preventDefault()
+                  try { await supabase.auth.signOut() } catch {}
+                  window.location.href = '/login'
+                }}
+                style={{ display: 'block', padding: '12px 18px', fontSize: 13, color: '#f85149', textDecoration: 'none' }}
+              >
+                Sign out
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
