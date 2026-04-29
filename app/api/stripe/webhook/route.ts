@@ -1,21 +1,28 @@
 // Stripe webhook handler.
 //
-// Runtime is Node (NOT edge) because:
-//   1. `stripe.webhooks.constructEvent` uses Node's `crypto` synchronously;
-//      on the edge runtime that throws or, worse, falls back to a no-op
-//      that silently bypasses signature verification.
-//   2. We need the raw request body byte-for-byte. On Node, Next gives us
-//      `request.text()` which preserves it.
+// Runtime is Edge (Cloudflare Pages requires it for non-static routes).
+// We CANNOT use the sync `stripe.webhooks.constructEvent` here because it
+// relies on Node's `crypto` module — instead we use the async variant
+// `constructEventAsync` together with a SubtleCrypto provider, which the
+// Stripe SDK exposes specifically for edge / browser-like runtimes.
+//
+// `await request.text()` preserves the raw body byte-for-byte, which is
+// what the signature is computed over.
 //
 // This route also implements idempotency: we record `event.id` in
 // `processed_webhooks` (with a unique constraint). If Stripe retries the
 // same event we short-circuit before running any side effects.
-export const runtime = 'nodejs'
+export const runtime = 'edge'
 import { NextResponse } from 'next/server'
 import { headers } from 'next/headers'
 import { stripe, planFromPriceId } from '@/lib/stripe'
 import { createAdminSupabase } from '@/lib/supabase/server'
 import Stripe from 'stripe'
+
+// SubtleCrypto-backed signature verifier. Edge runtimes (Cloudflare,
+// Vercel Edge) expose `crypto.subtle` natively, so this provider works
+// without any Node polyfill.
+const cryptoProvider = Stripe.createSubtleCryptoProvider()
 
 export async function POST(request: Request) {
   const body = await request.text()
@@ -36,7 +43,16 @@ export async function POST(request: Request) {
 
   let event: Stripe.Event
   try {
-    event = stripe.webhooks.constructEvent(body, signature, secret)
+    // Async signature verification — uses WebCrypto under the hood.
+    // The 4th argument is the tolerance (in seconds) for clock skew;
+    // `undefined` keeps Stripe's default (300s).
+    event = await stripe.webhooks.constructEventAsync(
+      body,
+      signature,
+      secret,
+      undefined,
+      cryptoProvider,
+    )
   } catch (err) {
     const msg = err instanceof Error ? err.message : 'unknown'
     console.error('Webhook signature verification failed:', msg)
