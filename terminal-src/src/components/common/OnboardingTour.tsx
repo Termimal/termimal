@@ -5,7 +5,7 @@
 //   3. Polymarket signal workflow
 // Dismissed via localStorage flag so it never re-shows.
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 const STORAGE_KEY = 'termimal:onboarding:dismissed:v1'
@@ -39,6 +39,7 @@ export function OnboardingTour() {
   const [step, setStep] = useState(0)
   const [visible, setVisible] = useState(false)
   const navigate = useNavigate()
+  const dialogRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -49,12 +50,26 @@ export function OnboardingTour() {
     return () => window.clearTimeout(id)
   }, [])
 
-  if (!visible) return null
-
   const dismiss = () => {
     try { window.localStorage.setItem(STORAGE_KEY, '1') } catch {}
     setVisible(false)
   }
+
+  // ESC closes + auto-focus first focusable on open
+  useEffect(() => {
+    if (!visible) return
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') dismiss() }
+    window.addEventListener('keydown', onKey)
+    const focusTimer = window.setTimeout(() => {
+      dialogRef.current?.querySelector<HTMLElement>('button, [href], input, textarea, [tabindex]:not([tabindex="-1"])')?.focus()
+    }, 0)
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      window.clearTimeout(focusTimer)
+    }
+  }, [visible])
+
+  if (!visible) return null
 
   const current = STEPS[step]
   const isLast = step === STEPS.length - 1
@@ -67,7 +82,9 @@ export function OnboardingTour() {
 
   return (
     <div
+      ref={dialogRef}
       role="dialog"
+      aria-modal="true"
       aria-label="First-run tour"
       style={{
         position: 'fixed',

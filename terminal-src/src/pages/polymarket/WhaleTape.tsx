@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import type { OFTrade } from './types'
 import { PM, fmtUsd, fmtTime } from './_ui/tokens'
 import { SegmentedControl, Icon } from './_ui/primitives'
+import { onActivate } from '@/lib/a11y'
 
 // Size tiers — visual weight scales with notional
 type Tier = 1 | 2 | 3 | 4 | 5
@@ -156,7 +157,9 @@ export function WhaleTape({ conditionId, liveTrades }: { conditionId: string; li
 
             return (
               <div key={`${t.ts}-${t.price}-${t.size}-${i}`}
+                role="button" tabIndex={0}
                 onClick={() => t.tx && window.open(`https://polygonscan.com/tx/${t.tx}`, '_blank')}
+                onKeyDown={onActivate(() => { if (t.tx) window.open(`https://polygonscan.com/tx/${t.tx}`, '_blank') })}
                 className="pm-hoverable"
                 style={{
                   padding: '4px 10px', paddingLeft: tier >= 4 ? 10 - Math.max(0, (tier === 5 ? 4 : 3) - 10) + 6 : 10,
@@ -215,7 +218,7 @@ export function WhaleTape({ conditionId, liveTrades }: { conditionId: string; li
 
         {/* Resume live pill */}
         {!autoScroll && filtered.length > 0 && (
-          <div onClick={resumeLive}
+          <div role="button" tabIndex={0} onClick={resumeLive} onKeyDown={onActivate(resumeLive)}
             style={{
               position: 'sticky', bottom: 8, marginLeft: 'auto', marginRight: 8,
               width: 'fit-content',

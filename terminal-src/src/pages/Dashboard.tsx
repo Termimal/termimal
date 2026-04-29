@@ -11,6 +11,7 @@ import { RiskWarning } from '@/components/common/RiskWarning'
 import { MethodologyExpander } from '@/components/common/MethodologyExpander'
 import { methodologies } from '@/components/common/methodologies'
 import { DataSource } from '@/components/common/DataSource'
+import { onActivate } from '@/lib/a11y'
 
 const mono = "'SF Mono', Menlo, Consolas, monospace"
 const EMPTY: any = { us10y: null, us2y: null, spread: null, vix: null, dxy: null, wti: null, hyg_lqd: null, oas: null, rsp_spy: null, us10y_h: [], us2y_h: [], spread_h: [], vix_h: [], dxy_h: [], wti_h: [], hyg_lqd_h: [], oas_h: [], rsp_spy_h: [] }
@@ -32,7 +33,7 @@ function InfoTip({ text }: { text: string }) {
   const [show, setShow] = useState(false)
   return (
     <span style={{ position: 'relative', display: 'inline-flex', alignItems: 'center' }}>
-      <span onClick={(e) => { e.stopPropagation(); setShow(!show) }}
+      <span role="button" tabIndex={0} onClick={(e) => { e.stopPropagation(); setShow(!show) }} onKeyDown={onActivate((e) => { e.stopPropagation(); setShow(!show) })}
         style={{ width: 12, height: 12, borderRadius: '50%', fontSize: 7, color: '#484f58', border: '1px solid #30363d',
                  display: 'inline-flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
                  opacity: 0.6, transition: 'opacity 0.15s' }}
@@ -155,7 +156,7 @@ function OverviewMode({ md, navigate, wlSyms, prices }: { md: any; navigate: any
           const v = t.val as number | null, color = mCol(t.key, v), hist = t.hist as number[]
           const chg = hist?.length > 1 ? +(hist[hist.length - 1] - hist[hist.length - 2]).toFixed(3) : null
           return (
-            <div key={t.key} onClick={() => navigate('/macro')} style={{ background: '#0e1117', padding: '7px 8px', cursor: 'pointer' }}
+            <div key={t.key} role="button" tabIndex={0} onClick={() => navigate('/macro')} onKeyDown={onActivate(() => navigate('/macro'))} style={{ background: '#0e1117', padding: '7px 8px', cursor: 'pointer' }}
               onMouseEnter={e => (e.currentTarget.style.background = '#161b22')} onMouseLeave={e => (e.currentTarget.style.background = '#0e1117')}>
               <div style={{ fontSize: 9, color: '#8b949e', marginBottom: 3, display: 'flex', alignItems: 'center', gap: 4 }}>{t.label} {METRIC_INFO[t.key] && <InfoTip text={METRIC_INFO[t.key]}/>}</div>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -194,7 +195,7 @@ function OverviewMode({ md, navigate, wlSyms, prices }: { md: any; navigate: any
           const liqCol = md.hyg_lqd < 0.81 ? '#f85149' : md.hyg_lqd < 0.83 ? '#d29922' : '#3fb950'
           const interp = md.vix > 25 ? 'Volatility rising — risk assets vulnerable' : md.oas > 4.5 ? 'Credit widening — monitor positioning' : 'Conditions supportive for risk'
           return (
-            <div onClick={() => navigate('/macro')} style={{ background: '#0e1117', padding: '8px 10px', cursor: 'pointer' }}
+            <div role="button" tabIndex={0} onClick={() => navigate('/macro')} onKeyDown={onActivate(() => navigate('/macro'))} style={{ background: '#0e1117', padding: '8px 10px', cursor: 'pointer' }}
               onMouseEnter={e => (e.currentTarget.style.background = '#131720')} onMouseLeave={e => (e.currentTarget.style.background = '#0e1117')}>
               <div style={{ fontSize: 8, color: '#484f58', letterSpacing: 0.4, fontWeight: 500, marginBottom: 3 }}>MACRO PULSE</div>
               <div style={{ display: 'flex', gap: 8, fontSize: 9, marginBottom: 3 }}>
@@ -216,7 +217,7 @@ function OverviewMode({ md, navigate, wlSyms, prices }: { md: any; navigate: any
           const regime = md.vix > 25 ? 'Defensive' : md.vix > 18 ? 'Caution' : 'Risk-on'
           const interp = md.vix > 25 ? 'Stress elevated — reduce exposure' : 'Risk within normal parameters'
           return (
-            <div onClick={() => navigate('/risk')} style={{ background: '#0e1117', padding: '8px 10px', cursor: 'pointer' }}
+            <div role="button" tabIndex={0} onClick={() => navigate('/risk')} onKeyDown={onActivate(() => navigate('/risk'))} style={{ background: '#0e1117', padding: '8px 10px', cursor: 'pointer' }}
               onMouseEnter={e => (e.currentTarget.style.background = '#131720')} onMouseLeave={e => (e.currentTarget.style.background = '#0e1117')}>
               <div style={{ fontSize: 8, color: '#484f58', letterSpacing: 0.4, fontWeight: 500, marginBottom: 3 }}>RISK ENGINE</div>
               <div style={{ display: 'flex', gap: 8, fontSize: 9, marginBottom: 3 }}>
@@ -236,7 +237,7 @@ function OverviewMode({ md, navigate, wlSyms, prices }: { md: any; navigate: any
           const momentum = md.vix > 25 ? 'Risk rising' : 'Stable'
           const momCol = md.vix > 25 ? '#d29922' : '#484f58'
           return (
-            <div onClick={() => navigate('/macro?tab=events')} style={{ background: '#0e1117', padding: '8px 10px', cursor: 'pointer' }}
+            <div role="button" tabIndex={0} onClick={() => navigate('/macro?tab=events')} onKeyDown={onActivate(() => navigate('/macro?tab=events'))} style={{ background: '#0e1117', padding: '8px 10px', cursor: 'pointer' }}
               onMouseEnter={e => (e.currentTarget.style.background = '#131720')} onMouseLeave={e => (e.currentTarget.style.background = '#0e1117')}>
               <div style={{ fontSize: 8, color: '#484f58', letterSpacing: 0.4, fontWeight: 500, marginBottom: 3 }}>POLYMARKET EDGE</div>
               <div style={{ display: 'flex', gap: 8, fontSize: 9, marginBottom: 3 }}>
@@ -255,7 +256,7 @@ function OverviewMode({ md, navigate, wlSyms, prices }: { md: any; navigate: any
           const confidence = basePct > 55 ? 'High' : basePct > 40 ? 'Medium' : 'Low'
           const confCol = basePct > 55 ? '#3fb950' : basePct > 40 ? '#d29922' : '#f85149'
           return (
-            <div onClick={() => navigate('/charts')} style={{ background: '#0e1117', padding: '8px 10px', cursor: 'pointer' }}
+            <div role="button" tabIndex={0} onClick={() => navigate('/charts')} onKeyDown={onActivate(() => navigate('/charts'))} style={{ background: '#0e1117', padding: '8px 10px', cursor: 'pointer' }}
               onMouseEnter={e => (e.currentTarget.style.background = '#131720')} onMouseLeave={e => (e.currentTarget.style.background = '#0e1117')}>
               <div style={{ fontSize: 8, color: '#484f58', letterSpacing: 0.4, fontWeight: 500, marginBottom: 3 }}>SCENARIO INTEL</div>
               <div style={{ display: 'flex', gap: 8, fontSize: 9, marginBottom: 3 }}>
@@ -289,7 +290,7 @@ function OverviewMode({ md, navigate, wlSyms, prices }: { md: any; navigate: any
                 const vol = p?.vol ?? null
                 const c = pct >= 0 ? '#3fb950' : '#f85149'
                 return (
-                  <tr key={sym} onClick={() => navigate(`/ticker/${sym}`)} style={{ cursor: 'pointer', borderBottom: '1px solid #161b22' }}
+                  <tr key={sym} role="button" tabIndex={0} onClick={() => navigate(`/ticker/${sym}`)} onKeyDown={onActivate(() => navigate(`/ticker/${sym}`))} style={{ cursor: 'pointer', borderBottom: '1px solid #161b22' }}
                     onMouseEnter={e => (e.currentTarget.style.background = '#161b22')} onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
                     <td style={{ padding: '4px 8px', fontSize: 11, color: '#c9d1d9', fontWeight: 500 }}>{sym.replace('=X','').replace('-USD','')}</td>
                     <td style={{ padding: '4px 8px', fontSize: 11, color: '#c9d1d9', fontFamily: mono, textAlign: 'right' }}>{formatPrice(sym, price)}</td>
@@ -314,7 +315,7 @@ function OverviewMode({ md, navigate, wlSyms, prices }: { md: any; navigate: any
               const v = md[row.key] as number | null
               const st = getStatus(row.key, v)
               return (
-                <div key={row.l} onClick={() => navigate(row.route)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '5px 10px', borderBottom: '1px solid #161b22', cursor: 'pointer', transition: 'background 0.12s' }}
+                <div key={row.l} role="button" tabIndex={0} onClick={() => navigate(row.route)} onKeyDown={onActivate(() => navigate(row.route))} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '5px 10px', borderBottom: '1px solid #161b22', cursor: 'pointer', transition: 'background 0.12s' }}
                   onMouseOver={e => (e.currentTarget.style.background = '#161b22')} onMouseOut={e => (e.currentTarget.style.background = 'transparent')}>
                   <span style={{ fontSize: 10, color: '#8b949e', display: 'flex', alignItems: 'center', gap: 4 }}>{row.l} {METRIC_INFO[row.key] && <InfoTip text={METRIC_INFO[row.key]}/>}</span>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -336,7 +337,7 @@ function OverviewMode({ md, navigate, wlSyms, prices }: { md: any; navigate: any
               const v = md[row.key] as number | null
               const st = getStatus(row.key, v)
               return (
-                <div key={row.l} onClick={() => navigate(row.route)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '5px 10px', borderBottom: '1px solid #161b22', cursor: 'pointer', transition: 'background 0.12s' }}
+                <div key={row.l} role="button" tabIndex={0} onClick={() => navigate(row.route)} onKeyDown={onActivate(() => navigate(row.route))} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '5px 10px', borderBottom: '1px solid #161b22', cursor: 'pointer', transition: 'background 0.12s' }}
                   onMouseOver={e => (e.currentTarget.style.background = '#161b22')} onMouseOut={e => (e.currentTarget.style.background = 'transparent')}>
                   <span style={{ fontSize: 10, color: '#8b949e', display: 'flex', alignItems: 'center', gap: 4 }}>{row.l} {METRIC_INFO[row.key] && <InfoTip text={METRIC_INFO[row.key]}/>}</span>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -366,7 +367,7 @@ function OverviewMode({ md, navigate, wlSyms, prices }: { md: any; navigate: any
               {sorted.map(sym => {
                 const p = prices[sym]?.pct ?? 0, c = p >= 0 ? '#3fb950' : '#f85149'
                 return (
-                  <div key={sym} onClick={() => navigate(`/ticker/${sym}`)} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '4px 10px', cursor: 'pointer', borderBottom: '1px solid #161b22' }}
+                  <div key={sym} role="button" tabIndex={0} onClick={() => navigate(`/ticker/${sym}`)} onKeyDown={onActivate(() => navigate(`/ticker/${sym}`))} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '4px 10px', cursor: 'pointer', borderBottom: '1px solid #161b22' }}
                     onMouseEnter={e => (e.currentTarget.style.background = '#161b22')} onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
                     <span style={{ fontSize: 11, color: '#c9d1d9', width: 55, fontWeight: 500 }}>{sym.replace('=X','').replace('-USD','')}</span>
                     <div style={{ flex: 1, height: 4, background: '#161b22' }}><div style={{ height: '100%', width: `${(Math.abs(p) / maxAbs) * 100}%`, background: c }} /></div>

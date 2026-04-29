@@ -4,6 +4,7 @@ import { TvLineChart } from '@/components/charts/TvLineChart'
 import { Flag } from '@/components/common/Flag'
 import { DataSource } from '@/components/common/DataSource'
 import { EmptyState } from '@/components/common/EmptyState'
+import { onActivate } from '@/lib/a11y'
 
 interface Row { country: string; flag: string; fred: string }
 interface IndDef { name: string; rows: Row[]; unit: string; desc: string }
@@ -85,7 +86,7 @@ export function Indicators() {
     const chg = cur - prv
     return (
       <div style={{ padding: '20px 24px' }}>
-        <span onClick={() => { setChartRow(null) }} style={{ fontSize: 13, color: '#388bfd', cursor: 'pointer' }}>← {sel.name} by Country</span>
+        <span role="button" tabIndex={0} onClick={() => { setChartRow(null) }} onKeyDown={onActivate(() => { setChartRow(null) })} style={{ fontSize: 13, color: '#388bfd', cursor: 'pointer' }}>← {sel.name} by Country</span>
         <div style={{ marginTop: 12, display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
           <span style={{ fontSize: 28 }}>{chartRow.flag}</span>
           <div>
@@ -112,7 +113,7 @@ export function Indicators() {
   if (sel) {
     return (
       <div style={{ padding: '20px 24px' }}>
-        <span onClick={() => setSel(null)} style={{ fontSize: 13, color: '#388bfd', cursor: 'pointer' }}>← Global Indicators</span>
+        <span role="button" tabIndex={0} onClick={() => setSel(null)} onKeyDown={onActivate(() => setSel(null))} style={{ fontSize: 13, color: '#388bfd', cursor: 'pointer' }}>← Global Indicators</span>
         <div style={{ fontSize: 15, fontWeight: 500, color: '#c9d1d9', marginTop: 8, marginBottom: 12 }}>{sel.name} <span style={{ fontSize: 13, color: '#8b949e', fontWeight: 400 }}>by Country</span></div>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead><tr>
@@ -166,7 +167,10 @@ export function Indicators() {
               const fv = vals[ind.rows[0]?.fred]
               const chg = fv ? fv.last - fv.prev : 0
               return (
-              <div key={ind.name} onClick={() => setSel(ind)}
+              <div key={ind.name}
+                role="button" tabIndex={0}
+                onClick={() => setSel(ind)}
+                onKeyDown={onActivate(() => setSel(ind))}
                 style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '4px 0', cursor: 'pointer', borderBottom: '1px solid #161b22' }}
                 onMouseEnter={e => { (e.currentTarget.children[0] as HTMLElement).style.color = '#388bfd' }}
                 onMouseLeave={e => { (e.currentTarget.children[0] as HTMLElement).style.color = '#8b949e' }}>

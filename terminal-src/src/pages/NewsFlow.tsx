@@ -6,6 +6,7 @@
 import { useState, useMemo, useEffect } from 'react'
 import { Logo } from '@/components/common/Logo'
 import { DataSource } from '@/components/common/DataSource'
+import { onActivate } from '@/lib/a11y'
 
 const mono = "'SF Mono', Menlo, Consolas, monospace"
 const DATA_MODE: 'MOCK' | 'LIVE' = 'MOCK'
@@ -402,7 +403,7 @@ export function NewsFlow() {
             </div>
           </div>
           <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', alignItems: 'center' }}>
-            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Keyword, symbol, source..."
+            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Keyword, symbol, source..." aria-label="Search news by keyword, symbol, or source"
               style={{ width: 200, fontSize: 9, padding: '3px 7px', background: '#0e1117', border: '1px solid #21262d', color: '#c9d1d9' }}/>
             <Dd value={countryF} onChange={setCountryF} options={['All', ...COUNTRIES]}/>
             <Dd value={catF}     onChange={setCatF}     options={['All', ...CATEGORIES]}/>
@@ -440,7 +441,7 @@ export function NewsFlow() {
           {visible.map(n => {
             const isSel = selected === n.id, isRead = readIds.has(n.id), isPinned = pinnedIds.has(n.id)
             return (
-              <div key={n.id} onClick={() => markRead(n.id)}
+              <div key={n.id} role="button" tabIndex={0} onClick={() => markRead(n.id)} onKeyDown={onActivate(() => markRead(n.id))}
                 style={{ display: 'flex', alignItems: 'stretch', cursor: 'pointer', borderBottom: '1px solid #161b22', background: isSel ? '#161b22' : 'transparent', transition: 'background 0.05s' }}
                 onMouseEnter={e => { if (!isSel) e.currentTarget.style.background = '#0e1117' }}
                 onMouseLeave={e => { if (!isSel) e.currentTarget.style.background = isSel ? '#161b22' : 'transparent' }}>
@@ -466,7 +467,7 @@ export function NewsFlow() {
                     {n.symbols.length > 2 && <span style={{ fontSize: 8, color: '#30363d' }}>+{n.symbols.length - 2}</span>}
                   </div>
                 </div>
-                <div onClick={e => { e.stopPropagation(); togglePin(n.id) }}
+                <div role="button" tabIndex={0} onClick={e => { e.stopPropagation(); togglePin(n.id) }} onKeyDown={onActivate(e => { e.stopPropagation(); togglePin(n.id) })}
                   title={isPinned ? 'Unpin story' : 'Pin story'}
                   style={{ padding: '8px 8px', fontSize: 12, color: isPinned ? '#d29922' : '#484f58', cursor: 'pointer', flexShrink: 0, lineHeight: 1, userSelect: 'none' }}
                   onMouseEnter={e => { e.currentTarget.style.color = isPinned ? '#f0a93a' : '#d29922' }}
@@ -519,7 +520,7 @@ export function NewsFlow() {
       {/* ═══ DETAIL PANEL ═══ */}
       {sel && (
         <div style={{ width: 440, borderLeft: '1px solid #21262d', background: '#0e1117', overflow: 'auto', padding: 16, flexShrink: 0 }}>
-          <div onClick={() => setSelected(null)} style={{ fontSize: 9, color: '#484f58', cursor: 'pointer', marginBottom: 10 }}>&larr; CLOSE</div>
+          <div role="button" tabIndex={0} onClick={() => setSelected(null)} onKeyDown={onActivate(() => setSelected(null))} style={{ fontSize: 9, color: '#484f58', cursor: 'pointer', marginBottom: 10 }}>&larr; CLOSE</div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
             <div style={{ width: 3, height: 14, background: impCol(sel.importance) }}/>
@@ -538,7 +539,7 @@ export function NewsFlow() {
               <div style={{ fontSize: 9, color: '#484f58', textTransform: 'uppercase', letterSpacing: 0.4, marginBottom: 6 }}>Related Symbols</div>
               <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap' }}>
                 {sel.symbols.map(s => (
-                  <span key={s} onClick={() => window.open(`/ticker/${s}`, '_self')}
+                  <span key={s} role="button" tabIndex={0} onClick={() => window.open(`/ticker/${s}`, '_self')} onKeyDown={onActivate(() => window.open(`/ticker/${s}`, '_self'))}
                     style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 10, color: '#388bfd', fontFamily: mono, padding: '3px 8px', border: '1px solid #21262d', background: '#0e1117', cursor: 'pointer' }}>
                     <Logo sym={s}/>{s}
                   </span>

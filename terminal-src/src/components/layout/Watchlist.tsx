@@ -6,6 +6,7 @@ import { fetchPriceHistory } from '@/api/client'
 import { Logo } from '@/components/common/Logo'
 import { formatPrice, getPrecision } from '@/utils/formatPrice'
 import { usePlan } from '@/lib/plan'
+import { onActivate } from '@/lib/a11y'
 
 const mono = "'SF Mono', 'Fira Code', Menlo, Consolas, monospace"
 const COLORS: Record<string, string> = {A:'#388bfd',B:'#8957e5',C:'#3fb950',D:'#d29922',E:'#f85149',F:'#388bfd',G:'#8957e5',H:'#3fb950',I:'#d29922',J:'#f85149',K:'#388bfd',L:'#8957e5',M:'#3fb950',N:'#d29922',O:'#f85149',P:'#388bfd',Q:'#8957e5',R:'#3fb950',S:'#d29922',T:'#f85149',U:'#388bfd',V:'#8957e5',W:'#3fb950',X:'#d29922',Y:'#f85149',Z:'#388bfd'}
@@ -204,7 +205,7 @@ export function Watchlist() {
   if(collapsed){
     return(
       <div style={{width:28,background:'#0e1117',borderLeft:'1px solid #21262d',display:'flex',flexDirection:'column',alignItems:'center',paddingTop:8,flexShrink:0}}>
-        <div onClick={()=>setCollapsed(false)} style={{cursor:'pointer',color:'#30363d',fontSize:11,writingMode:'vertical-rl',letterSpacing:0.7,marginTop:8}}
+        <div role="button" tabIndex={0} onClick={()=>setCollapsed(false)} onKeyDown={onActivate(()=>setCollapsed(false))} style={{cursor:'pointer',color:'#30363d',fontSize:11,writingMode:'vertical-rl',letterSpacing:0.7,marginTop:8}}
           onMouseEnter={e=>(e.currentTarget.style.color='#8b949e')} onMouseLeave={e=>(e.currentTarget.style.color='#30363d')}>WATCHLIST</div>
       </div>
     )
@@ -216,7 +217,7 @@ export function Watchlist() {
       <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'5px 8px',borderBottom:'1px solid #21262d'}}>
         <div style={{display:'flex',gap:0}}>
           {(['chart','research'] as const).map(m=>(
-            <span key={m} onClick={()=>setMode(m)}
+            <span key={m} role="button" tabIndex={0} onClick={()=>setMode(m)} onKeyDown={onActivate(()=>setMode(m))}
               style={{padding:'3px 8px',fontSize:10,cursor:'pointer',color:mode===m?'#c9d1d9':'#484f58',fontWeight:mode===m?500:400,
                 borderBottom:mode===m?'1px solid #388bfd':'1px solid transparent',letterSpacing:'0.02em'}}>
               {m==='chart'?'CHART':'RESEARCH'}
@@ -224,9 +225,9 @@ export function Watchlist() {
           ))}
         </div>
         <div style={{display:'flex',gap:2,alignItems:'center'}}>
-          <span onClick={()=>{setShowAdd(!showAdd);setAddInput('')}} style={{cursor:'pointer',color:showAdd?'#388bfd':'#30363d',fontSize:14,lineHeight:1}}
+          <span role="button" tabIndex={0} onClick={()=>{setShowAdd(!showAdd);setAddInput('')}} onKeyDown={onActivate(()=>{setShowAdd(!showAdd);setAddInput('')})} style={{cursor:'pointer',color:showAdd?'#388bfd':'#30363d',fontSize:14,lineHeight:1}}
             onMouseEnter={e=>(e.currentTarget.style.color='#388bfd')} onMouseLeave={e=>{if(!showAdd)e.currentTarget.style.color='#30363d'}}>+</span>
-          <span onClick={()=>setCollapsed(true)} style={{cursor:'pointer',color:'#30363d',fontSize:10,marginLeft:4}}
+          <span role="button" tabIndex={0} onClick={()=>setCollapsed(true)} onKeyDown={onActivate(()=>setCollapsed(true))} style={{cursor:'pointer',color:'#30363d',fontSize:10,marginLeft:4}}
             onMouseEnter={e=>(e.currentTarget.style.color='#8b949e')} onMouseLeave={e=>(e.currentTarget.style.color='#30363d')}>▷</span>
         </div>
       </div>
@@ -237,14 +238,14 @@ export function Watchlist() {
           <div style={{display:'flex',padding:'4px 8px',gap:4}}>
             <input value={addInput} onChange={e=>setAddInput(e.target.value)}
               onKeyDown={e=>{if(e.key==='Enter')addManual();if(e.key==='Escape')setShowAdd(false)}}
-              placeholder="Search symbols..." style={{flex:1,fontSize:10,padding:'3px 6px'}} autoFocus/>
+              placeholder="Search symbols..." aria-label="Search symbols" style={{flex:1,fontSize:10,padding:'3px 6px'}} autoFocus/>
           </div>
           <div style={{flex:1,overflow:'auto'}}>
             {Object.entries(addSuggestions).map(([group, items]) => (
               <div key={group}>
                 <div style={{fontSize:8,color:'#30363d',padding:'4px 10px',textTransform:'uppercase',letterSpacing:0.4}}>{group}</div>
                 {items.slice(0, group === 'Forex' ? 12 : group === 'Stocks' ? 20 : group === 'Indices' ? 12 : 15).map(u => (
-                  <div key={u.s} onClick={() => addSym(u.s)}
+                  <div key={u.s} role="button" tabIndex={0} onClick={() => addSym(u.s)} onKeyDown={onActivate(() => addSym(u.s))}
                     style={{display:'flex',alignItems:'center',gap:6,padding:'3px 10px',cursor:'pointer',fontSize:10}}
                     onMouseEnter={e=>(e.currentTarget.style.background='#161b22')} onMouseLeave={e=>(e.currentTarget.style.background='transparent')}>
                     <Logo sym={u.s} />
@@ -288,10 +289,13 @@ export function Watchlist() {
         ))}
         {/* "+ Add section" footer */}
         <div style={{padding:'8px 10px',borderTop:'1px solid #161b22',display:'flex',gap:6}}>
-          <span onClick={() => {
+          <span role="button" tabIndex={0} onClick={() => {
               const name = window.prompt('Section name:', 'NEW SECTION')
               if (name && name.trim()) addSection(name)
-            }}
+            }} onKeyDown={onActivate(() => {
+              const name = window.prompt('Section name:', 'NEW SECTION')
+              if (name && name.trim()) addSection(name)
+            })}
             style={{fontSize:10,color:'#388bfd',cursor:'pointer',letterSpacing:0.4,fontFamily:mono}}
             onMouseEnter={e=>(e.currentTarget.style.color='#58a6ff')}
             onMouseLeave={e=>(e.currentTarget.style.color='#388bfd')}>
@@ -364,7 +368,7 @@ function SectionBlock({ section, mode, prices, sparkData, currentTicker, hovSym,
           fontSize:9, letterSpacing:0.5, color:'#8b949e', textTransform:'uppercase',
           cursor:'default', userSelect:'none',
         }}>
-        <span onClick={() => toggleSectionCollapse(section.id)}
+        <span role="button" tabIndex={0} onClick={() => toggleSectionCollapse(section.id)} onKeyDown={onActivate(() => toggleSectionCollapse(section.id))}
           style={{ cursor:'pointer', fontSize:8, color:'#484f58', width:10, textAlign:'center', display:'inline-block', transform: section.collapsed ? 'rotate(0)' : 'rotate(90deg)', transition:'transform 120ms' }}>▶</span>
         {editing ? (
           <input
@@ -388,9 +392,11 @@ function SectionBlock({ section, mode, prices, sparkData, currentTicker, hovSym,
           </span>
         )}
         {allowSectionRemove && !editing && (
-          <span onClick={() => {
+          <span role="button" tabIndex={0} onClick={() => {
               if (window.confirm(`Remove section "${section.name}"? Tickers will move to the next section.`)) removeSection(section.id)
-            }}
+            }} onKeyDown={onActivate(() => {
+              if (window.confirm(`Remove section "${section.name}"? Tickers will move to the next section.`)) removeSection(section.id)
+            })}
             style={{ cursor:'pointer', color:'#30363d', fontSize:11, padding:'0 3px' }}
             onMouseEnter={e=>(e.currentTarget.style.color='#f85149')}
             onMouseLeave={e=>(e.currentTarget.style.color='#30363d')}>×</span>
@@ -416,8 +422,9 @@ function SectionBlock({ section, mode, prices, sparkData, currentTicker, hovSym,
 
         if (mode==='chart') {
           return (
-            <div key={sym} {...dragProps}
+            <div key={sym} role="button" tabIndex={0} {...dragProps}
               onClick={()=>navigate(`/charts?sym=${sym}`)}
+              onKeyDown={onActivate(()=>navigate(`/charts?sym=${sym}`))}
               onMouseEnter={()=>setHovSym(sym)} onMouseLeave={()=>setHovSym(null)}
               style={{display:'grid',gridTemplateColumns:'24px 1fr 50px 46px 38px',alignItems:'center',padding:'3px 8px',height:30,cursor:'grab',
                 borderBottom:'1px solid #161b22', borderTop: isDragOver ? '2px solid #388bfd' : '2px solid transparent',
@@ -426,7 +433,7 @@ function SectionBlock({ section, mode, prices, sparkData, currentTicker, hovSym,
               <Logo sym={sym}/>
               <div style={{display:'flex',alignItems:'center',gap:3,paddingLeft:3,minWidth:0}}>
                 <span style={{fontSize:11,fontWeight:active?600:500,color:'#c9d1d9',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{fxDisplay(sym)}</span>
-                {hov&&<span onClick={e=>{e.stopPropagation();removeFromWatchlist(sym)}} style={{fontSize:9,color:'#30363d',flexShrink:0,cursor:'pointer'}}
+                {hov&&<span role="button" tabIndex={0} onClick={e=>{e.stopPropagation();removeFromWatchlist(sym)}} onKeyDown={onActivate(e=>{e.stopPropagation();removeFromWatchlist(sym)})} style={{fontSize:9,color:'#30363d',flexShrink:0,cursor:'pointer'}}
                   onMouseEnter={e=>(e.currentTarget.style.color='#f85149')} onMouseLeave={e=>(e.currentTarget.style.color='#30363d')}>×</span>}
               </div>
               <span style={{fontSize:10,textAlign:'right',color:'#c9d1d9',fontFamily:mono,fontVariantNumeric:'tabular-nums'}}>{formatPrice(sym, price)}</span>
@@ -438,8 +445,9 @@ function SectionBlock({ section, mode, prices, sparkData, currentTicker, hovSym,
 
         // Research mode
         return (
-          <div key={sym} {...dragProps}
+          <div key={sym} role="button" tabIndex={0} {...dragProps}
             onClick={()=>navigate(`/ticker/${sym}`)}
+            onKeyDown={onActivate(()=>navigate(`/ticker/${sym}`))}
             onMouseEnter={()=>setHovSym(sym)} onMouseLeave={()=>setHovSym(null)}
             style={{padding:'6px 8px',cursor:'grab',borderBottom:'1px solid #21262d',
               borderTop: isDragOver ? '2px solid #388bfd' : '2px solid transparent',
@@ -458,7 +466,7 @@ function SectionBlock({ section, mode, prices, sparkData, currentTicker, hovSym,
               </div>
               <div style={{display:'flex',gap:4,alignItems:'center'}}>
                 {spark&&<Sp data={spark} color={col}/>}
-                <span onClick={e=>{e.stopPropagation();removeFromWatchlist(sym)}} style={{color:'#30363d',cursor:'pointer',fontSize:10}}
+                <span role="button" tabIndex={0} onClick={e=>{e.stopPropagation();removeFromWatchlist(sym)}} onKeyDown={onActivate(e=>{e.stopPropagation();removeFromWatchlist(sym)})} style={{color:'#30363d',cursor:'pointer',fontSize:10}}
                   onMouseEnter={e=>(e.currentTarget.style.color='#f85149')} onMouseLeave={e=>(e.currentTarget.style.color='#30363d')}>×</span>
               </div>
             </div>

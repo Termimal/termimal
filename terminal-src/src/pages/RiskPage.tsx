@@ -6,6 +6,7 @@ import { RiskWarning } from '@/components/common/RiskWarning'
 import { MethodologyExpander } from '@/components/common/MethodologyExpander'
 import { methodologies } from '@/components/common/methodologies'
 import { DataSource } from '@/components/common/DataSource'
+import { onActivate } from '@/lib/a11y'
 
 // ── Risk component computation from real data ────────────────
 const W = { volatileity: 0.25, macro: 0.25, financial: 0.20, valuation: 0.15, liquidity: 0.15 }
@@ -541,7 +542,7 @@ export function RiskPage() {
           ))}
         </div>
         {/* Detail toggle */}
-        <div onClick={() => setShowDetail(!showDetail)} style={{ fontSize: 9, color: '#388bfd', cursor: 'pointer', padding: '4px 0' }}>
+        <div role="button" tabIndex={0} onClick={() => setShowDetail(!showDetail)} onKeyDown={onActivate(() => setShowDetail(!showDetail))} style={{ fontSize: 9, color: '#388bfd', cursor: 'pointer', padding: '4px 0' }}>
           {showDetail ? 'Hide details' : 'Show scenario details'}
         </div>
         {showDetail && (

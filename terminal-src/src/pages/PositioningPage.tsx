@@ -5,6 +5,7 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { fetchPositioning, fetchPositioningDetail } from '@/api/client'
 import { TvLineChart } from '@/components/charts/TvLineChart'
+import { onActivate } from '@/lib/a11y'
 
 const mono = "'SF Mono', Menlo, Consolas, monospace"
 
@@ -107,7 +108,7 @@ function PositioningDetail({ instrumentId, onBack }: { instrumentId: string; onB
   )
   if (!data) return (
     <div style={{ padding: 40, textAlign: 'center', color: '#484f58' }}>
-      <span onClick={onBack} style={{ fontSize: 12, color: '#388bfd', cursor: 'pointer', display: 'block', marginBottom: 20 }}>← Positioning Pressure</span>
+      <span role="button" tabIndex={0} onClick={onBack} onKeyDown={onActivate(onBack)} style={{ fontSize: 12, color: '#388bfd', cursor: 'pointer', display: 'block', marginBottom: 20 }}>← Positioning Pressure</span>
       Unable to load detailed data for this instrument.
     </div>
   )
@@ -119,7 +120,7 @@ function PositioningDetail({ instrumentId, onBack }: { instrumentId: string; onB
   return (
     <div style={{ padding: '20px 24px' }}>
       {/* Back nav */}
-      <span onClick={onBack} style={{ fontSize: 12, color: '#388bfd', cursor: 'pointer' }}>← Positioning Pressure</span>
+      <span role="button" tabIndex={0} onClick={onBack} onKeyDown={onActivate(onBack)} style={{ fontSize: 12, color: '#388bfd', cursor: 'pointer' }}>← Positioning Pressure</span>
 
       {/* Header */}
       <div style={{ marginTop: 14, display: 'flex', alignItems: 'flex-start', gap: 16 }}>
@@ -282,7 +283,7 @@ function PositioningDetail({ instrumentId, onBack }: { instrumentId: string; onB
       {/* COT cross-navigation */}
       {POSITIONING_TO_COT[instrumentId] && (
         <div style={{ marginTop: 12 }}>
-          <span onClick={() => navigate('/cot')} style={{ fontSize: 10, color: '#388bfd', cursor: 'pointer' }}>
+          <span role="button" tabIndex={0} onClick={() => navigate('/cot')} onKeyDown={onActivate(() => navigate('/cot'))} style={{ fontSize: 10, color: '#388bfd', cursor: 'pointer' }}>
             View raw COT data for {POSITIONING_TO_COT[instrumentId]} →
           </span>
         </div>

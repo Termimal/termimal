@@ -11,6 +11,7 @@ import { RiskWarning } from '@/components/common/RiskWarning'
 import { MethodologyExpander } from '@/components/common/MethodologyExpander'
 import { methodologies } from '@/components/common/methodologies'
 import { EmptyState } from '@/components/common/EmptyState'
+import { onActivate } from '@/lib/a11y'
 
 // ─── Types (preserved from original) ───────────────────────────────────────────
 interface Outcome { name: string; price: number }
@@ -137,7 +138,7 @@ function MarketRow({
   const strengthTxt = sig ? `${level.toLowerCase()} ${sig.confidence}pc` : ''
 
   return (
-    <div ref={rowRef} onClick={onOpen}
+    <div ref={rowRef} role="button" tabIndex={0} onClick={onOpen} onKeyDown={onActivate(onOpen)}
       className={selected ? '' : 'pm-hoverable'}
       style={{
         display: 'grid',
@@ -402,7 +403,9 @@ function SignalRow({ sig, onOpenDrilldown, onOutcome, compact }: { sig: Signal; 
 
   return (
     <div className="pm-hoverable"
+      role="button" tabIndex={0}
       onClick={() => onOpenDrilldown && onOpenDrilldown(sig.signal_id)}
+      onKeyDown={onActivate(() => onOpenDrilldown && onOpenDrilldown(sig.signal_id))}
       style={{
         padding: '8px 14px', minHeight: 44,
         borderBottom: `1px solid ${PM.border.subtle}`,

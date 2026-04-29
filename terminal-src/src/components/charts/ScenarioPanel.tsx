@@ -1,6 +1,7 @@
 // components/charts/ScenarioPanel.tsx — Scenario Planner MVP
 import { useState, useEffect, useMemo, useRef } from 'react'
 import { formatPrice, getPrecision } from '@/utils/formatPrice'
+import { onActivate } from '@/lib/a11y'
 
 const mono = "'SF Mono', Menlo, Consolas, monospace"
 
@@ -147,7 +148,7 @@ export function ScenarioPanel({ symbol, currentPrice, onClose, scenarios, onScen
       <div style={{ padding: '10px 12px', borderBottom: '1px solid #21262d' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
           <div style={{ fontSize: 10, fontWeight: 600, color: '#c9d1d9', letterSpacing: '0.03em' }}>SCENARIOS · {symbol}</div>
-          <span onClick={onClose} style={{ cursor: 'pointer', color: '#30363d', fontSize: 11, padding: '2px 4px' }}
+          <span role="button" tabIndex={0} onClick={onClose} onKeyDown={onActivate(onClose)} style={{ cursor: 'pointer', color: '#30363d', fontSize: 11, padding: '2px 4px' }}
             onMouseEnter={e => (e.currentTarget.style.color = '#8b949e')} onMouseLeave={e => (e.currentTarget.style.color = '#30363d')}>✕</span>
         </div>
         <div style={{ fontSize: 9, color: summaryCol }}>{summary}</div>
@@ -183,7 +184,7 @@ export function ScenarioPanel({ symbol, currentPrice, onClose, scenarios, onScen
           return (
             <div key={sc.id} style={{ borderBottom: '1px solid #161b22', borderLeft: `2px solid ${col}`, opacity: sc.status === 'invalidated' ? 0.4 : 1 }}>
               {/* Card header */}
-              <div onClick={() => toggleExpand(sc.id)}
+              <div role="button" tabIndex={0} onClick={() => toggleExpand(sc.id)} onKeyDown={onActivate(() => toggleExpand(sc.id))}
                 style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '7px 12px', cursor: 'pointer' }}
                 onMouseEnter={e => (e.currentTarget.style.background = '#0e1117')} onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
                 <span style={{ fontSize: 10, color: col }}>{TYPE_ICON[sc.type]}</span>
@@ -226,9 +227,9 @@ export function ScenarioPanel({ symbol, currentPrice, onClose, scenarios, onScen
                     </div>
                   )}
                   <div style={{ display: 'flex', gap: 10, marginTop: 8 }}>
-                    <span onClick={() => setEditing(sc.id)} style={{ fontSize: 9, color: '#484f58', cursor: 'pointer' }}
+                    <span role="button" tabIndex={0} onClick={() => setEditing(sc.id)} onKeyDown={onActivate(() => setEditing(sc.id))} style={{ fontSize: 9, color: '#484f58', cursor: 'pointer' }}
                       onMouseEnter={e => (e.currentTarget.style.color = '#388bfd')} onMouseLeave={e => (e.currentTarget.style.color = '#484f58')}>Edit</span>
-                    <span onClick={() => deleteScenario(sc.id)} style={{ fontSize: 9, color: '#484f58', cursor: 'pointer' }}
+                    <span role="button" tabIndex={0} onClick={() => deleteScenario(sc.id)} onKeyDown={onActivate(() => deleteScenario(sc.id))} style={{ fontSize: 9, color: '#484f58', cursor: 'pointer' }}
                       onMouseEnter={e => (e.currentTarget.style.color = '#f85149')} onMouseLeave={e => (e.currentTarget.style.color = '#484f58')}>Delete</span>
                   </div>
                 </div>
@@ -332,7 +333,7 @@ function ScenarioForm({ type, initial, price, dec, onSave, onCancel }: {
   const F = ({ label, value, onChange, placeholder }: { label: string; value: string; onChange: (v: string) => void; placeholder?: string }) => (
     <div style={{ marginBottom: 6 }}>
       <div style={{ fontSize: 9, color: '#484f58', marginBottom: 2 }}>{label}</div>
-      <input value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder}
+      <input value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder} aria-label={label}
         style={{ width: '100%', fontSize: 10, padding: '4px 6px', background: '#0e1117', border: '1px solid #21262d', color: '#c9d1d9', fontFamily: mono, outline: 'none' }}
         onFocus={e => (e.target.style.borderColor = col)} onBlur={e => (e.target.style.borderColor = '#21262d')} />
     </div>
@@ -352,7 +353,7 @@ function ScenarioForm({ type, initial, price, dec, onSave, onCancel }: {
         <div style={{ fontSize: 9, color: '#30363d', marginBottom: 6 }}>If price stays inside → no trade. If it breaks out → scenario resolved.</div>
       </>) : (<>
         <F label={type === 'bull' ? 'Trigger — break above' : 'Trigger — break below'} value={trigger} onChange={setTrigger} />
-        <input value={triggerNote} onChange={e => setTriggerNote(e.target.value)} placeholder="e.g. Break and hold above resistance"
+        <input value={triggerNote} onChange={e => setTriggerNote(e.target.value)} placeholder="e.g. Break and hold above resistance" aria-label="Trigger note"
           style={{ width: '100%', fontSize: 9, padding: '3px 6px', background: 'transparent', border: '1px solid #161b22', color: '#484f58', marginBottom: 6, outline: 'none' }} />
         <F label="Target price" value={target} onChange={setTarget} />
         <F label="Stop / Invalidation" value={invalidation} onChange={setInvalidation} />
@@ -363,6 +364,7 @@ function ScenarioForm({ type, initial, price, dec, onSave, onCancel }: {
         <div style={{ fontSize: 9, color: '#484f58', marginBottom: 2 }}>Plan</div>
         <textarea value={plan} onChange={e => setPlan(e.target.value)}
           placeholder={type === 'base' ? 'No trade. Wait for resolution...' : 'What do I do if this scenario triggers?'}
+          aria-label="Plan"
           rows={2} style={{ width: '100%', fontSize: 10, padding: '4px 6px', background: '#0e1117', border: '1px solid #21262d', color: '#c9d1d9', resize: 'vertical', outline: 'none', lineHeight: 1.5 }}
           onFocus={e => (e.target.style.borderColor = col)} onBlur={e => (e.target.style.borderColor = '#21262d')} />
       </div>

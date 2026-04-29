@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useStore } from '@/store/useStore'
 import { fetchFundamentals } from '@/api/client'
+import { onActivate } from '@/lib/a11y'
 
 // ── Sector auto-detection database ───────────────────────────
 // Covers the most common tickers. Unknown tickers → 'normal' fallback.
@@ -356,7 +357,10 @@ function CategorySection({ title, items, data, sector }: {
     <div style={{ marginBottom: 8 }}>
       {/* Header bar — clickable to collapse */}
       <div
+        role="button"
+        tabIndex={0}
         onClick={() => setOpen(v => !v)}
+        onKeyDown={onActivate(() => setOpen(v => !v))}
         style={{
           display: 'flex', alignItems: 'center', gap: 10,
           padding: '5px 8px', background: '#161b22',

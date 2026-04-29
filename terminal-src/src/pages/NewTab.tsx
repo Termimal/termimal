@@ -1,5 +1,6 @@
 // pages/NewTab.tsx — TradingView-style tile grid
 import { useNavigate } from 'react-router-dom'
+import { onActivate } from '@/lib/a11y'
 
 const TILES = [
   { path: '/',             label: 'Dashboard',         desc: 'Market overview, regime, risk engine', key: '1' },
@@ -40,7 +41,10 @@ export function NewTab() {
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
         {TILES.map((t: any) => (
-          <div key={t.path} onClick={() => openPage(t.path)}
+          <div key={t.path}
+            role="button" tabIndex={0}
+            onClick={() => openPage(t.path)}
+            onKeyDown={onActivate(() => openPage(t.path))}
             style={{ background: '#0e1117', padding: '12px 12px', cursor: 'pointer', border: '1px solid #21262d', transition: 'border-color 0.1s' }}
             onMouseEnter={e => { e.currentTarget.style.borderColor = '#388bfd' }}
             onMouseLeave={e => { e.currentTarget.style.borderColor = '#21262d' }}>

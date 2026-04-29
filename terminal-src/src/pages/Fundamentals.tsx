@@ -602,6 +602,7 @@ export function Fundamentals() {
         <div style={{ display:'flex', gap:5, alignItems:'center' }}>
           <input value={input} onChange={e=>setInput(e.target.value.toUpperCase())}
             onKeyDown={e=>e.key==='Enter'&&go()}
+            aria-label="Ticker symbol"
             placeholder="TICKER"
             style={{ background:'#161b22', border:'1px solid #21262d', color:'#388bfd', fontSize:16, fontWeight:700, padding:'5px 14px', width:120, outline:'none',  letterSpacing:0.5, borderRadius:4 }}
           />

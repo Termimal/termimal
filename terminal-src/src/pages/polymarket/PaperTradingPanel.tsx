@@ -208,7 +208,7 @@ export function PaperTradingPanel({ meta }: { meta: OFMarketMeta | null }) {
           border: `1px solid ${value && !valid ? PM.down : PM.border.prominent}`,
           borderRadius: 2,
         }}>
-          <input value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder}
+          <input value={value} onChange={e => onChange(e.target.value)} aria-label={label} placeholder={placeholder}
             disabled={tradeMode === 'live'}
             style={{
               flex: 1, height: 22, padding: '0 6px',

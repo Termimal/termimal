@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { useStore } from '@/store/useStore'
 import { FundamentalPanel } from '@/components/FundamentalPanel'
 import { Logo } from '@/components/common/Logo'
+import { onActivate } from '@/lib/a11y'
 
 interface Props { symbol: string }
 const F = "inherit"
@@ -351,7 +352,7 @@ function TradePlanner({ price, beta }: { price: number; beta: number }) {
         ].map(inp => (
           <div key={inp.l}>
             <div style={{ fontSize: 9, color: '#484f58', marginBottom: 2 }}>{inp.l}</div>
-            <input value={inp.v} onChange={e => inp.set(e.target.value)} placeholder={inp.ph ?? ''}
+            <input value={inp.v} onChange={e => inp.set(e.target.value)} aria-label={inp.l} placeholder={inp.ph ?? ''}
               style={{ width: '100%', fontSize: 11, padding: '4px 6px', background: '#0e1117', border: '1px solid #21262d', color: '#c9d1d9', fontFamily: mono }} />
           </div>
         ))}
@@ -2274,7 +2275,10 @@ function BtcOnchainPanel({ symbol }: { symbol: string }) {
             const col = sc(m.state)
             const hasValue = m.value != null
             return (
-              <div key={m.name} onClick={()=>hasValue && m.history?.length > 2 ? setExpanded(m.name) : null}
+              <div key={m.name}
+                   role="button" tabIndex={0}
+                   onClick={()=>hasValue && m.history?.length > 2 ? setExpanded(m.name) : null}
+                   onKeyDown={onActivate(()=>hasValue && m.history?.length > 2 ? setExpanded(m.name) : null)}
                    style={{background:'#0e1117',border:'1px solid #21262d',padding:'10px 12px',
                            cursor: hasValue && m.history?.length > 2 ? 'pointer' : 'default',
                            borderLeft: m.state ? `2px solid ${col}` : '1px solid #21262d'}}>

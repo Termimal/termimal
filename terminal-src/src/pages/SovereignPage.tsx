@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import { useStore, selectMacro } from '@/store/useStore'
 import { TvLineChart } from '@/components/charts/TvLineChart'
+import { onActivate } from '@/lib/a11y'
 
 const mono = "'SF Mono', Menlo, Consolas, monospace"
 
@@ -144,7 +145,7 @@ function SectionTitle({ children, right }: { children: string; right?: React.Rea
 // ═══════════════════════════════════════════════════════════
 
 function BackLink({ onClick, label }: { onClick: () => void; label: string }) {
-  return <span onClick={onClick} style={{ fontSize: 13, color: '#388bfd', cursor: 'pointer' }}>← {label}</span>
+  return <span role="button" tabIndex={0} onClick={onClick} onKeyDown={onActivate(onClick)} style={{ fontSize: 13, color: '#388bfd', cursor: 'pointer' }}>← {label}</span>
 }
 
 // ── Country Yield Detail ──
@@ -500,7 +501,10 @@ export function SovereignPage() {
           {SPREADS.map(sp => {
             const pct = ((sp.value - sp.range1y[0]) / (sp.range1y[1] - sp.range1y[0])) * 100
             return (
-              <div key={sp.label} onClick={() => openDetail('spread', sp.label)}
+              <div key={sp.label}
+                role="button" tabIndex={0}
+                onClick={() => openDetail('spread', sp.label)}
+                onKeyDown={onActivate(() => openDetail('spread', sp.label))}
                 style={{ marginBottom: 14, cursor: 'pointer', padding: '4px 6px', marginLeft: -6 }}
                 onMouseEnter={e => (e.currentTarget.style.background = '#161b22')} onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 2 }}>
@@ -532,7 +536,10 @@ export function SovereignPage() {
             const pct = (r.tonnes / maxT) * 100
             const addPct = r.change1y > 0 ? (r.change1y / maxT) * 100 : 0
             return (
-              <div key={r.flag} onClick={() => setGoldDetail(r)}
+              <div key={r.flag}
+                role="button" tabIndex={0}
+                onClick={() => setGoldDetail(r)}
+                onKeyDown={onActivate(() => setGoldDetail(r))}
                 onMouseEnter={e => (e.currentTarget as HTMLDivElement).style.background = '#161b22'}
                 onMouseLeave={e => (e.currentTarget as HTMLDivElement).style.background = 'transparent'}
                 style={{ marginBottom: 2, padding: '4px 6px', borderBottom: '1px solid #161b22', cursor: 'pointer', transition: 'background 80ms' }}>
@@ -683,7 +690,7 @@ export function SovereignPage() {
         const path = hist.map((v, i) => `${i === 0 ? 'M' : 'L'} ${xFor(i).toFixed(2)} ${yFor(v).toFixed(2)}`).join(' ')
         const area = `${path} L ${xFor(hist.length - 1).toFixed(2)} ${PAD.t + ch} L ${PAD.l} ${PAD.t + ch} Z`
         return (
-          <div onClick={() => setGoldDetail(null)}
+          <div aria-hidden="true" onClick={() => setGoldDetail(null)}
             style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.72)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 500 }}>
             <div onClick={e => e.stopPropagation()}
               style={{ background: '#0d1117', border: '1px solid #30363d', width: 780, padding: 20, fontFamily: 'inherit' }}>
@@ -775,7 +782,7 @@ export function SovereignPage() {
         const path = hist.map((v, i) => `${i === 0 ? 'M' : 'L'} ${xFor(i).toFixed(2)} ${yFor(v).toFixed(2)}`).join(' ')
         const area = `${path} L ${xFor(hist.length - 1).toFixed(2)} ${PAD.t + ch} L ${PAD.l} ${PAD.t + ch} Z`
         return (
-          <div onClick={() => setStableDetail(null)}
+          <div aria-hidden="true" onClick={() => setStableDetail(null)}
             style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.72)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 500 }}>
             <div onClick={e => e.stopPropagation()}
               style={{ background: '#0d1117', border: '1px solid #30363d', width: 780, padding: 20, fontFamily: 'inherit' }}>

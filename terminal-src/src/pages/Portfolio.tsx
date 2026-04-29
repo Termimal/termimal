@@ -6,6 +6,7 @@ import { fetchPriceHistory } from '@/api/client'
 import { TvCandleChart } from '@/components/charts/TvCandleChart'
 import { PortfolioNews } from '@/components/portfolio/PortfolioNews'
 import { Logo } from '@/components/common/Logo'
+import { onActivate } from '@/lib/a11y'
 
 interface Position { id: string; symbol: string; shares: number; entry: number; date: string }
 interface PortfolioMeta { id: string; name: string; createdAt: string }
@@ -53,9 +54,9 @@ function PositionSizer({ portfolioValue }: { portfolioValue: number }) {
   return (
     <div>
       <div style={{display:'flex',gap:10,marginBottom:10,flexWrap:'wrap'}}>
-        <div><div style={{fontSize:10,color:'#8b949e',marginBottom:3}}>Risk %</div><input value={riskPct} onChange={e=>setRiskPct(e.target.value)} type="number" step="0.1" style={{...inp,width:70}}/></div>
-        <div><div style={{fontSize:10,color:'#8b949e',marginBottom:3}}>Entry</div><input value={entryPrice} onChange={e=>setEntryPrice(e.target.value)} type="number" step="0.01" placeholder="150.00" style={{...inp,width:90}}/></div>
-        <div><div style={{fontSize:10,color:'#8b949e',marginBottom:3}}>Stop Loss</div><input value={stopPrice} onChange={e=>setStopPrice(e.target.value)} type="number" step="0.01" placeholder="145.00" style={{...inp,width:90}}/></div>
+        <div><div style={{fontSize:10,color:'#8b949e',marginBottom:3}}>Risk %</div><input aria-label="Risk %" value={riskPct} onChange={e=>setRiskPct(e.target.value)} type="number" step="0.1" style={{...inp,width:70}}/></div>
+        <div><div style={{fontSize:10,color:'#8b949e',marginBottom:3}}>Entry</div><input aria-label="Entry" value={entryPrice} onChange={e=>setEntryPrice(e.target.value)} type="number" step="0.01" placeholder="150.00" style={{...inp,width:90}}/></div>
+        <div><div style={{fontSize:10,color:'#8b949e',marginBottom:3}}>Stop Loss</div><input aria-label="Stop loss" value={stopPrice} onChange={e=>setStopPrice(e.target.value)} type="number" step="0.01" placeholder="145.00" style={{...inp,width:90}}/></div>
       </div>
       {valid&&<div style={{display:'flex',gap:12,fontSize:11,flexWrap:'wrap'}}>
         <span style={{color:'#388bfd'}}>Shares: <b>{shares}</b></span>
@@ -84,11 +85,11 @@ function PortfolioHub({ metas, onSelect, onCreate, onDelete, prices }: { metas: 
         <button onClick={()=>setCreating(true)} style={{fontSize:11,padding:'6px 14px',background:'#388bfd',color:'#fff',border:'none',cursor:'pointer',borderRadius:2,fontWeight:500}}>+ New Portfolio</button>
       </div>
       {creating&&(
-        <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,.6)',zIndex:1000,display:'flex',alignItems:'center',justifyContent:'center'}} onClick={()=>setCreating(false)}>
+        <div aria-hidden="true" style={{position:'fixed',inset:0,background:'rgba(0,0,0,.6)',zIndex:1000,display:'flex',alignItems:'center',justifyContent:'center'}} onClick={()=>setCreating(false)}>
           <div style={{background:'#161b22',border:'1px solid #30363d',padding:'24px 28px',minWidth:340}} onClick={e=>e.stopPropagation()}>
             <div style={{fontSize:14,fontWeight:600,color:'#c9d1d9',marginBottom:16}}>New Portfolio</div>
             <div style={{fontSize:11,color:'#8b949e',marginBottom:6}}>Portfolio name</div>
-            <input autoFocus value={newName} onChange={e=>setNewName(e.target.value)} onKeyDown={e=>{if(e.key==='Enter')submit();if(e.key==='Escape')setCreating(false)}} placeholder="e.g. Tech Growth, Dividends, Swing Trades…" style={{width:'100%',background:'#0e1117',border:'1px solid #21262d',color:'#c9d1d9',fontSize:13,padding:'8px 10px',outline:'none',borderRadius:2,boxSizing:'border-box'}}/>
+            <input aria-label="Portfolio name" autoFocus value={newName} onChange={e=>setNewName(e.target.value)} onKeyDown={e=>{if(e.key==='Enter')submit();if(e.key==='Escape')setCreating(false)}} placeholder="e.g. Tech Growth, Dividends, Swing Trades…" style={{width:'100%',background:'#0e1117',border:'1px solid #21262d',color:'#c9d1d9',fontSize:13,padding:'8px 10px',outline:'none',borderRadius:2,boxSizing:'border-box'}}/>
             <div style={{display:'flex',gap:8,marginTop:16,justifyContent:'flex-end'}}>
               <button onClick={()=>setCreating(false)} style={{fontSize:11,padding:'6px 14px',background:'transparent',color:'#8b949e',border:'1px solid #30363d',cursor:'pointer',borderRadius:2}}>Cancel</button>
               <button onClick={submit} style={{fontSize:11,padding:'6px 14px',background:'#388bfd',color:'#fff',border:'none',cursor:'pointer',borderRadius:2}}>Create</button>
@@ -104,9 +105,9 @@ function PortfolioHub({ metas, onSelect, onCreate, onDelete, prices }: { metas: 
           </div>
         : <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))',gap:12}}>
             {cards.map(c=>(
-              <div key={c.id} onClick={()=>onSelect(c.id)} style={{background:'#0e1117',border:'1px solid #21262d',padding:'16px 18px',cursor:'pointer',position:'relative',transition:'border-color .1s'}}
+              <div key={c.id} role="button" tabIndex={0} onClick={()=>onSelect(c.id)} onKeyDown={onActivate(()=>onSelect(c.id))} style={{background:'#0e1117',border:'1px solid #21262d',padding:'16px 18px',cursor:'pointer',position:'relative',transition:'border-color .1s'}}
                 onMouseEnter={e=>(e.currentTarget.style.borderColor='#30363d')} onMouseLeave={e=>(e.currentTarget.style.borderColor='#21262d')}>
-                <span onClick={e=>{e.stopPropagation();if(window.confirm(`Delete "${c.name}"?`))onDelete(c.id)}} style={{position:'absolute',top:10,right:10,color:'#30363d',cursor:'pointer',fontSize:16,lineHeight:1,padding:'2px 4px'}}
+                <span role="button" tabIndex={0} onClick={e=>{e.stopPropagation();if(window.confirm(`Delete "${c.name}"?`))onDelete(c.id)}} onKeyDown={onActivate(e=>{e.stopPropagation();if(window.confirm(`Delete "${c.name}"?`))onDelete(c.id)})} style={{position:'absolute',top:10,right:10,color:'#30363d',cursor:'pointer',fontSize:16,lineHeight:1,padding:'2px 4px'}}
                   onMouseEnter={e=>(e.currentTarget.style.color='#f85149')} onMouseLeave={e=>(e.currentTarget.style.color='#30363d')}>×</span>
                 <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:12}}>
                   <span style={{fontSize:13,fontWeight:600,color:'#c9d1d9'}}>{c.name}</span>
@@ -248,7 +249,7 @@ function PortfolioDetail({ meta, onBack, prices }: { meta: PortfolioMeta; onBack
           <div style={{fontSize:11,color:'#8b949e',marginBottom:24}}>Add positions to start tracking</div>
           <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:12,maxWidth:560,margin:'0 auto'}}>
             {([['csv','Upload CSV','From a file'],['manual','Add manually','Enter by hand'],['watchlist','From watchlist','Import from watchlist']] as const).map(([m,label,desc])=>(
-              <div key={m} onClick={()=>{setShowAdd(true);setAddMode(m)}} style={{background:'#0e1117',border:'1px solid #21262d',padding:'18px 14px',textAlign:'center',cursor:'pointer'}}
+              <div key={m} role="button" tabIndex={0} onClick={()=>{setShowAdd(true);setAddMode(m)}} onKeyDown={onActivate(()=>{setShowAdd(true);setAddMode(m)})} style={{background:'#0e1117',border:'1px solid #21262d',padding:'18px 14px',textAlign:'center',cursor:'pointer'}}
                 onMouseEnter={e=>(e.currentTarget.style.borderColor='#30363d')} onMouseLeave={e=>(e.currentTarget.style.borderColor='#21262d')}>
                 <div style={{fontSize:12,fontWeight:500,color:'#c9d1d9',marginBottom:4}}>{label}</div>
                 <div style={{fontSize:10,color:'#484f58'}}>{desc}</div>
@@ -275,9 +276,9 @@ function PortfolioDetail({ meta, onBack, prices }: { meta: PortfolioMeta; onBack
           {addMode==='manual'&&(
             <div style={{display:'flex',gap:8,flexWrap:'wrap',alignItems:'flex-end'}}>
               {([['Symbol',sym,setSym,'80px','AAPL'],['Shares',shares,setShares,'80px','10'],['Entry Price',entry,setEntry,'100px','150.00']] as const).map(([label,val,setter,width,ph])=>(
-                <div key={label}><div style={{fontSize:10,color:'#8b949e',marginBottom:3}}>{label}</div><input value={val} onChange={e=>(setter as any)(e.target.value)} placeholder={ph} style={{...inp,width}}/></div>
+                <div key={label}><div style={{fontSize:10,color:'#8b949e',marginBottom:3}}>{label}</div><input aria-label={label} value={val} onChange={e=>(setter as any)(e.target.value)} placeholder={ph} style={{...inp,width}}/></div>
               ))}
-              <div><div style={{fontSize:10,color:'#8b949e',marginBottom:3}}>Date</div><input type="date" value={date} onChange={e=>setDate(e.target.value)} style={{...inp,width:120}}/></div>
+              <div><div style={{fontSize:10,color:'#8b949e',marginBottom:3}}>Date</div><input aria-label="Date" type="date" value={date} onChange={e=>setDate(e.target.value)} style={{...inp,width:120}}/></div>
               <button onClick={add} style={{padding:'6px 16px',background:'#388bfd',color:'#fff',border:'none',cursor:'pointer',fontSize:12,borderRadius:2}}>Add</button>
             </div>
           )}
@@ -298,7 +299,7 @@ function PortfolioDetail({ meta, onBack, prices }: { meta: PortfolioMeta; onBack
           {addMode==='csv'&&(
             <div>
               <div style={{fontSize:11,color:'#8b949e',marginBottom:10}}>Columns: <span style={{color:'#c9d1d9'}}>Symbol, Shares, Price, Date</span>. Auto-detects headers.</div>
-              <input ref={csvRef} type="file" accept=".csv,.tsv,.txt" onChange={handleCSV} style={{fontSize:12,color:'#8b949e'}}/>
+              <input aria-label="Upload portfolio CSV" ref={csvRef} type="file" accept=".csv,.tsv,.txt" onChange={handleCSV} style={{fontSize:12,color:'#8b949e'}}/>
               <div style={{marginTop:10,padding:'8px 12px',background:'#0e1117',fontSize:10,color:'#484f58',fontFamily:mono}}>Symbol,Shares,Price,Date<br/>AAPL,10,150.00,2024-01-15</div>
             </div>
           )}
@@ -379,7 +380,7 @@ function PortfolioDetail({ meta, onBack, prices }: { meta: PortfolioMeta; onBack
                 <div style={{fontSize:12,fontWeight:500,color:'#c9d1d9',marginBottom:10}}>{title as string}</div>
                 {(list as typeof rows).length===0?<div style={{fontSize:11,color:'#8b949e'}}>None today</div>
                   :(list as typeof rows).map(r=>(
-                    <div key={r.id} onClick={()=>navigate(`/ticker/${r.symbol}`)} style={{display:'flex',alignItems:'center',gap:8,marginBottom:6,cursor:'pointer'}}>
+                    <div key={r.id} role="button" tabIndex={0} onClick={()=>navigate(`/ticker/${r.symbol}`)} onKeyDown={onActivate(()=>navigate(`/ticker/${r.symbol}`))} style={{display:'flex',alignItems:'center',gap:8,marginBottom:6,cursor:'pointer'}}>
                       <Logo sym={r.symbol}/>
                       <span style={{fontSize:11,color:'#c9d1d9',width:50,fontWeight:500,background:'#161b22',padding:'3px 8px',textAlign:'center'}}>{r.symbol}</span>
                       <div style={{flex:1,height:6,background:'#161b22',borderRadius:2,overflow:'hidden'}}><div style={{height:'100%',width:`${(Math.abs(r.dayChg)/maxAbs)*100}%`,background:col as string,borderRadius:2}}/></div>
@@ -422,7 +423,7 @@ function PortfolioDetail({ meta, onBack, prices }: { meta: PortfolioMeta; onBack
                       <td style={{padding:'5px 8px',textAlign:'right',color:'#c9d1d9',fontFamily:mono,fontSize:11}}>{fmtUsd(r.value)}</td>
                       <td style={{padding:'5px 8px',textAlign:'right',color:'#484f58',fontFamily:mono,fontSize:10}}>{tv>0?((r.value/tv)*100).toFixed(1):0}%</td>
                       <td style={{padding:'5px 8px',textAlign:'right',fontFamily:mono,fontSize:11}}><span style={{color:col}}>{fmtUsd(r.pnl)}</span><span style={{color:col,fontSize:10,marginLeft:4}}>{r.pnlPct>=0?'+':''}{r.pnlPct.toFixed(1)}%</span></td>
-                      <td style={{padding:'5px 8px',textAlign:'right'}}><span onClick={e=>{e.stopPropagation();sv(positions.filter(p=>p.id!==r.id))}} style={{color:'#30363d',cursor:'pointer',fontSize:14}} onMouseEnter={e=>(e.currentTarget.style.color='#f85149')} onMouseLeave={e=>(e.currentTarget.style.color='#30363d')}>×</span></td>
+                      <td style={{padding:'5px 8px',textAlign:'right'}}><span role="button" tabIndex={0} aria-label="Remove position" onClick={e=>{e.stopPropagation();sv(positions.filter(p=>p.id!==r.id))}} onKeyDown={onActivate(e=>{e.stopPropagation();sv(positions.filter(p=>p.id!==r.id))})} style={{color:'#30363d',cursor:'pointer',fontSize:14}} onMouseEnter={e=>(e.currentTarget.style.color='#f85149')} onMouseLeave={e=>(e.currentTarget.style.color='#30363d')}>×</span></td>
                     </tr>
                   })}
                 </tbody>

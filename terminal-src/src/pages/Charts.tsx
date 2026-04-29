@@ -8,6 +8,7 @@ import { ScenarioPanel, ScenarioOverlay, type ScenarioSet } from '@/components/c
 import { fetchPriceHistory } from '@/api/client'
 import { Logo } from '@/components/common/Logo'
 import type { IChartApi, ISeriesApi } from 'lightweight-charts'
+import { onActivate } from '@/lib/a11y'
 
 // ─── Timeframe options (expanded) ─────────────────────────────────
 const TF_OPTIONS = [
@@ -406,6 +407,7 @@ export function Charts() {
           {/* Symbol search */}
           <div style={{ position: 'relative', height: '100%', display: 'flex', alignItems: 'center', marginRight: 6 }}>
             <input
+              aria-label="Symbol search"
               value={input}
               onChange={e => setInput(e.target.value.toUpperCase())}
               onClick={e => { e.stopPropagation(); setSymSearch(true) }}
@@ -449,7 +451,9 @@ export function Charts() {
                   }
                   return matches.slice(0, 12).map(t => (
                     <div key={t.s}
+                      role="button" tabIndex={0}
                       onClick={() => { setSymbol(t.s); setInput(t.s); setSymSearch(false) }}
+                      onKeyDown={onActivate(() => { setSymbol(t.s); setInput(t.s); setSymSearch(false) })}
                       style={{
                         display: 'flex', alignItems: 'center', padding: '7px 12px',
                         cursor: 'pointer', gap: 10,
@@ -535,7 +539,7 @@ export function Charts() {
                       {items.map(ind => {
                         const active = indicators.find(i => i.id === ind.id)?.active
                         return (
-                          <div key={ind.id} onClick={() => toggleIndicator(ind.id)}
+                          <div key={ind.id} role="button" tabIndex={0} onClick={() => toggleIndicator(ind.id)} onKeyDown={onActivate(() => toggleIndicator(ind.id))}
                             style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '5px 10px', cursor: 'pointer' }}
                             onMouseEnter={e => (e.currentTarget.style.background = '#1c2128')}
                             onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
@@ -562,11 +566,15 @@ export function Charts() {
           </div>
 
           {/* Scenarios */}
-          <span onClick={() => {
+          <span role="button" tabIndex={0} onClick={() => {
             const next = !showScenarios
             setShowScenarios(next)
             window.dispatchEvent(new CustomEvent('ft-scenario-panel', { detail: { open: next } }))
-          }}
+          }} onKeyDown={onActivate(() => {
+            const next = !showScenarios
+            setShowScenarios(next)
+            window.dispatchEvent(new CustomEvent('ft-scenario-panel', { detail: { open: next } }))
+          })}
             style={{ padding: '0 10px', height: '100%', display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, cursor: 'pointer',
               color: showScenarios ? '#c9d1d9' : '#8b949e', borderRight: '1px solid #21262d' }}>
             <Icon><path d="M2 8l3-3 3 3 5-6"/></Icon>
@@ -734,7 +742,7 @@ function Dropdown({ label, open, onToggle, items, selected, onSelect, width }: {
           boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
         }}>
           {items.map(item => (
-            <div key={item.key} onClick={() => onSelect(item.key)}
+            <div key={item.key} role="button" tabIndex={0} onClick={() => onSelect(item.key)} onKeyDown={onActivate(() => onSelect(item.key))}
               style={{
                 padding: '6px 12px', fontSize: 11, cursor: 'pointer',
                 background: selected === item.key ? 'rgba(56,139,253,0.15)' : 'transparent',
@@ -1016,7 +1024,7 @@ function BrokerOrderModal({ symbol, price, side, onClose, initialMode }: {
   }
 
   return (
-    <div onClick={onClose}
+    <div aria-hidden="true" onClick={onClose}
       style={{
         position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 1000,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -1043,7 +1051,7 @@ function BrokerOrderModal({ symbol, price, side, onClose, initialMode }: {
                   <span style={{ fontFamily: mono }}>{formatPrice(symbol, side === 'buy' ? price * 1.0002 : price * 0.9998)}</span>
                 </div>
               </div>
-              <input type="text" placeholder="Search broker..." value={brokerQuery} onChange={e => setBrokerQuery(e.target.value)}
+              <input type="text" placeholder="Search broker..." aria-label="Search brokers" value={brokerQuery} onChange={e => setBrokerQuery(e.target.value)}
                 style={{ width: 200, padding: '6px 10px', background: '#0b0f14', border: '1px solid #30363d', color: '#c9d1d9', fontSize: 11, borderRadius: 3, outline: 'none', fontFamily: 'system-ui, sans-serif' }}/>
             </>
           ) : (
@@ -1204,13 +1212,13 @@ function BrokerOrderModal({ symbol, price, side, onClose, initialMode }: {
                   {/* Quantity input */}
                   <div>
                     <div style={{ fontSize: 9, color: '#8b949e', marginBottom: 4, letterSpacing: 0.4 }}>QUANTITY</div>
-                    <input type="number" value={qty} onChange={e => setQty(e.target.value)}
+                    <input aria-label="Quantity" type="number" value={qty} onChange={e => setQty(e.target.value)}
                       style={{ width: '100%', padding: '8px 10px', background: '#0b0f14', border: '1px solid #30363d', color: '#c9d1d9', fontSize: 13, fontFamily: mono, borderRadius: 3, outline: 'none' }}/>
                   </div>
                   {orderType !== 'market' && (
                     <div>
                       <div style={{ fontSize: 9, color: '#8b949e', marginBottom: 4, letterSpacing: 0.4 }}>{orderType === 'limit' ? 'LIMIT' : 'STOP'} PRICE</div>
-                      <input type="number" value={limitPrice} onChange={e => setLimitPrice(e.target.value)} step="0.01"
+                      <input aria-label={`${orderType === 'limit' ? 'Limit' : 'Stop'} price`} type="number" value={limitPrice} onChange={e => setLimitPrice(e.target.value)} step="0.01"
                         style={{ width: '100%', padding: '8px 10px', background: '#0b0f14', border: '1px solid #30363d', color: '#c9d1d9', fontSize: 13, fontFamily: mono, borderRadius: 3, outline: 'none' }}/>
                     </div>
                   )}

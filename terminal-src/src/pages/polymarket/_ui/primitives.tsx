@@ -3,6 +3,7 @@
 
 import { ReactNode, CSSProperties } from 'react'
 import { PM } from './tokens'
+import { onActivate } from '@/lib/a11y'
 
 // ─── Metric Cell ─────────────────────────────────────────────────────────────
 export function MetricCell({
@@ -155,7 +156,9 @@ export function Chip({
     >
       {label}
       {onRemove && active && (
-        <span onClick={e => { e.stopPropagation(); onRemove() }}
+        <span role="button" tabIndex={0}
+          onClick={e => { e.stopPropagation(); onRemove() }}
+          onKeyDown={onActivate(e => { e.stopPropagation(); onRemove() })}
           style={{ fontSize: 11, lineHeight: 1, color: PM.accentText, padding: '0 2px' }}>×</span>
       )}
     </button>

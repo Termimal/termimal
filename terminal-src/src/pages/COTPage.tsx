@@ -8,6 +8,7 @@ import { RiskWarning } from '@/components/common/RiskWarning'
 import { MethodologyExpander } from '@/components/common/MethodologyExpander'
 import { methodologies } from '@/components/common/methodologies'
 import { DataSource } from '@/components/common/DataSource'
+import { onActivate } from '@/lib/a11y'
 
 // Mapping: COT contract name → positioning instrument ID
 const COT_TO_POSITIONING: Record<string, string> = {
@@ -202,7 +203,7 @@ function ContractCard({ row, isExpanded, onToggle, positioningData, onOpenPositi
   return (
     <div style={{ borderBottom: '1px solid #21262d', marginBottom: 0 }}>
       {/* Header */}
-      <div onClick={onToggle} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', cursor: 'pointer' }}
+      <div role="button" tabIndex={0} onClick={onToggle} onKeyDown={onActivate(onToggle)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', cursor: 'pointer' }}
         onMouseEnter={e => (e.currentTarget.style.background = '#1c2128')}
         onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -211,7 +212,7 @@ function ContractCard({ row, isExpanded, onToggle, positioningData, onOpenPositi
             {isTff ? 'FINANCIAL' : 'COMMODITY'}
           </span>
           {posData && (
-            <span onClick={e => { e.stopPropagation(); onOpenPositioning?.(posId) }}
+            <span role="button" tabIndex={0} onClick={e => { e.stopPropagation(); onOpenPositioning?.(posId) }} onKeyDown={onActivate(e => { e.stopPropagation(); onOpenPositioning?.(posId) })}
               style={{ fontSize: 9, color: posData.percentile >= 90 ? '#f85149' : posData.percentile >= 75 ? '#d29922' : '#484f58', cursor: 'pointer',
                 padding: '1px 6px', border: '1px solid #21262d', background: '#161b22' }}
               title="Open Positioning detail">

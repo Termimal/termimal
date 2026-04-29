@@ -5,7 +5,7 @@
 // Re-openable via openCookiePreferences() — wire from any "Cookie preferences"
 // link in the footer.
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 
 const STORAGE_KEY = 'termimal:cookies:v1'
 const OPEN_EVENT  = 'termimal:cookies:open'
@@ -114,6 +114,7 @@ export function CookieConsentBanner() {
   const [functional, setFunctional] = useState(false)
   const [analytics, setAnalytics] = useState(false)
   const [marketing, setMarketing] = useState(false)
+  const dialogRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const existing = read()
@@ -150,11 +151,27 @@ export function CookieConsentBanner() {
     setShowDetails(false)
   }, [])
 
+  // ESC closes + auto-focus first focusable on open
+  useEffect(() => {
+    if (!visible) return
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setVisible(false) }
+    window.addEventListener('keydown', onKey)
+    const focusTimer = window.setTimeout(() => {
+      dialogRef.current?.querySelector<HTMLElement>('button, [href], input, textarea, [tabindex]:not([tabindex="-1"])')?.focus()
+    }, 0)
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      window.clearTimeout(focusTimer)
+    }
+  }, [visible])
+
   if (!visible) return null
 
   return (
     <div
+      ref={dialogRef}
       role="dialog"
+      aria-modal="true"
       aria-label="Cookie preferences"
       style={{
         position: 'fixed',

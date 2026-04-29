@@ -6,7 +6,7 @@
 // gradients, no glow, no consumer-fintech bright colors. Lock + check
 // icons only. Numbers as ∞ (never the word "Unlimited").
 
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { PLAN_PRICES, PLAN_CURRENCY, PLAN_LIMITS, formatLimit, type Plan } from '@/lib/plan'
 
 const mono = "'SF Mono', Menlo, Consolas, monospace"
@@ -88,16 +88,25 @@ export function UpgradeModal({
   reason,
   title,
 }: UpgradeModalProps) {
-  // Lock body scroll while open + Esc to close
+  const dialogRef = useRef<HTMLDivElement>(null)
+
+  // Lock body scroll while open + Esc to close + restore focus
   useEffect(() => {
     if (!open) return
     const prev = document.body.style.overflow
     document.body.style.overflow = 'hidden'
+    const previouslyFocused = document.activeElement as HTMLElement | null
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
     window.addEventListener('keydown', onKey)
+    // Auto-focus the first focusable element in the dialog when it opens
+    const focusTimer = window.setTimeout(() => {
+      dialogRef.current?.querySelector<HTMLElement>('button, [href], input, textarea, [tabindex]:not([tabindex="-1"])')?.focus()
+    }, 0)
     return () => {
       document.body.style.overflow = prev
       window.removeEventListener('keydown', onKey)
+      window.clearTimeout(focusTimer)
+      try { previouslyFocused?.focus?.() } catch {}
     }
   }, [open, onClose])
 
@@ -109,6 +118,7 @@ export function UpgradeModal({
 
   return (
     <div
+      ref={dialogRef}
       role="dialog"
       aria-modal="true"
       aria-labelledby="upgrade-modal-title"

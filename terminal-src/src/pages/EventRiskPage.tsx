@@ -2,6 +2,7 @@
 // Data transparency, 22 curated events, terminal-grade polish
 import React, { useState } from 'react'
 import { TvLineChart } from '@/components/charts/TvLineChart'
+import { onActivate } from '@/lib/a11y'
 
 const mono = "'SF Mono', Menlo, Consolas, monospace"
 
@@ -345,7 +346,7 @@ function EventDetail({ event, onBack }: { event: EventItem; onBack: () => void }
   return (
     <div style={{ padding:'20px 24px' }}>
       {/* Back nav */}
-      <span onClick={onBack} style={{ fontSize:12, color:'#388bfd', cursor:'pointer', letterSpacing:'0.01em' }}>← Event Risk Monitor</span>
+      <span role="button" tabIndex={0} onClick={onBack} onKeyDown={onActivate(onBack)} style={{ fontSize:12, color:'#388bfd', cursor:'pointer', letterSpacing:'0.01em' }}>← Event Risk Monitor</span>
 
       {/* Header */}
       <div style={{ marginTop:14, display:'flex', alignItems:'flex-start', gap:16 }}>
@@ -629,7 +630,7 @@ export function EventRiskPage() {
         ))}
         <div style={{ marginLeft:'auto', paddingRight:8, display:'flex', alignItems:'center', gap:4 }}>
           <span style={{ fontSize:10, color:'#30363d' }}>⌕</span>
-          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Filter events"
+          <input value={search} onChange={e => setSearch(e.target.value)} aria-label="Filter events" placeholder="Filter events"
             style={{ background:'transparent', border:'none', borderBottom:`1px solid ${search ? '#388bfd' : '#21262d'}`, color:'#c9d1d9', fontSize:10, padding:'4px 2px', width: search ? 130 : 90, outline:'none', fontFamily:mono, transition:'width 0.2s, border-color 0.2s' }}
             onFocus={e => { e.currentTarget.style.width = '130px'; e.currentTarget.style.borderBottomColor = '#388bfd' }}
             onBlur={e => { if (!search) { e.currentTarget.style.width = '90px'; e.currentTarget.style.borderBottomColor = '#21262d' } }}

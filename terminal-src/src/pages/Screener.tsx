@@ -4,6 +4,7 @@ import { useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useStore } from '@/store/useStore'
 import { Logo } from '@/components/common/Logo'
+import { onActivate } from '@/lib/a11y'
 
 // ─── Sector styling ──────────────────────────────────────────────
 const SECTOR_STYLE: Record<string, { bg: string; border: string; fg: string }> = {
@@ -380,7 +381,7 @@ export function Screener() {
           {/* Picker dropdown */}
           {showPicker && (
             <>
-              <div onClick={() => setShowPicker(false)}
+              <div aria-hidden="true" onClick={() => setShowPicker(false)}
                 style={{ position: 'fixed', inset: 0, zIndex: 40 }} />
               <div style={{
                 position: 'absolute', top: '100%', left: 0, marginTop: 4,
@@ -391,6 +392,7 @@ export function Screener() {
               }}>
                 <input
                   autoFocus
+                  aria-label="Search a filter"
                   placeholder="Search a filter…"
                   value={pickerSearch}
                   onChange={e => setPickerSearch(e.target.value)}
@@ -408,7 +410,9 @@ export function Screener() {
                     </div>
                   ) : availableFields.map(f => (
                     <div key={f.id}
+                      role="button" tabIndex={0}
                       onClick={() => addFilter(f.id)}
+                      onKeyDown={onActivate(() => addFilter(f.id))}
                       style={{
                         padding: '6px 12px', fontSize: 11, color: '#c9d1d9',
                         cursor: 'pointer',
@@ -431,6 +435,7 @@ export function Screener() {
         {/* Search box — always visible (ticker / name) */}
         <input
           type="text"
+          aria-label="Search ticker or name"
           placeholder="Search ticker or name…"
           value={filters.search ?? ''}
           onChange={e => updateF({ search: e.target.value })}
@@ -575,6 +580,7 @@ function FilterChip({ field, filters, updateF, onRemove }: {
         <>
           <input
             type="number"
+            aria-label={`${field.label} minimum`}
             placeholder="min"
             value={(filters[field.minKey!] as string) ?? ''}
             onChange={e => updateF({ [field.minKey!]: e.target.value } as any)}
@@ -588,6 +594,7 @@ function FilterChip({ field, filters, updateF, onRemove }: {
           <span style={{ fontSize: 9, color: '#484f58' }}>–</span>
           <input
             type="number"
+            aria-label={`${field.label} maximum`}
             placeholder="max"
             value={(filters[field.maxKey!] as string) ?? ''}
             onChange={e => updateF({ [field.maxKey!]: e.target.value } as any)}
@@ -615,7 +622,9 @@ function FilterChip({ field, filters, updateF, onRemove }: {
       )}
 
       <span
+        role="button" tabIndex={0}
         onClick={onRemove}
+        onKeyDown={onActivate(onRemove)}
         style={{
           cursor: 'pointer', marginLeft: 4, fontSize: 11,
           color: '#8b949e', lineHeight: 1,

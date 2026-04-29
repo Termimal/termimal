@@ -2,6 +2,7 @@
 // Same data logic, TradingView styling
 import { useState, useEffect, useMemo } from 'react'
 import { useStore, selectMacro, selectCOT } from '@/store/useStore'
+import { onActivate } from '@/lib/a11y'
 
 function chg(now: number, prev: number) { return now - prev }
 function pct(now: number, prev: number) { return ((now - prev) / Math.abs(prev) * 100) }
@@ -68,7 +69,9 @@ function Section({ num, title, rows }: {
   const [open, setOpen] = useState(true)
   return (
     <div style={{ marginBottom: 0 }}>
-      <div onClick={() => setOpen(!open)}
+      <div role="button" tabIndex={0}
+        onClick={() => setOpen(!open)}
+        onKeyDown={onActivate(() => setOpen(!open))}
         style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', cursor: 'pointer', borderBottom: '1px solid #21262d' }}
         onMouseEnter={e => (e.currentTarget.style.background = '#1c2128')}
         onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>

@@ -9,6 +9,7 @@ import { PositioningPage } from '@/pages/PositioningPage'
 import { Calendar } from '@/pages/Calendar'
 import { DataSource } from '@/components/common/DataSource'
 import { PaywallGate } from '@/components/common/PaywallGate'
+import { onActivate } from '@/lib/a11y'
 
 // ─── Regime band reading ─────────────────────────────────────
 function RegimeReading({ label, val, status, col }: { label: string; val: string; status: string; col: string }) {
@@ -245,7 +246,7 @@ export function MacroPage() {
           />
           {/* Clickable title + sub overlay — triggers dropdown */}
           <div style={{ position: 'absolute', top: 5, left: 8, zIndex: 5, display: 'flex', alignItems: 'baseline', gap: 6 }}>
-            <div onClick={() => setVixOpen(!vixOpen)}
+            <div role="button" tabIndex={0} onClick={() => setVixOpen(!vixOpen)} onKeyDown={onActivate(() => setVixOpen(!vixOpen))}
               style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 4,
                 padding: '2px 8px', fontSize: 11, fontWeight: 600, color: '#c9d1d9', background: vixOpen ? '#1c2128' : 'transparent',
                 border: `1px solid ${vixOpen ? '#388bfd44' : 'transparent'}`, transition: 'all 0.15s' }}
@@ -257,7 +258,7 @@ export function MacroPage() {
           </div>
           {vixOpen && (
             <>
-              <div onClick={() => setVixOpen(false)} style={{ position: 'fixed', inset: 0, zIndex: 8 }} />
+              <div aria-hidden="true" onClick={() => setVixOpen(false)} style={{ position: 'fixed', inset: 0, zIndex: 8 }} />
               <div style={{ position: 'absolute', top: 30, left: 8, zIndex: 10, background: '#161b22', border: '1px solid #30363d', boxShadow: '0 8px 24px rgba(0,0,0,0.6)', minWidth: 180 }}>
               {([
                 { k: 'us' as const, label: 'VIX (S&P 500)' },
@@ -265,8 +266,8 @@ export function MacroPage() {
                 { k: 'jp' as const, label: 'Nikkei 225 Vol' },
                 { k: 'cn' as const, label: 'Hang Seng Vol' },
               ]).map(opt => (
-                <div key={opt.k} onClick={() => { setVixRegion(opt.k); setVixOpen(false) }}
-                  style={{ padding: '7px 14px', fontSize: 10, cursor: 'pointer', 
+                <div key={opt.k} role="button" tabIndex={0} onClick={() => { setVixRegion(opt.k); setVixOpen(false) }} onKeyDown={onActivate(() => { setVixRegion(opt.k); setVixOpen(false) })}
+                  style={{ padding: '7px 14px', fontSize: 10, cursor: 'pointer',
                     color: vixRegion === opt.k ? '#c9d1d9' : '#8b949e',
                     background: vixRegion === opt.k ? '#388bfd18' : 'transparent', 
                     borderLeft: vixRegion === opt.k ? '2px solid #388bfd' : '2px solid transparent',

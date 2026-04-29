@@ -2,6 +2,7 @@
 import { useState, useMemo } from 'react'
 import { TvLineChart } from '@/components/charts/TvLineChart'
 import { Flag } from '@/components/common/Flag'
+import { onActivate } from '@/lib/a11y'
 
 interface Evt {
   date: string; time: string; cc: string; flag: string; name: string; ref: string
@@ -83,7 +84,7 @@ export function Calendar() {
     const v = chartData?.values ?? [], cur = v[v.length - 1] ?? 0, prv = v.length > 2 ? v[v.length - 2] : cur
     return (
       <div style={{ padding: '20px 24px' }}>
-        <span onClick={() => setChart(null)} style={{ fontSize: 13, color: '#388bfd', cursor: 'pointer' }}>← Back to Calendar</span>
+        <span role="button" tabIndex={0} onClick={() => setChart(null)} onKeyDown={onActivate(() => setChart(null))} style={{ fontSize: 13, color: '#388bfd', cursor: 'pointer' }}>← Back to Calendar</span>
         <div style={{ marginTop: 12, display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
           <span style={{ fontSize: 28 }}>{chart.flag}</span>
           <div>
@@ -114,7 +115,7 @@ export function Calendar() {
       <div style={{ display: 'flex', gap: 12, marginBottom: 20, alignItems: 'center' }}>
         <div style={{ display: 'flex', border: '1px solid #21262d' }}>
           {CB.map(([c, label]) => (
-            <span key={c} onClick={() => setCF(c)}
+            <span key={c} role="button" tabIndex={0} onClick={() => setCF(c)} onKeyDown={onActivate(() => setCF(c))}
               style={{ padding: '5px 10px', fontSize: 11, cursor: 'pointer', borderRight: '1px solid #21262d',
                 background: cF === c ? '#1c2128' : 'transparent', color: cF === c ? '#c9d1d9' : '#484f58', fontWeight: cF === c ? 500 : 400,
                 display: 'flex', alignItems: 'center', gap: 4 }}>
@@ -125,7 +126,7 @@ export function Calendar() {
         </div>
         <div style={{ display: 'flex', border: '1px solid #21262d' }}>
           {(['all','high','medium'] as const).map(k => (
-            <span key={k} onClick={() => setIF(k)}
+            <span key={k} role="button" tabIndex={0} onClick={() => setIF(k)} onKeyDown={onActivate(() => setIF(k))}
               style={{ padding: '5px 10px', fontSize: 11, cursor: 'pointer', borderRight: '1px solid #21262d',
                 background: iF === k ? '#1c2128' : 'transparent', color: iF === k ? '#c9d1d9' : '#484f58', fontWeight: iF === k ? 500 : 400,
                 display: 'flex', alignItems: 'center', gap: 5 }}>
@@ -159,7 +160,7 @@ export function Calendar() {
             </div>
             {/* Event rows */}
             {evts.map((e, i) => (
-              <div key={i} onClick={() => open(e)}
+              <div key={i} role="button" tabIndex={0} onClick={() => open(e)} onKeyDown={onActivate(() => open(e))}
                 style={{ display: 'grid', gridTemplateColumns: '68px 16px 26px 8px 1fr 80px 80px 80px', alignItems: 'center', height: 38, borderBottom: '1px solid #161b22', cursor: e.fred ? 'pointer' : 'default', transition: 'background 0.06s' }}
                 onMouseEnter={ev => (ev.currentTarget.style.background = '#1c2128')}
                 onMouseLeave={ev => (ev.currentTarget.style.background = 'transparent')}>

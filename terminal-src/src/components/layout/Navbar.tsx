@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { useStore, selectRegime } from '@/store/useStore'
 import { Logo } from '@/components/common/Logo'
 import { supabase } from '@/lib/supabase'
+import { onActivate } from '@/lib/a11y'
 
 const ALL_PAGES = [
   { path: '/',             label: 'Dashboard' },
@@ -408,6 +409,7 @@ export function Navbar() {
             <input ref={inputRef} value={query} onChange={e => onSearch(e.target.value)}
               onFocus={() => { onSearch(query) }} onKeyDown={onKey}
               placeholder="Search symbol or name...  ⌘K"
+              aria-label="Search symbol or name"
               style={{ width: '100%', background: '#0e1117', border: '1px solid #21262d', borderRadius: 2, fontSize: 11, color: '#c9d1d9', padding: '4px 8px 4px 26px', outline: 'none' }} />
           </div>
           {searchOpen && (
@@ -415,7 +417,7 @@ export function Navbar() {
               {/* Category tabs */}
               <div style={{ display: 'flex', gap: 0, borderBottom: '1px solid #21262d', flexShrink: 0, overflowX: 'auto' }}>
                 {[{k:'all',l:'All'},{k:'Stock',l:'Stocks'},{k:'ETF',l:'ETFs'},{k:'Index',l:'Indices'},{k:'Crypto',l:'Crypto'},{k:'Forex',l:'Forex'},{k:'Futures',l:'Futures'}].map(c=>(
-                  <span key={c.k} onClick={()=>{setSearchCat(c.k);onSearch(query,c.k)}}
+                  <span key={c.k} role="button" tabIndex={0} onClick={()=>{setSearchCat(c.k);onSearch(query,c.k)}} onKeyDown={onActivate(()=>{setSearchCat(c.k);onSearch(query,c.k)})}
                     style={{padding:'5px 10px',fontSize:10,cursor:'pointer',flexShrink:0,
                       color:searchCat===c.k?'#c9d1d9':'#484f58',fontWeight:searchCat===c.k?500:400,
                       borderBottom:searchCat===c.k?'1px solid #388bfd':'1px solid transparent'}}>{c.l}</span>
@@ -428,7 +430,7 @@ export function Navbar() {
                   {query ? <>No results for "{query}" · <button onClick={() => goTo(query.toUpperCase())} style={{ color: '#388bfd', background: 'none', border: 'none', cursor: 'pointer', fontSize: 11 }}>Try {query.toUpperCase()}</button></> : 'Type to search'}
                 </div>
               ) : hits.map((t, i) => (
-                <div key={t.s} onClick={() => goTo(t.s)} onMouseEnter={() => setSel(i)}
+                <div key={t.s} role="button" tabIndex={0} onClick={() => goTo(t.s)} onKeyDown={onActivate(() => goTo(t.s))} onMouseEnter={() => setSel(i)}
                   style={{ display: 'flex', alignItems: 'center', padding: '5px 10px', cursor: 'pointer', background: i === sel ? '#21262d' : 'transparent', gap: 8 }}>
                   <Logo sym={t.s} />
                   <span style={{ fontSize: 12, fontWeight: 600, color: '#c9d1d9', minWidth: 56 }}>{t.s}</span>
@@ -465,7 +467,7 @@ export function Navbar() {
 
         {/* ═══ Account Menu ═══ */}
         <div ref={acctRef} style={{ position: 'relative', marginLeft: 4 }}>
-          <div onClick={() => setAcctOpen(!acctOpen)}
+          <div role="button" tabIndex={0} onClick={() => setAcctOpen(!acctOpen)} onKeyDown={onActivate(() => setAcctOpen(!acctOpen))}
             style={{
               width: 28, height: 28, display: 'flex', alignItems: 'center', justifyContent: 'center',
               cursor: 'pointer', fontSize: 9, fontWeight: 600, letterSpacing: '0.02em',
@@ -560,12 +562,14 @@ export function Navbar() {
           const isDragOver = dragOverIdx === idx && dragIdx !== idx
           return (
             <div key={tabPath}
+              role="button" tabIndex={0}
               draggable
               onDragStart={() => onDragStart(idx)}
               onDragOver={e => onDragOver(e, idx)}
               onDrop={() => onDrop(idx)}
               onDragEnd={onDragEnd}
               onClick={() => navigate(tabPath)}
+              onKeyDown={onActivate(() => navigate(tabPath))}
               style={{
                 display: 'flex', alignItems: 'center', gap: 6, height: '100%',
                 padding: '0 18px', cursor: 'grab', fontSize: 13, whiteSpace: 'nowrap',
@@ -582,7 +586,7 @@ export function Navbar() {
               onMouseLeave={e => { if (!active) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#8b949e' }}}>
               <span>{page.label}</span>
               {openTabs.length > 1 && (
-                <span onClick={e => closeTab(tabPath, e)}
+                <span role="button" tabIndex={0} onClick={e => closeTab(tabPath, e)} onKeyDown={onActivate(e => closeTab(tabPath, e as any))}
                   style={{ marginLeft: 6, width: 16, height: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 2, fontSize: 12, color: '#484f58' }}
                   onMouseEnter={e => { e.currentTarget.style.background = '#30363d'; e.currentTarget.style.color = '#c9d1d9' }}
                   onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#8b949e' }}>×</span>
@@ -593,7 +597,7 @@ export function Navbar() {
 
         {/* + button → opens new tab landing page */}
         <div style={{ position: 'relative', zIndex: 300, display: 'flex', alignItems: 'center', height: '100%' }}>
-          <div onClick={() => { if (!openTabs.includes('/newtab')) { setOpenTabs([...openTabs, '/newtab']); } navigate('/newtab') }}
+          <div role="button" tabIndex={0} onClick={() => { if (!openTabs.includes('/newtab')) { setOpenTabs([...openTabs, '/newtab']); } navigate('/newtab') }} onKeyDown={onActivate(() => { if (!openTabs.includes('/newtab')) { setOpenTabs([...openTabs, '/newtab']); } navigate('/newtab') })}
             style={{ width: 28, height: 28, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', borderRadius: 3, marginLeft: 6, fontSize: 17, lineHeight: 1, color: '#8b949e' }}
             onMouseEnter={e => { e.currentTarget.style.background = '#161b22'; e.currentTarget.style.color = '#c9d1d9' }}
             onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#8b949e' }}>+</div>
