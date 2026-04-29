@@ -458,7 +458,7 @@ export function NewsFlow() {
                     <span style={{ fontSize: 8, color: '#484f58', fontWeight: 500 }}>{n.provider}</span>
                     <span style={{ width: 1, height: 8, background: '#21262d' }}/>
                     {n.symbols.slice(0, 2).map(s => (
-                      <span key={s} style={{ display: 'inline-flex', alignItems: 'center', gap: 3, fontSize: 8, color: '#388bfd', fontFamily: mono }}>
+                      <span key={s} style={{ display: 'inline-flex', alignItems: 'center', gap: 3, fontSize: 8, color: '#34d399', fontFamily: mono }}>
                         <span style={{ transform: 'scale(0.7)', transformOrigin: 'left center' }}><Logo sym={s}/></span>
                         {s}
                       </span>
@@ -539,7 +539,7 @@ export function NewsFlow() {
               <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap' }}>
                 {sel.symbols.map(s => (
                   <span key={s} onClick={() => window.open(`/ticker/${s}`, '_self')}
-                    style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 10, color: '#388bfd', fontFamily: mono, padding: '3px 8px', border: '1px solid #21262d', background: '#0e1117', cursor: 'pointer' }}>
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 10, color: '#34d399', fontFamily: mono, padding: '3px 8px', border: '1px solid #21262d', background: '#0e1117', cursor: 'pointer' }}>
                     <Logo sym={s}/>{s}
                   </span>
                 ))}
@@ -555,7 +555,7 @@ export function NewsFlow() {
 
           <div style={{ marginTop: 20, paddingTop: 12, borderTop: '1px solid #21262d', display: 'flex', gap: 8 }}>
             <a href={sel.url} target="_blank" rel="noopener noreferrer"
-              style={{ fontSize: 9, color: '#388bfd', textDecoration: 'none', padding: '4px 10px', border: '1px solid #388bfd44' }}>
+              style={{ fontSize: 9, color: '#34d399', textDecoration: 'none', padding: '4px 10px', border: '1px solid #34d39944' }}>
               Open source →
             </a>
             <button onClick={() => togglePin(sel.id)}

@@ -165,7 +165,7 @@ export function PaywallGate({ feature, children, preview }: PaywallGateProps) {
             onClick={() => setModalOpen(true)}
             style={{
               padding: '8px 18px', fontSize: 10, fontWeight: 700, fontFamily: mono,
-              background: '#388bfd', color: '#fff',
+              background: '#34d399', color: '#fff',
               border: 'none', cursor: 'pointer',
               letterSpacing: 0.5, textTransform: 'uppercase',
             }}

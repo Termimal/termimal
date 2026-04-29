@@ -34,7 +34,7 @@ function fmtNet(n: number | undefined | null): string {
 
 function sigColor(sig: string): string {
   if (!sig) return '#8b949e'
-  if (sig.includes('BUY') || sig.includes('BULLISH')) return '#388bfd'
+  if (sig.includes('BUY') || sig.includes('BULLISH')) return '#34d399'
   if (sig.includes('SELL') || sig.includes('BEARISH')) return '#f85149'
   return '#d29922'
 }
@@ -43,7 +43,7 @@ function sigColor(sig: string): string {
 function NetBar({ value, max }: { value: number; max: number }) {
   if (!value || !max) return <div style={{ height: 5 }} />
   const pct = Math.min(100, (Math.abs(value) / max) * 100)
-  const col = value >= 0 ? '#388bfd' : '#f85149'
+  const col = value >= 0 ? '#34d399' : '#f85149'
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 2, height: 12, width: 80 }}>
       <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-end' }}>
@@ -60,7 +60,7 @@ function NetBar({ value, max }: { value: number; max: number }) {
 // ─── Category row ────────────────────────────────────────
 function CatRow({ cat, maxNet, idx = 0 }: { cat: any; maxNet: number; idx?: number }) {
   if (!cat) return null
-  const netCol = (cat.net ?? 0) >= 0 ? '#388bfd' : '#f85149'
+  const netCol = (cat.net ?? 0) >= 0 ? '#34d399' : '#f85149'
   const chgCol = (cat.chg ?? 0) >= 0 ? '#3fb950' : '#f85149'
   const chgLong = cat.chg_long ?? 0
   const chgShort = cat.chg_short ?? 0
@@ -117,7 +117,7 @@ function CotImpactEstimate({ row, posData }: { row: any; posData: any }) {
   if (am > 0 && amc > 0)      { signal = 'Bullish — adding to longs';       signalCol = '#3fb950' }
   else if (am > 0 && amc < 0)  { signal = 'Caution — unwinding longs';      signalCol = '#d29922' }
   else if (am < 0 && amc < 0)  { signal = 'Bearish — adding to shorts';     signalCol = '#f85149' }
-  else if (am < 0 && amc > 0)  { signal = 'Covering — reducing shorts';     signalCol = '#388bfd' }
+  else if (am < 0 && amc > 0)  { signal = 'Covering — reducing shorts';     signalCol = '#34d399' }
   else                         { signal = 'Neutral — no clear direction';    signalCol = '#8b949e' }
 
   // ── Expected move: driven by CHANGE magnitude, not level ──
@@ -143,7 +143,7 @@ function CotImpactEstimate({ row, posData }: { row: any; posData: any }) {
     if (pctile >= 90)      { crowding = 'Extreme long';    crowdCol = '#f85149' }
     else if (pctile >= 75) { crowding = 'Elevated long';   crowdCol = '#d29922' }
     else if (pctile <= 10) { crowding = 'Extreme short';   crowdCol = '#3fb950' }
-    else if (pctile <= 25) { crowding = 'Elevated short';  crowdCol = '#388bfd' }
+    else if (pctile <= 25) { crowding = 'Elevated short';  crowdCol = '#34d399' }
   }
 
   return (
@@ -207,7 +207,7 @@ function ContractCard({ row, isExpanded, onToggle, positioningData, onOpenPositi
         onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <span style={{ fontSize: 13, fontWeight: 500, color: '#c9d1d9' }}>{row.n}</span>
-          <span style={{ fontSize: 9, padding: '1px 5px', color: isTff ? '#388bfd' : '#d29922', background: isTff ? '#388bfd15' : '#d2992215' }}>
+          <span style={{ fontSize: 9, padding: '1px 5px', color: isTff ? '#34d399' : '#d29922', background: isTff ? '#34d39915' : '#d2992215' }}>
             {isTff ? 'FINANCIAL' : 'COMMODITY'}
           </span>
           {posData && (
@@ -222,11 +222,11 @@ function ContractCard({ row, isExpanded, onToggle, positioningData, onOpenPositi
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
           <div style={{ textAlign: 'right' }}>
             <div style={{ fontSize: 9, color: '#8b949e' }}>{isTff ? 'Asset Mgr' : 'Managed $'}</div>
-            <div style={{ fontSize: 12, fontFamily: "'SF Mono', Menlo, Consolas, monospace", fontWeight: 600, color: (row.am ?? 0) >= 0 ? '#388bfd' : '#f85149' }}>{fmtNet(row.am)}</div>
+            <div style={{ fontSize: 12, fontFamily: "'SF Mono', Menlo, Consolas, monospace", fontWeight: 600, color: (row.am ?? 0) >= 0 ? '#34d399' : '#f85149' }}>{fmtNet(row.am)}</div>
           </div>
           <div style={{ textAlign: 'right' }}>
             <div style={{ fontSize: 9, color: '#8b949e' }}>{isTff ? 'Leveraged' : 'Producer'}</div>
-            <div style={{ fontSize: 12, fontFamily: "'SF Mono', Menlo, Consolas, monospace", fontWeight: 600, color: (row.lm ?? 0) >= 0 ? '#388bfd' : '#f85149' }}>{fmtNet(row.lm)}</div>
+            <div style={{ fontSize: 12, fontFamily: "'SF Mono', Menlo, Consolas, monospace", fontWeight: 600, color: (row.lm ?? 0) >= 0 ? '#34d399' : '#f85149' }}>{fmtNet(row.lm)}</div>
           </div>
           <span style={{ fontSize: 14, fontWeight: 500, color: sc }}>{row.signal?.includes('BUY') || row.signal?.includes('BULLISH') ? '▲' : row.signal?.includes('SELL') || row.signal?.includes('BEARISH') ? '▼' : '—'}</span>
           <span style={{ color: '#8b949e', fontSize: 14, transition: 'transform .2s', transform: isExpanded ? 'rotate(180deg)' : 'rotate(0)' }}>▾</span>
@@ -358,7 +358,7 @@ export function COTPage() {
             style={{ width: 28, height: 28, borderRadius: 2, border: '1px solid #21262d', background: '#161b22', color: '#8b949e', cursor: 'pointer', fontSize: 14 }}>→</button>
           {selectedDate && (
             <button onClick={() => setSelectedDate('')}
-              style={{ fontSize: 11, padding: '4px 10px', borderRadius: 2, border: '1px solid #388bfd33', background: '#388bfd15', color: '#388bfd', cursor: 'pointer' }}>
+              style={{ fontSize: 11, padding: '4px 10px', borderRadius: 2, border: '1px solid #34d39933', background: '#34d39915', color: '#34d399', cursor: 'pointer' }}>
               Latest
             </button>
           )}
@@ -374,7 +374,7 @@ export function COTPage() {
               background: filter === key ? 'rgba(56,139,253,0.12)' : 'transparent',
               color: filter === key ? '#58a6ff' : '#8b949e',
               fontWeight: filter === key ? 600 : 400,
-              borderBottom: `2px solid ${filter === key ? '#388bfd' : 'transparent'}`,
+              borderBottom: `2px solid ${filter === key ? '#34d399' : 'transparent'}`,
               letterSpacing: 0.3,
               transition: 'all 100ms ease-out',
             }}
@@ -388,7 +388,7 @@ export function COTPage() {
 
       {/* Signal legend */}
       <div style={{ display: 'flex', gap: 16, padding: '6px 0', marginBottom: 8, fontSize: 11, color: '#8b949e' }}>
-        <span><span style={{ color: '#388bfd', fontWeight: 500, fontSize: 13 }}>▲</span> <span style={{ fontSize: 11 }}>Smart $ long, Spec short</span></span>
+        <span><span style={{ color: '#34d399', fontWeight: 500, fontSize: 13 }}>▲</span> <span style={{ fontSize: 11 }}>Smart $ long, Spec short</span></span>
         <span><span style={{ color: '#f85149', fontWeight: 500, fontSize: 13 }}>▼</span> <span style={{ fontSize: 11 }}>Smart $ short, Spec long</span></span>
         <span><span style={{ color: '#d29922', fontWeight: 500, fontSize: 13 }}>—</span> <span style={{ fontSize: 11 }}>Conflicting / neutral</span></span>
       </div>
@@ -415,7 +415,7 @@ export function COTPage() {
                   if (j?.data?.length) setCotData(j.data)
                   setLoading(false)
                 }).catch(() => setLoading(false))
-              }} style={{ fontSize: 11, padding: '6px 14px', background: '#388bfd', color: '#fff', border: 'none', cursor: 'pointer' }}>
+              }} style={{ fontSize: 11, padding: '6px 14px', background: '#34d399', color: '#fff', border: 'none', cursor: 'pointer' }}>
                 Retry (force refresh)
               </button>
               <button onClick={() => {

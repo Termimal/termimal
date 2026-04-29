@@ -24,7 +24,7 @@ export interface Scenario {
 
 export type ScenarioSet = Scenario[]
 
-const TYPE_COL = { bull: '#388bfd', base: '#d29922', bear: '#f85149' }
+const TYPE_COL = { bull: '#34d399', base: '#d29922', bear: '#f85149' }
 const TYPE_ICON = { bull: '▲', base: '—', bear: '▼' }
 const TYPE_LABEL = { bull: 'BULL CASE', base: 'RANGE / NO TRADE', bear: 'BEAR CASE' }
 const TYPE_DESC: Record<string, string> = { bull: 'Breakout scenario', base: 'Chop — wait for resolution', bear: 'Breakdown scenario' }
@@ -116,7 +116,7 @@ export function ScenarioPanel({ symbol, currentPrice, onClose, scenarios, onScen
   useEffect(() => { saveScenarios(symbol, scenarios) }, [scenarios, symbol])
 
   const summary = getSummary(scenarios)
-  const summaryCol = summary.includes('Bull') ? '#388bfd' : summary.includes('Bear') ? '#f85149' : summary.includes('Range') ? '#d29922' : summary.includes('target') ? '#3fb950' : '#484f58'
+  const summaryCol = summary.includes('Bull') ? '#34d399' : summary.includes('Bear') ? '#f85149' : summary.includes('Range') ? '#d29922' : summary.includes('target') ? '#3fb950' : '#484f58'
 
   const hasBull = scenarios.some(s => s.type === 'bull')
   const hasBase = scenarios.some(s => s.type === 'base')
@@ -227,7 +227,7 @@ export function ScenarioPanel({ symbol, currentPrice, onClose, scenarios, onScen
                   )}
                   <div style={{ display: 'flex', gap: 10, marginTop: 8 }}>
                     <span onClick={() => setEditing(sc.id)} style={{ fontSize: 9, color: '#484f58', cursor: 'pointer' }}
-                      onMouseEnter={e => (e.currentTarget.style.color = '#388bfd')} onMouseLeave={e => (e.currentTarget.style.color = '#484f58')}>Edit</span>
+                      onMouseEnter={e => (e.currentTarget.style.color = '#34d399')} onMouseLeave={e => (e.currentTarget.style.color = '#484f58')}>Edit</span>
                     <span onClick={() => deleteScenario(sc.id)} style={{ fontSize: 9, color: '#484f58', cursor: 'pointer' }}
                       onMouseEnter={e => (e.currentTarget.style.color = '#f85149')} onMouseLeave={e => (e.currentTarget.style.color = '#484f58')}>Delete</span>
                   </div>

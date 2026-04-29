@@ -8,7 +8,7 @@ import { formatPrice, getPrecision } from '@/utils/formatPrice'
 import { usePlan } from '@/lib/plan'
 
 const mono = "'SF Mono', 'Fira Code', Menlo, Consolas, monospace"
-const COLORS: Record<string, string> = {A:'#388bfd',B:'#8957e5',C:'#3fb950',D:'#d29922',E:'#f85149',F:'#388bfd',G:'#8957e5',H:'#3fb950',I:'#d29922',J:'#f85149',K:'#388bfd',L:'#8957e5',M:'#3fb950',N:'#d29922',O:'#f85149',P:'#388bfd',Q:'#8957e5',R:'#3fb950',S:'#d29922',T:'#f85149',U:'#388bfd',V:'#8957e5',W:'#3fb950',X:'#d29922',Y:'#f85149',Z:'#388bfd'}
+const COLORS: Record<string, string> = {A:'#34d399',B:'#8957e5',C:'#3fb950',D:'#d29922',E:'#f85149',F:'#34d399',G:'#8957e5',H:'#3fb950',I:'#d29922',J:'#f85149',K:'#34d399',L:'#8957e5',M:'#3fb950',N:'#d29922',O:'#f85149',P:'#34d399',Q:'#8957e5',R:'#3fb950',S:'#d29922',T:'#f85149',U:'#34d399',V:'#8957e5',W:'#3fb950',X:'#d29922',Y:'#f85149',Z:'#34d399'}
 
 function Av({s}:{s:string}) {
   return <div style={{width:16,height:16,display:'flex',alignItems:'center',justifyContent:'center',fontSize:8,fontWeight:600,color:'#0e1117',background:COLORS[s[0]]??'#484f58',flexShrink:0}}>{s[0]}</div>
@@ -218,14 +218,14 @@ export function Watchlist() {
           {(['chart','research'] as const).map(m=>(
             <span key={m} onClick={()=>setMode(m)}
               style={{padding:'3px 8px',fontSize:10,cursor:'pointer',color:mode===m?'#c9d1d9':'#484f58',fontWeight:mode===m?500:400,
-                borderBottom:mode===m?'1px solid #388bfd':'1px solid transparent',letterSpacing:'0.02em'}}>
+                borderBottom:mode===m?'1px solid #34d399':'1px solid transparent',letterSpacing:'0.02em'}}>
               {m==='chart'?'CHART':'RESEARCH'}
             </span>
           ))}
         </div>
         <div style={{display:'flex',gap:2,alignItems:'center'}}>
-          <span onClick={()=>{setShowAdd(!showAdd);setAddInput('')}} style={{cursor:'pointer',color:showAdd?'#388bfd':'#30363d',fontSize:14,lineHeight:1}}
-            onMouseEnter={e=>(e.currentTarget.style.color='#388bfd')} onMouseLeave={e=>{if(!showAdd)e.currentTarget.style.color='#30363d'}}>+</span>
+          <span onClick={()=>{setShowAdd(!showAdd);setAddInput('')}} style={{cursor:'pointer',color:showAdd?'#34d399':'#30363d',fontSize:14,lineHeight:1}}
+            onMouseEnter={e=>(e.currentTarget.style.color='#34d399')} onMouseLeave={e=>{if(!showAdd)e.currentTarget.style.color='#30363d'}}>+</span>
           <span onClick={()=>setCollapsed(true)} style={{cursor:'pointer',color:'#30363d',fontSize:10,marginLeft:4}}
             onMouseEnter={e=>(e.currentTarget.style.color='#8b949e')} onMouseLeave={e=>(e.currentTarget.style.color='#30363d')}>▷</span>
         </div>
@@ -292,9 +292,9 @@ export function Watchlist() {
               const name = window.prompt('Section name:', 'NEW SECTION')
               if (name && name.trim()) addSection(name)
             }}
-            style={{fontSize:10,color:'#388bfd',cursor:'pointer',letterSpacing:0.4,fontFamily:mono}}
+            style={{fontSize:10,color:'#34d399',cursor:'pointer',letterSpacing:0.4,fontFamily:mono}}
             onMouseEnter={e=>(e.currentTarget.style.color='#58a6ff')}
-            onMouseLeave={e=>(e.currentTarget.style.color='#388bfd')}>
+            onMouseLeave={e=>(e.currentTarget.style.color='#34d399')}>
             + add section
           </span>
         </div>
@@ -375,7 +375,7 @@ function SectionBlock({ section, mode, prices, sparkData, currentTicker, hovSym,
             onKeyDown={e => { if (e.key === 'Enter') commitRename(); if (e.key === 'Escape') { setEditing(false); setEditValue(section.name) }}}
             style={{
               flex:1, fontSize:9, padding:'2px 4px',
-              background:'#0e1117', border:'1px solid #388bfd', borderRadius:2,
+              background:'#0e1117', border:'1px solid #34d399', borderRadius:2,
               color:'#c9d1d9', outline:'none', fontFamily:'inherit', textTransform:'uppercase', letterSpacing:0.5,
             }}
           />
@@ -420,8 +420,8 @@ function SectionBlock({ section, mode, prices, sparkData, currentTicker, hovSym,
               onClick={()=>navigate(`/charts?sym=${sym}`)}
               onMouseEnter={()=>setHovSym(sym)} onMouseLeave={()=>setHovSym(null)}
               style={{display:'grid',gridTemplateColumns:'24px 1fr 50px 46px 38px',alignItems:'center',padding:'3px 8px',height:30,cursor:'grab',
-                borderBottom:'1px solid #161b22', borderTop: isDragOver ? '2px solid #388bfd' : '2px solid transparent',
-                borderLeft:active?'2px solid #388bfd':'2px solid transparent',
+                borderBottom:'1px solid #161b22', borderTop: isDragOver ? '2px solid #34d399' : '2px solid transparent',
+                borderLeft:active?'2px solid #34d399':'2px solid transparent',
                 background:active?'#161b22':hov?'#0e1117':'transparent',transition:'background 0.05s'}}>
               <Logo sym={sym}/>
               <div style={{display:'flex',alignItems:'center',gap:3,paddingLeft:3,minWidth:0}}>
@@ -442,8 +442,8 @@ function SectionBlock({ section, mode, prices, sparkData, currentTicker, hovSym,
             onClick={()=>navigate(`/ticker/${sym}`)}
             onMouseEnter={()=>setHovSym(sym)} onMouseLeave={()=>setHovSym(null)}
             style={{padding:'6px 8px',cursor:'grab',borderBottom:'1px solid #21262d',
-              borderTop: isDragOver ? '2px solid #388bfd' : '2px solid transparent',
-              borderLeft:active?'2px solid #388bfd':'2px solid transparent',
+              borderTop: isDragOver ? '2px solid #34d399' : '2px solid transparent',
+              borderLeft:active?'2px solid #34d399':'2px solid transparent',
               background:active?'#161b22':hov?'#0e1117':'transparent',transition:'background 0.05s'}}>
             <div style={{display:'flex',alignItems:'center',gap:5,marginBottom:2}}>
               <Logo sym={sym}/>

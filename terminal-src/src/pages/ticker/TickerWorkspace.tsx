@@ -131,7 +131,7 @@ function PriceChart({ symbol, up }: { symbol: string; up: boolean }) {
           <button key={p.key} onClick={() => setPeriod(p.key)}
             style={{
               padding: '3px 10px', fontSize: 11, borderRadius: 2, border: 'none', cursor: 'pointer',
-              background: period === p.key ? '#388bfd' : 'transparent',
+              background: period === p.key ? '#34d399' : 'transparent',
               color: period === p.key ? '#fff' : '#8b949e',
               fontWeight: period === p.key ? 600 : 400,
             }}
@@ -453,7 +453,7 @@ function RiskTab({f, symbol}:{f:any; symbol:string}) {
     const sorted = paths.map(pa => pa).sort((a,b) => a[a.length-1] - b[b.length-1])
     return sorted[Math.min(idx, PATHS-1)]
   })
-  const bandCols = ['#f85149', '#d29922', '#c9d1d9', '#388bfd', '#3fb950']
+  const bandCols = ['#f85149', '#d29922', '#c9d1d9', '#34d399', '#3fb950']
   const bandLabels = ['P5 (downside)','P25','P50 (median)','P75','P95 (upside)']
 
   // Var level line on chart (1D * sqrt(90) for 90-day horizon)
@@ -827,7 +827,7 @@ function RelativeStrength({ symbol, sector }: { symbol: string; sector: string }
 
   // Build deduplicated benchmark rows (filters out duplicate SPY when it IS the sector proxy)
   const benchmarkRows = [
-    { label: symbol, perf: stockPerf, col: '#388bfd' },
+    { label: symbol, perf: stockPerf, col: '#34d399' },
     ...(!isSectorSpy ? [{ label: sectorInfo.etf, perf: sectorPerf, col: '#d29922' }] : []),
     { label: 'SPY', perf: spyPerf, col: '#8b949e' },
   ]
@@ -882,7 +882,7 @@ function RelativeStrength({ symbol, sector }: { symbol: string; sector: string }
         <line x1={pl} y1={pt + ih * (1 - (100 - mn) / rng)} x2={w - pr} y2={pt + ih * (1 - (100 - mn) / rng)} stroke="#21262d" strokeWidth="0.5" strokeDasharray="3 3" />
         {rsData.spy.length > 0 && <polyline points={makeLine(rsData.spy)} fill="none" stroke="#8b949e" strokeWidth="1" opacity="0.5" />}
         {!isSectorSpy && rsData.sector.length > 0 && <polyline points={makeLine(rsData.sector)} fill="none" stroke="#d29922" strokeWidth="1" opacity="0.6" />}
-        <polyline points={makeLine(rsData.stock)} fill="none" stroke="#388bfd" strokeWidth="1.5" />
+        <polyline points={makeLine(rsData.stock)} fill="none" stroke="#34d399" strokeWidth="1.5" />
       </svg>
 
       {/* Signal */}
@@ -973,7 +973,7 @@ function RegressionTab({ symbol }: { symbol: string }) {
         </div>
         <div style={{ background: '#161b22', borderTop: `2px solid ${activeSigCol}`, borderRadius: 2, padding: '12px 14px' }}>
           <div style={{ fontSize: 10, color: '#8b949e', marginBottom: 4 }}>Fair Value ({activeModelName})</div>
-          <div style={{ fontSize: 20, fontWeight: 600, color: '#388bfd', fontFamily: "'SF Mono', Menlo, Consolas, monospace" }}>${activeFairValue}</div>
+          <div style={{ fontSize: 20, fontWeight: 600, color: '#34d399', fontFamily: "'SF Mono', Menlo, Consolas, monospace" }}>${activeFairValue}</div>
         </div>
         <div style={{ background: '#161b22', borderTop: `2px solid ${activeSigCol}`, borderRadius: 2, padding: '12px 14px' }}>
           <div style={{ fontSize: 10, color: '#8b949e', marginBottom: 4 }}>Deviation</div>
@@ -991,9 +991,9 @@ function RegressionTab({ symbol }: { symbol: string }) {
         {(data.models ?? []).map((m: any) => (
           <button key={m.name} onClick={() => setSelectedModel(m.name)}
             style={{ padding: '5px 14px', borderRadius: 2, fontSize: 11, cursor: 'pointer', border: 'none',
-              background: m.name === selectedModel ? '#388bfd22' : '#161b22',
-              color: m.name === selectedModel ? '#388bfd' : '#8b949e',
-              borderBottom: m.name === selectedModel ? '2px solid #388bfd' : '2px solid transparent',
+              background: m.name === selectedModel ? '#34d39922' : '#161b22',
+              color: m.name === selectedModel ? '#34d399' : '#8b949e',
+              borderBottom: m.name === selectedModel ? '2px solid #34d399' : '2px solid transparent',
               fontWeight: m.name === selectedModel ? 600 : 400,
             }}>
             {m.name.charAt(0).toUpperCase() + m.name.slice(1)}: R²={m.r2}
@@ -1017,12 +1017,12 @@ function RegressionTab({ symbol }: { symbol: string }) {
             </g>
           ))}
           {/* Forecast zone background */}
-          <rect x={xS(n)} y={pt} width={xS(total - 1) - xS(n)} height={ih} fill="#388bfd08" />
-          <line x1={xS(n)} y1={pt} x2={xS(n)} y2={pt + ih} stroke="#388bfd" strokeWidth="0.5" strokeDasharray="4 4" />
+          <rect x={xS(n)} y={pt} width={xS(total - 1) - xS(n)} height={ih} fill="#34d39908" />
+          <line x1={xS(n)} y1={pt} x2={xS(n)} y2={pt + ih} stroke="#34d399" strokeWidth="0.5" strokeDasharray="4 4" />
           {/* Price line */}
           <polyline points={priceLine} fill="none" stroke="#c9d1d9" strokeWidth="1" opacity="0.6" />
           {/* Fit line */}
-          <polyline points={fitLine} fill="none" stroke="#388bfd" strokeWidth="1.5" />
+          <polyline points={fitLine} fill="none" stroke="#34d399" strokeWidth="1.5" />
           {/* Forecast */}
           <polyline points={forecastLine} fill="none" stroke="#3fb950" strokeWidth="1.5" strokeDasharray="4 2" />
           {/* Labels */}
@@ -1031,7 +1031,7 @@ function RegressionTab({ symbol }: { symbol: string }) {
         </svg>
         <div style={{ display: 'flex', gap: 16, fontSize: 10, marginTop: 6 }}>
           <span style={{ color: '#8b949e' }}>— Price</span>
-          <span style={{ color: '#388bfd' }}>— {activeModelName} fit</span>
+          <span style={{ color: '#34d399' }}>— {activeModelName} fit</span>
           <span style={{ color: '#3fb950' }}>-- Forecast</span>
           <span style={{ marginLeft: 'auto', color: '#8b949e' }}>1Y target: <b style={{ color: '#3fb950' }}>${activeForecast[activeForecast.length - 1]}</b></span>
         </div>
@@ -1119,7 +1119,7 @@ function StockNewsTab({ symbol }: { symbol: string }) {
           <div style={{display:'flex',gap:12,alignItems:'center'}}>
             <span style={{fontSize:9,color:'#484f58'}}>{item.publisher}</span>
             <span style={{fontSize:9,color:'#30363d',fontFamily:mono}}>{item.date}</span>
-            {item.type && <span style={{fontSize:8,color:'#388bfd',background:'#388bfd12',border:'1px solid #388bfd25',padding:'1px 5px'}}>{item.type}</span>}
+            {item.type && <span style={{fontSize:8,color:'#34d399',background:'#34d39912',border:'1px solid #34d39925',padding:'1px 5px'}}>{item.type}</span>}
           </div>
         </a>
       ))}
@@ -1272,7 +1272,7 @@ function AnalysisTab({ symbol }: { symbol: string }) {
 
           {/* SMA overlays */}
           {sma20Path && <polyline points={sma20Path} fill="none" stroke="#d29922" strokeWidth={1} opacity={0.6}/>}
-          {sma50Path && <polyline points={sma50Path} fill="none" stroke="#388bfd" strokeWidth={1.2} opacity={0.7}/>}
+          {sma50Path && <polyline points={sma50Path} fill="none" stroke="#34d399" strokeWidth={1.2} opacity={0.7}/>}
 
           {/* Current price marker */}
           <line x1={PAD.l} x2={PAD.l + cw} y1={toYP(closes[N - 1])} y2={toYP(closes[N - 1])} stroke="#c9d1d9" strokeWidth={0.5} opacity={0.3} strokeDasharray="2,3"/>
@@ -1306,7 +1306,7 @@ function AnalysisTab({ symbol }: { symbol: string }) {
           <line x1={PAD.l} x2={PAD.l + cw} y1={toYR(50)} y2={toYR(50)} stroke="#484f58" strokeWidth={0.3} opacity={0.3} strokeDasharray="2,4"/>
 
           {/* RSI line */}
-          {rsiPath && <polyline points={rsiPath} fill="none" stroke={m.rsi > 70 ? '#f85149' : m.rsi < 30 ? '#3fb950' : '#388bfd'} strokeWidth={1.3}/>}
+          {rsiPath && <polyline points={rsiPath} fill="none" stroke={m.rsi > 70 ? '#f85149' : m.rsi < 30 ? '#3fb950' : '#34d399'} strokeWidth={1.3}/>}
 
           {/* RSI labels */}
           <text x={PAD.l - 6} y={toYR(70) + 3} fontSize={7} fill="#f85149" textAnchor="end" opacity={0.6}>70</text>
@@ -1316,7 +1316,7 @@ function AnalysisTab({ symbol }: { symbol: string }) {
 
           {/* RSI current value */}
           {m.rsi != null && <g>
-            <rect x={PAD.l + cw + 4} y={toYR(m.rsi) - 7} width={30} height={14} rx={2} fill={m.rsi > 70 ? '#f85149' : m.rsi < 30 ? '#3fb950' : '#388bfd'} opacity={0.9}/>
+            <rect x={PAD.l + cw + 4} y={toYR(m.rsi) - 7} width={30} height={14} rx={2} fill={m.rsi > 70 ? '#f85149' : m.rsi < 30 ? '#3fb950' : '#34d399'} opacity={0.9}/>
             <text x={PAD.l + cw + 19} y={toYR(m.rsi) + 3} fontSize={8} fill="#0e1117" textAnchor="middle" fontWeight={600} fontFamily="monospace">{m.rsi.toFixed(0)}</text>
           </g>}
 
@@ -1335,8 +1335,8 @@ function AnalysisTab({ symbol }: { symbol: string }) {
             <span style={{fontSize: 7, color: '#d29922', opacity: 0.7}}>SMA 20</span>
           </div>
           <div style={{display: 'flex', alignItems: 'center', gap: 3}}>
-            <div style={{width: 12, height: 2, background: '#388bfd', opacity: 0.7}}/>
-            <span style={{fontSize: 7, color: '#388bfd', opacity: 0.8}}>SMA 50</span>
+            <div style={{width: 12, height: 2, background: '#34d399', opacity: 0.7}}/>
+            <span style={{fontSize: 7, color: '#34d399', opacity: 0.8}}>SMA 50</span>
           </div>
           {srLines.filter((l: any) => l.role === 'Support').length > 0 && <div style={{display: 'flex', alignItems: 'center', gap: 3}}>
             <div style={{width: 12, height: 1, background: '#3fb950', opacity: 0.5, borderTop: '1px dashed #3fb950'}}/>
@@ -1704,7 +1704,7 @@ function AnalystConsensus({ symbol }: { symbol: string }) {
               <text x={xNow + projWidth/2} y={CHART_H - BOT_PAD + 11} fontSize={7} fill="#30363d" textAnchor="middle">12m forecast</text>
 
               {/* Projection cone (shaded band) */}
-              <polygon points={conePoints} fill="#388bfd" opacity={0.18}/>
+              <polygon points={conePoints} fill="#34d399" opacity={0.18}/>
 
               {/* High target line */}
               {target_high && <>
@@ -1900,7 +1900,7 @@ function Spark({ history, color, h = 28 }: { history: number[]; color: string; h
 
 // ─── Band colors ──────────────────────────────────────────────
 const BAND_COLORS: Record<string, string> = {
-  depressed: '#388bfd', supportive: '#3fb950', neutral: '#8b949e',
+  depressed: '#34d399', supportive: '#3fb950', neutral: '#8b949e',
   elevated: '#d29922', overheated: '#f85149',
 }
 
@@ -2030,7 +2030,7 @@ function MetricDetail({ data, expanded, onBack, sc, mono }: {
   // Metric reference lines
   const refs = metricVals.length ? [
     {v:mAvg, label:`AVG ${mAvg.toFixed(2)}`, dash:'4,4', c:'#484f58'},
-    {v:mMed, label:`MED ${mMed.toFixed(2)}`, dash:'8,4', c:'#388bfd'},
+    {v:mMed, label:`MED ${mMed.toFixed(2)}`, dash:'8,4', c:'#34d399'},
   ].filter(r=>r.v>yRmin&&r.v<yRmax) : []
 
   // Paths
@@ -2070,7 +2070,7 @@ function MetricDetail({ data, expanded, onBack, sc, mono }: {
   return <div style={{display:'flex',flexDirection:'column',gap:0}}>
     {/* ── BACK ── */}
     <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:6}}>
-      <button onClick={onBack} style={{fontSize:10,color:'#388bfd',background:'transparent',border:'1px solid #388bfd33',padding:'4px 16px',cursor:'pointer'}}>← BACK</button>
+      <button onClick={onBack} style={{fontSize:10,color:'#34d399',background:'transparent',border:'1px solid #34d39933',padding:'4px 16px',cursor:'pointer'}}>← BACK</button>
       <span style={{fontSize:9,color:'#30363d',textTransform:'uppercase',letterSpacing:0.5}}>{secTitle}</span>
     </div>
 
@@ -2100,7 +2100,7 @@ function MetricDetail({ data, expanded, onBack, sc, mono }: {
         {TFS.filter(t=>t==='max'||(tfMap[t]||0)<=priceHist.length).map(t=>(
           <button key={t} onClick={()=>setTf(t)} style={{fontSize:10,padding:'5px 14px',cursor:'pointer',fontFamily:mono,
             color:activeTf===t?'#c9d1d9':'#484f58',background:activeTf===t?'#161b22':'transparent',
-            border:activeTf===t?'1px solid #388bfd':'1px solid transparent'}}>
+            border:activeTf===t?'1px solid #34d399':'1px solid transparent'}}>
             {t==='max'?'MAX':t.toUpperCase()}
           </button>
         ))}
@@ -2192,7 +2192,7 @@ function MetricDetail({ data, expanded, onBack, sc, mono }: {
     {/* ── STATS ── */}
     {metricVals.length>0&&<div style={{display:'grid',gridTemplateColumns:'repeat(6,1fr)',gap:0,background:'#0e1117',borderTop:'1px solid #161b22'}}>
       {[{l:'CURRENT',v:current!=null?(typeof current==='number'?current.toFixed(2):current):'—',c:col},
-        {l:'AVERAGE',v:mAvg.toFixed(2),c:'#8b949e'},{l:'MEDIAN',v:mMed.toFixed(2),c:'#388bfd'},
+        {l:'AVERAGE',v:mAvg.toFixed(2),c:'#8b949e'},{l:'MEDIAN',v:mMed.toFixed(2),c:'#34d399'},
         {l:'P10',v:mP10.toFixed(2),c:'#3fb950'},{l:'P90',v:mP90.toFixed(2),c:'#f85149'},
         {l:'RANGE',v:`${mMn.toFixed(2)} — ${mMx.toFixed(2)}`,c:'#484f58'},
       ].map(s=><div key={s.l} style={{padding:'10px 14px',borderRight:'1px solid #161b22'}}>
@@ -2238,7 +2238,7 @@ function BtcOnchainPanel({ symbol }: { symbol: string }) {
 
   const sc = (s:string|null) => {
     if (!s) return '#8b949e'
-    if (['Depressed','Deep Stress','Stressed'].includes(s)) return '#388bfd'
+    if (['Depressed','Deep Stress','Stressed'].includes(s)) return '#34d399'
     if (['Supportive','Calm','Increasing'].includes(s)) return '#3fb950'
     if (['Elevated'].includes(s)) return '#d29922'
     if (['Overheated','Extreme','Declining'].includes(s)) return '#f85149'
@@ -2430,10 +2430,10 @@ export function TickerWorkspace({ symbol }: Props) {
           <span style={{fontSize:22,fontWeight:600,color:'#c9d1d9',letterSpacing:-0.3}}>{fx ? symbol.replace('=X','') : symbol}</span>
           <span style={{fontSize:12,color:'#8b949e'}}>{f.name}</span>
           <span style={{fontSize:8,color:'#8b949e',background:'#21262d',padding:'1px 7px'}}>{f.exchange}</span>
-          {fx && <span style={{fontSize:8,color:'#388bfd',background:'#388bfd15',padding:'1px 7px'}}>FOREX</span>}
+          {fx && <span style={{fontSize:8,color:'#34d399',background:'#34d39915',padding:'1px 7px'}}>FOREX</span>}
           <div style={{marginLeft:'auto',display:'flex',gap:8}}>
             <button onClick={()=>inWL?removeFromWatchlist(symbol):addToWatchlist(symbol)}
-              style={{fontSize:9,color:inWL?'#388bfd':'#8b949e',border:`1px solid ${inWL?'#388bfd':'#8b949e'}`,background:'transparent',padding:'4px 12px',cursor:'pointer',}}>
+              style={{fontSize:9,color:inWL?'#34d399':'#8b949e',border:`1px solid ${inWL?'#34d399':'#8b949e'}`,background:'transparent',padding:'4px 12px',cursor:'pointer',}}>
               {inWL?'★ WATCHLIST':'☆ ADD'}
             </button>
             <button onClick={()=>navigate(-1)} style={{fontSize:9,color:'#8b949e',border:'1px solid #333',background:'transparent',padding:'4px 12px',cursor:'pointer',}}>✕</button>
@@ -2460,8 +2460,8 @@ export function TickerWorkspace({ symbol }: Props) {
           <button key={t.id} onClick={()=>setTab(t.id)}
             style={{padding:'8px 18px',fontSize:9,letterSpacing:0.5,cursor:'pointer',
               background:'transparent',border:'none',
-              color:tab===t.id?'#388bfd':'#8b949e',
-              borderBottom:tab===t.id?'2px solid #388bfd':'2px solid transparent'}}>
+              color:tab===t.id?'#34d399':'#8b949e',
+              borderBottom:tab===t.id?'2px solid #34d399':'2px solid transparent'}}>
             {t.label}
           </button>
         ))}
@@ -2475,7 +2475,7 @@ export function TickerWorkspace({ symbol }: Props) {
             <div style={{display:'flex',flexDirection:'column',gap:8}}>
               <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:6}}>
                 {[
-                  {l:'Pair Type', v:f.fxType??'Major', c:'#388bfd'},
+                  {l:'Pair Type', v:f.fxType??'Major', c:'#34d399'},
                   {l:'Region', v:f.fxRegion??'—', c:'#8b949e'},
                   {l:'ATR(14)', v:fx&&!isJPYPair(symbol)?atr.toFixed(4):atr.toFixed(2), c:'#c9d1d9'},
                   {l:'ATR %', v:atrPct+'%', c:atrPct<0.5?'#3fb950':atrPct<1?'#d29922':'#f85149'},
@@ -2492,7 +2492,7 @@ export function TickerWorkspace({ symbol }: Props) {
                 <div style={{display:'grid',gridTemplateColumns:'auto 1fr',gap:'4px 16px',fontSize:11}}>
                   <span style={{color:'#484f58'}}>Base</span><span style={{color:'#c9d1d9'}}>{f.fxBase ?? symbol.slice(0,3)}</span>
                   <span style={{color:'#484f58'}}>Quote</span><span style={{color:'#c9d1d9'}}>{f.fxQuote ?? symbol.slice(3,6)}</span>
-                  <span style={{color:'#484f58'}}>Classification</span><span style={{color:'#388bfd'}}>{f.fxType ?? 'Major'}</span>
+                  <span style={{color:'#484f58'}}>Classification</span><span style={{color:'#34d399'}}>{f.fxType ?? 'Major'}</span>
                   <span style={{color:'#484f58'}}>DXY Sensitivity</span><span style={{color:'#8b949e'}}>{f.fxQuote==='USD'||f.fxBase==='USD'?'Direct — pair contains USD':'Indirect — cross pair'}</span>
                   <span style={{color:'#484f58'}}>52W Range</span><span style={{color:'#8b949e',fontFamily:mono}}>{fxPrice(symbol,f.l52??price*0.9)} — {fxPrice(symbol,f.h52??price*1.1)}</span>
                   <span style={{color:'#484f58'}}>Range Position</span><span style={{color:'#c9d1d9',fontFamily:mono}}>{(((price-(f.l52??price*0.9))/((f.h52??price*1.1)-(f.l52??price*0.9)))*100).toFixed(0)}%</span>

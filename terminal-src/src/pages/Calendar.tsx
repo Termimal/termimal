@@ -83,7 +83,7 @@ export function Calendar() {
     const v = chartData?.values ?? [], cur = v[v.length - 1] ?? 0, prv = v.length > 2 ? v[v.length - 2] : cur
     return (
       <div style={{ padding: '20px 24px' }}>
-        <span onClick={() => setChart(null)} style={{ fontSize: 13, color: '#388bfd', cursor: 'pointer' }}>← Back to Calendar</span>
+        <span onClick={() => setChart(null)} style={{ fontSize: 13, color: '#34d399', cursor: 'pointer' }}>← Back to Calendar</span>
         <div style={{ marginTop: 12, display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
           <span style={{ fontSize: 28 }}>{chart.flag}</span>
           <div>
@@ -93,7 +93,7 @@ export function Calendar() {
           {v.length > 0 && <div style={{ marginLeft: 'auto', fontSize: 28, fontWeight: 600, color: '#c9d1d9', fontFamily: "'SF Mono', Menlo, Consolas, monospace" }}>{cur.toLocaleString(undefined, { maximumFractionDigits: 2 })}</div>}
         </div>
         {cLoad ? <div style={{ height: 350, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#8b949e' }}>Loading...</div>
-         : chartData ? <TvLineChart title="" sub={chart.unit ?? ''} dec={2} height={350} fill lines={[{ label: chart.name, color: '#388bfd', data: chartData.values }]} refs={[]} />
+         : chartData ? <TvLineChart title="" sub={chart.unit ?? ''} dec={2} height={350} fill lines={[{ label: chart.name, color: '#34d399', data: chartData.values }]} refs={[]} />
          : <div style={{ height: 350, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#8b949e' }}>No data</div>}
         <div style={{ marginTop: 16, fontSize: 13, color: '#8b949e' }}>{chart.desc}</div>
       </div>
@@ -153,8 +153,8 @@ export function Calendar() {
         return (
           <div key={d}>
             {/* Date header */}
-            <div style={{ padding: '14px 0 6px', fontSize: 12, fontWeight: 500, color: isToday ? '#388bfd' : '#8b949e', borderBottom: '1px solid #21262d', letterSpacing: '0.01em' }}>
-              {isToday && <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#388bfd', display: 'inline-block', marginRight: 6, verticalAlign: 'middle' }} />}
+            <div style={{ padding: '14px 0 6px', fontSize: 12, fontWeight: 500, color: isToday ? '#34d399' : '#8b949e', borderBottom: '1px solid #21262d', letterSpacing: '0.01em' }}>
+              {isToday && <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#34d399', display: 'inline-block', marginRight: 6, verticalAlign: 'middle' }} />}
               {dt.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
             </div>
             {/* Event rows */}

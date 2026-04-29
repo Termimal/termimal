@@ -3,7 +3,7 @@
 // FX, crypto, commodity futures, indices: keep custom SVGs (better than any CDN)
 import { useState } from 'react'
 
-const COLORS: Record<string,string> = {A:'#388bfd',B:'#8957e5',C:'#3fb950',D:'#d29922',E:'#f85149',F:'#388bfd',G:'#8957e5',H:'#3fb950',I:'#d29922',J:'#f85149',K:'#388bfd',L:'#8957e5',M:'#3fb950',N:'#d29922',O:'#f85149',P:'#388bfd',Q:'#8957e5',R:'#3fb950',S:'#d29922',T:'#f85149',U:'#388bfd',V:'#8957e5',W:'#3fb950',X:'#d29922',Y:'#f85149',Z:'#388bfd'}
+const COLORS: Record<string,string> = {A:'#34d399',B:'#8957e5',C:'#3fb950',D:'#d29922',E:'#f85149',F:'#34d399',G:'#8957e5',H:'#3fb950',I:'#d29922',J:'#f85149',K:'#34d399',L:'#8957e5',M:'#3fb950',N:'#d29922',O:'#f85149',P:'#34d399',Q:'#8957e5',R:'#3fb950',S:'#d29922',T:'#f85149',U:'#34d399',V:'#8957e5',W:'#3fb950',X:'#d29922',Y:'#f85149',Z:'#34d399'}
 
 const sz = 18
 

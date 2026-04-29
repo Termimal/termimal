@@ -42,7 +42,7 @@ export function NewTab() {
         {TILES.map((t: any) => (
           <div key={t.path} onClick={() => openPage(t.path)}
             style={{ background: '#0e1117', padding: '12px 12px', cursor: 'pointer', border: '1px solid #21262d', transition: 'border-color 0.1s' }}
-            onMouseEnter={e => { e.currentTarget.style.borderColor = '#388bfd' }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = '#34d399' }}
             onMouseLeave={e => { e.currentTarget.style.borderColor = '#21262d' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
               <span style={{ fontSize: 12, fontWeight: 500, color: '#c9d1d9' }}>{t.label}</span>

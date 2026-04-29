@@ -97,7 +97,7 @@ function Toggle({
         checked={checked}
         disabled={disabled}
         onChange={e => onChange(e.target.checked)}
-        style={{ marginTop: 2, accentColor: '#388bfd' }}
+        style={{ marginTop: 2, accentColor: '#34d399' }}
         aria-label={label}
       />
       <span>
@@ -181,7 +181,7 @@ export function CookieConsentBanner() {
       >
         <div style={{ padding: 14 }}>
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, marginBottom: 10 }}>
-            <span aria-hidden style={{ color: '#388bfd', fontSize: 14, fontWeight: 700 }}>i</span>
+            <span aria-hidden style={{ color: '#34d399', fontSize: 14, fontWeight: 700 }}>i</span>
             <div style={{ flex: 1 }}>
               <div style={{ fontSize: 12, fontWeight: 600, color: '#c9d1d9', marginBottom: 4 }}>
                 Termimal uses cookies
@@ -189,8 +189,8 @@ export function CookieConsentBanner() {
               <p style={{ margin: 0, fontSize: 11, color: '#8b949e', lineHeight: 1.6 }}>
                 Strictly necessary cookies keep you signed in and the platform secure — they cannot be turned off.
                 Functional, analytics, and marketing cookies are optional. You can change your choice at any time
-                from the footer. See our <a href="/cookies" style={{ color: '#388bfd' }}>Cookie Policy</a> and {' '}
-                <a href="/privacy" style={{ color: '#388bfd' }}>Privacy Policy</a>.
+                from the footer. See our <a href="/cookies" style={{ color: '#34d399' }}>Cookie Policy</a> and {' '}
+                <a href="/privacy" style={{ color: '#34d399' }}>Privacy Policy</a>.
               </p>
             </div>
           </div>
@@ -256,7 +256,7 @@ export function CookieConsentBanner() {
                 onClick={() => save({ functional, analytics, marketing })}
                 style={{
                   padding: '6px 14px', fontSize: 10, fontFamily: mono, fontWeight: 600,
-                  background: '#388bfd', color: '#fff',
+                  background: '#34d399', color: '#fff',
                   border: 'none', cursor: 'pointer',
                 }}
               >
@@ -268,7 +268,7 @@ export function CookieConsentBanner() {
                 onClick={() => save({ functional: true, analytics: true, marketing: true })}
                 style={{
                   padding: '6px 14px', fontSize: 10, fontFamily: mono, fontWeight: 600,
-                  background: '#388bfd', color: '#fff',
+                  background: '#34d399', color: '#fff',
                   border: 'none', cursor: 'pointer',
                 }}
               >

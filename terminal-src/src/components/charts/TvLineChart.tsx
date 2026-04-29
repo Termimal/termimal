@@ -242,7 +242,7 @@ export function TvLineChart({ title, sub, lines, refs, height = 200, unit = '', 
               <button key={p.key} onClick={() => setPeriod(p.key)}
                 style={{
                   padding: '2px 6px', fontSize: 9, borderRadius: 2, border: 'none', cursor: 'pointer',
-                  background: period === p.key ? '#388bfd' : 'transparent',
+                  background: period === p.key ? '#34d399' : 'transparent',
                   color: period === p.key ? '#fff' : '#8b949e',
                   fontWeight: period === p.key ? 600 : 400,
                 }}

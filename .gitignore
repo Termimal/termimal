@@ -36,3 +36,4 @@ next-env.d.ts
 *.pem
 *.key
 *.p12
+nterminal-src/dist/n

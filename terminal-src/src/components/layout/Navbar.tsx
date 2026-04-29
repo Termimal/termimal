@@ -136,6 +136,8 @@ export function Navbar() {
   const location = useLocation()
   const regime   = useStore(selectRegime)
   const { apiOnline } = useStore()
+  const apiFailedChecks = useStore(s => (s as any).apiFailedChecks ?? 0)
+  const apiOffline = !apiOnline && apiFailedChecks >= 3
   // Real Supabase user for the account menu
   const [authUser, setAuthUser] = useState<{ email: string | null; full_name: string | null }>({ email: null, full_name: null })
   useEffect(() => {
@@ -331,10 +333,25 @@ export function Navbar() {
     <div style={{ flexShrink: 0 }}>
       {/* ── Top bar ── */}
       <div style={{ display: 'flex', alignItems: 'center', height: 44, background: '#161b22', borderBottom: '1px solid #21262d', padding: '0 12px', gap: 10 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer', marginRight: 4 }} onClick={() => navigate('/')}>
+        {/* Back-to-website link (hard navigation — breaks out of /terminal SPA basename) */}
+        <a
+          href="/"
+          title="Back to termimal.com"
+          style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '4px 8px', textDecoration: 'none', color: '#8b949e', fontSize: 11, border: '1px solid #21262d', borderRadius: 2, marginRight: 4 }}
+          onMouseEnter={e => { e.currentTarget.style.color = '#c9d1d9'; e.currentTarget.style.borderColor = '#30363d' }}
+          onMouseLeave={e => { e.currentTarget.style.color = '#8b949e'; e.currentTarget.style.borderColor = '#21262d' }}
+        >
+          <span aria-hidden style={{ fontSize: 11 }}>←</span>
+          <span style={{ fontSize: 10, letterSpacing: 0.3 }}>Site</span>
+        </a>
+        {/* Logo — also hard-navigates home */}
+        <a
+          href="/"
+          style={{ display: 'flex', alignItems: 'center', gap: 6, textDecoration: 'none', cursor: 'pointer', marginRight: 4 }}
+        >
           <span style={{ fontSize: 13, fontWeight: 600, color: '#c9d1d9', letterSpacing: 0.4 }}>TERMIMAL</span>
           <span title="Build version" style={{ fontSize: 8, color: '#484f58', marginLeft: 4, fontFamily: "'SF Mono', Menlo, Consolas, monospace" }}>v6.9</span>
-        </div>
+        </a>
         <div style={{ width: 1, height: 20, background: '#21262d' }} />
         {/* Search */}
         <div ref={searchBoxRef} style={{ position: 'relative', width: 240 }}>
@@ -353,14 +370,14 @@ export function Navbar() {
                   <span key={c.k} onClick={()=>{setSearchCat(c.k);onSearch(query,c.k)}}
                     style={{padding:'5px 10px',fontSize:10,cursor:'pointer',flexShrink:0,
                       color:searchCat===c.k?'#c9d1d9':'#484f58',fontWeight:searchCat===c.k?500:400,
-                      borderBottom:searchCat===c.k?'1px solid #388bfd':'1px solid transparent'}}>{c.l}</span>
+                      borderBottom:searchCat===c.k?'1px solid #34d399':'1px solid transparent'}}>{c.l}</span>
                 ))}
               </div>
               {/* Results */}
               <div style={{ flex: 1, overflowY: 'auto' }}>
               {hits.length === 0 ? (
                 <div style={{ padding: 16, textAlign: 'center', fontSize: 11, color: '#484f58' }}>
-                  {query ? <>No results for "{query}" · <button onClick={() => goTo(query.toUpperCase())} style={{ color: '#388bfd', background: 'none', border: 'none', cursor: 'pointer', fontSize: 11 }}>Try {query.toUpperCase()}</button></> : 'Type to search'}
+                  {query ? <>No results for "{query}" · <button onClick={() => goTo(query.toUpperCase())} style={{ color: '#34d399', background: 'none', border: 'none', cursor: 'pointer', fontSize: 11 }}>Try {query.toUpperCase()}</button></> : 'Type to search'}
                 </div>
               ) : hits.map((t, i) => (
                 <div key={t.s} onClick={() => goTo(t.s)} onMouseEnter={() => setSel(i)}
@@ -379,9 +396,16 @@ export function Navbar() {
         <div style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '3px 8px', borderRadius: 2, fontSize: 10, fontWeight: 500, color: regCol, background: regCol + '15' }}>
           <span style={{ width: 5, height: 5, borderRadius: '50%', background: regCol }} className="pulse-dot" /> {regime}
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 10, color: apiOnline ? '#3fb950' : '#f85149' }}>
-          <span style={{ width: 5, height: 5, borderRadius: '50%', background: apiOnline ? '#3fb950' : '#f85149' }} />
-          {apiOnline ? 'Live' : 'Connecting...'}
+        <div
+          title={
+            apiOnline ? 'Backend reachable.'
+              : apiOffline ? 'Backend unreachable. Check VITE_BACKEND_URL or try again.'
+              : 'Trying to reach the backend...'
+          }
+          style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 10, color: apiOnline ? '#3fb950' : apiOffline ? '#f85149' : '#d29922' }}
+        >
+          <span style={{ width: 5, height: 5, borderRadius: '50%', background: apiOnline ? '#3fb950' : apiOffline ? '#f85149' : '#d29922' }} />
+          {apiOnline ? 'Live' : apiOffline ? 'Offline' : 'Connecting...'}
         </div>
         <span style={{ fontSize: 11, color: '#484f58', fontFamily: "'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace", fontVariantNumeric: 'tabular-nums', letterSpacing: 0.3 }}>{clock}</span>
 
@@ -392,8 +416,8 @@ export function Navbar() {
               width: 28, height: 28, display: 'flex', alignItems: 'center', justifyContent: 'center',
               cursor: 'pointer', fontSize: 9, fontWeight: 600, letterSpacing: '0.02em',
               color: acctOpen ? '#c9d1d9' : '#8b949e',
-              background: acctOpen ? '#388bfd' : '#161b22',
-              border: `1px solid ${acctOpen ? '#388bfd' : '#21262d'}`,
+              background: acctOpen ? '#34d399' : '#161b22',
+              border: `1px solid ${acctOpen ? '#34d399' : '#21262d'}`,
               transition: 'all 0.1s',
             }}
             onMouseEnter={e => { if (!acctOpen) { e.currentTarget.style.borderColor = '#30363d'; e.currentTarget.style.color = '#c9d1d9' } }}
@@ -417,29 +441,54 @@ export function Navbar() {
                 </div>
               </div>
 
-              {/* Account / billing / sign-out all live on the marketing site.
-                  Clicking these breaks out of the iframe via target="_top". */}
+              {/* Account / billing / support all live on the marketing site.
+                  Plain hrefs — same origin, full-page navigation, breaks out
+                  of the SPA's React Router (which is scoped to /terminal). */}
               <div style={{ padding: '4px 0' }}>
-                <a href="/" target="_top" rel="noopener"
+                <a href="/dashboard/profile"
                   style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 16px', cursor: 'pointer', textDecoration: 'none' }}
                   onMouseEnter={e => (e.currentTarget.style.background = '#0e1117')}
                   onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
-                  <span style={{ width: 18, height: 18, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 9, color: '#30363d', border: '1px solid #21262d', flexShrink: 0 }}>A</span>
-                  <span style={{ fontSize: 12, color: '#8b949e' }}>Manage account</span>
+                  <span style={{ width: 18, height: 18, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 9, color: '#30363d', border: '1px solid #21262d', flexShrink: 0 }}>U</span>
+                  <span style={{ fontSize: 12, color: '#8b949e' }}>Profile</span>
                 </a>
-                <a href="/pricing" target="_top" rel="noopener"
+                <a href="/dashboard/billing"
                   style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 16px', cursor: 'pointer', textDecoration: 'none' }}
                   onMouseEnter={e => (e.currentTarget.style.background = '#0e1117')}
                   onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
                   <span style={{ width: 18, height: 18, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 9, color: '#30363d', border: '1px solid #21262d', flexShrink: 0 }}>$</span>
-                  <span style={{ fontSize: 12, color: '#8b949e' }}>Billing &amp; plans</span>
+                  <span style={{ fontSize: 12, color: '#8b949e' }}>Subscription &amp; billing</span>
                 </a>
-                <a href="/support" target="_top" rel="noopener"
+                <a href="/pricing"
+                  style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 16px', cursor: 'pointer', textDecoration: 'none' }}
+                  onMouseEnter={e => (e.currentTarget.style.background = '#0e1117')}
+                  onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
+                  <span style={{ width: 18, height: 18, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 9, color: '#30363d', border: '1px solid #21262d', flexShrink: 0 }}>↑</span>
+                  <span style={{ fontSize: 12, color: '#8b949e' }}>Upgrade plan</span>
+                </a>
+                <a href="/support"
                   style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 16px', cursor: 'pointer', textDecoration: 'none' }}
                   onMouseEnter={e => (e.currentTarget.style.background = '#0e1117')}
                   onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
                   <span style={{ width: 18, height: 18, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 9, color: '#30363d', border: '1px solid #21262d' }}>?</span>
                   <span style={{ fontSize: 12, color: '#8b949e' }}>Help &amp; contact</span>
+                </a>
+              </div>
+              {/* Sign out — calls supabase.auth.signOut() then hard-navigates
+                  to /login on the marketing site so the cookie is cleared
+                  everywhere (terminal cookie clears too — same origin). */}
+              <div style={{ padding: '4px 0', borderTop: '1px solid #161b22' }}>
+                <a href="#"
+                  onClick={async (e) => {
+                    e.preventDefault()
+                    try { await supabase.auth.signOut() } catch {}
+                    window.location.href = '/login'
+                  }}
+                  style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 16px', cursor: 'pointer', textDecoration: 'none' }}
+                  onMouseEnter={e => (e.currentTarget.style.background = '#0e1117')}
+                  onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
+                  <span style={{ width: 18, height: 18, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 9, color: '#f8514966', border: '1px solid #21262d' }}>→</span>
+                  <span style={{ fontSize: 12, color: '#f85149' }}>Sign out</span>
                 </a>
               </div>
             </div>
@@ -469,8 +518,8 @@ export function Navbar() {
                 transition: 'color 120ms ease-out, background 120ms ease-out', position: 'relative',
                 background: active ? '#161b22' : 'transparent',
                 color: active ? '#f0f6fc' : '#8b949e',
-                borderBottom: active ? '2px solid #388bfd' : '2px solid transparent',
-                borderLeft: isDragOver ? '2px solid #388bfd' : 'none',
+                borderBottom: active ? '2px solid #34d399' : '2px solid transparent',
+                borderLeft: isDragOver ? '2px solid #34d399' : 'none',
                 letterSpacing: 0.2,
                 opacity: dragIdx === idx ? 0.5 : 1,
               }}

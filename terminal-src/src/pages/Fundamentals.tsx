@@ -40,8 +40,8 @@ function detectSector(sym: string): Sector {
 }
 
 const SECTOR_META: Record<Sector, { label: string; emoji: string; color: string; warn: string | null }> = {
-  normal:   { emoji:'', color:'#388bfd', label:'Standard — Industry / Consumer / Mature Tech', warn: null },
-  cyclical: { emoji:'', color:'#388bfd', label:'Cyclical — Auto / Materials / Shipping / Steel',
+  normal:   { emoji:'', color:'#34d399', label:'Standard — Industry / Consumer / Mature Tech', warn: null },
+  cyclical: { emoji:'', color:'#34d399', label:'Cyclical — Auto / Materials / Shipping / Steel',
     warn:'WARNING: ratios at cycle peak are misleading — analyze over 3-5 years minimum' },
   tech:     { emoji:'', color:'#3fb950', label:'Tech / Growth — AI / SaaS / Biotech',
     warn:'WARNING: not yet profitable + dilution risk — FCF burn and cash runway are priority' },
@@ -576,7 +576,7 @@ export function Fundamentals() {
           </span>
           {/* Next earnings */}
           {nextEarnings && (
-            <span style={{ fontSize:9, color:'#388bfd',  }}>
+            <span style={{ fontSize:9, color:'#34d399',  }}>
               📅 Prochain earnings: {new Date(nextEarnings).toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'})}
             </span>
           )}
@@ -603,9 +603,9 @@ export function Fundamentals() {
           <input value={input} onChange={e=>setInput(e.target.value.toUpperCase())}
             onKeyDown={e=>e.key==='Enter'&&go()}
             placeholder="TICKER"
-            style={{ background:'#161b22', border:'1px solid #21262d', color:'#388bfd', fontSize:16, fontWeight:700, padding:'5px 14px', width:120, outline:'none',  letterSpacing:0.5, borderRadius:4 }}
+            style={{ background:'#161b22', border:'1px solid #21262d', color:'#34d399', fontSize:16, fontWeight:700, padding:'5px 14px', width:120, outline:'none',  letterSpacing:0.5, borderRadius:4 }}
           />
-          <button onClick={go} style={{ padding:'5px 14px', fontSize:9, background:'#388bfd18', border:'1px solid #388bfd44', color:'#388bfd', cursor:'pointer',  letterSpacing:0.5, borderRadius:4 }}>
+          <button onClick={go} style={{ padding:'5px 14px', fontSize:9, background:'#34d39918', border:'1px solid #34d39944', color:'#34d399', cursor:'pointer',  letterSpacing:0.5, borderRadius:4 }}>
             ANALYZE
           </button>
           <button onClick={()=>navigate(`/ticker/${sym}`)} style={{ padding:'5px 14px', fontSize:9, background:'#3fb95014', border:'1px solid #3fb95033', color:'#3fb950', cursor:'pointer',  borderRadius:4 }}>

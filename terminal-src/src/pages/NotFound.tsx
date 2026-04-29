@@ -25,7 +25,7 @@ export function NotFoundPage() {
         <div
           style={{
             fontFamily: mono, fontSize: 11, fontWeight: 700,
-            letterSpacing: 3, textTransform: 'uppercase', color: '#388bfd',
+            letterSpacing: 3, textTransform: 'uppercase', color: '#34d399',
             marginBottom: 12,
           }}
         >
@@ -43,7 +43,7 @@ export function NotFoundPage() {
             style={{
               padding: '8px 16px', fontSize: 12, fontFamily: mono, fontWeight: 700,
               textTransform: 'uppercase', letterSpacing: 0.5,
-              background: '#388bfd', color: '#fff', textDecoration: 'none',
+              background: '#34d399', color: '#fff', textDecoration: 'none',
             }}
           >
             Open terminal

@@ -66,15 +66,15 @@ export function PortfolioNews({ symbols }: { symbols: string[] }) {
           <button onClick={() => setFilter('ALL')}
             style={{ fontSize: 10, padding: '3px 8px',
               background: filter === 'ALL' ? 'rgba(56,139,253,0.15)' : 'transparent',
-              color: filter === 'ALL' ? '#388bfd' : '#8b949e',
-              border: `1px solid ${filter === 'ALL' ? '#388bfd' : '#21262d'}`,
+              color: filter === 'ALL' ? '#34d399' : '#8b949e',
+              border: `1px solid ${filter === 'ALL' ? '#34d399' : '#21262d'}`,
               cursor: 'pointer', fontFamily: mono, letterSpacing: 0.3 }}>ALL</button>
           {uniqSyms.slice(0, 10).map(s => (
             <button key={s} onClick={() => setFilter(s)}
               style={{ fontSize: 10, padding: '3px 8px',
                 background: filter === s ? 'rgba(56,139,253,0.15)' : 'transparent',
-                color: filter === s ? '#388bfd' : '#8b949e',
-                border: `1px solid ${filter === s ? '#388bfd' : '#21262d'}`,
+                color: filter === s ? '#34d399' : '#8b949e',
+                border: `1px solid ${filter === s ? '#34d399' : '#21262d'}`,
                 cursor: 'pointer', fontFamily: mono, letterSpacing: 0.3 }}>{s}</button>
           ))}
         </div>
@@ -93,7 +93,7 @@ export function PortfolioNews({ symbols }: { symbols: string[] }) {
                        alignItems: 'center', transition: 'background 80ms' }}
               onMouseEnter={e => (e.currentTarget.style.background = '#161b22')}
               onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
-              <span style={{ fontSize: 10, color: '#388bfd', fontFamily: mono, fontWeight: 600 }}>{n.related || '—'}</span>
+              <span style={{ fontSize: 10, color: '#34d399', fontFamily: mono, fontWeight: 600 }}>{n.related || '—'}</span>
               <span style={{ fontSize: 11, color: '#c9d1d9', lineHeight: 1.4, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' } as any}>{n.title}</span>
               <span style={{ fontSize: 9, color: '#8b949e', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{n.publisher}</span>
               <span style={{ fontSize: 9, color: '#484f58', fontFamily: mono, textAlign: 'right' }}>{timeStr}</span>

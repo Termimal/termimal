@@ -24,8 +24,8 @@ export const c = {
     inverse:   '#0B0E14',
   },
   accent: {
-    blue:      '#2962FF',
-    blueHover: '#1E53E5',
+    blue:      '#34d399',
+    blueHover: '#10b981',
     blueSoft:  'rgba(41,98,255,0.12)',
     link:      '#5AA9E6',
   },

@@ -56,11 +56,11 @@ function DeltaChip({ val }: { val: number }) {
 
 function SortIcon({ active, dir }: { active: boolean; dir: 'asc' | 'desc' }) {
   if (!active) return <span style={{ color: '#21262d', fontSize: 8, marginLeft: 2 }}>&#8597;</span>
-  return <span style={{ color: '#388bfd', fontSize: 8, marginLeft: 2 }}>{dir === 'asc' ? '↑' : '↓'}</span>
+  return <span style={{ color: '#34d399', fontSize: 8, marginLeft: 2 }}>{dir === 'asc' ? '↑' : '↓'}</span>
 }
 
 function PressureBar({ percentile }: { percentile: number }) {
-  const col = percentile >= 90 ? '#f85149' : percentile >= 75 ? '#d29922' : '#388bfd'
+  const col = percentile >= 90 ? '#f85149' : percentile >= 75 ? '#d29922' : '#34d399'
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
       <div style={{ width: 70, height: 6, background: '#161b22', borderRadius: 1, overflow: 'hidden' }}>
@@ -72,7 +72,7 @@ function PressureBar({ percentile }: { percentile: number }) {
 }
 
 function DirectionLabel({ direction }: { direction: string }) {
-  const col = direction === 'Long crowded' ? '#d29922' : direction === 'Short crowded' ? '#388bfd' : '#484f58'
+  const col = direction === 'Long crowded' ? '#d29922' : direction === 'Short crowded' ? '#34d399' : '#484f58'
   return <span style={{ fontSize: 9, color: col, fontFamily: mono }}>{direction}</span>
 }
 
@@ -85,7 +85,7 @@ function getMomentumLabel(history: number[]): { label: string; color: string } {
   const oA = older.reduce((a, b) => a + b, 0) / older.length
   const d = rA - oA
   if (d > 2) return { label: 'Rising risk', color: '#d29922' }
-  if (d < -2) return { label: 'Falling risk', color: '#388bfd' }
+  if (d < -2) return { label: 'Falling risk', color: '#34d399' }
   return { label: 'Stable outlook', color: '#484f58' }
 }
 
@@ -107,19 +107,19 @@ function PositioningDetail({ instrumentId, onBack }: { instrumentId: string; onB
   )
   if (!data) return (
     <div style={{ padding: 40, textAlign: 'center', color: '#484f58' }}>
-      <span onClick={onBack} style={{ fontSize: 12, color: '#388bfd', cursor: 'pointer', display: 'block', marginBottom: 20 }}>← Positioning Pressure</span>
+      <span onClick={onBack} style={{ fontSize: 12, color: '#34d399', cursor: 'pointer', display: 'block', marginBottom: 20 }}>← Positioning Pressure</span>
       Unable to load detailed data for this instrument.
     </div>
   )
 
   const d7col = data.weeklyChange > 0 ? '#3fb950' : data.weeklyChange < 0 ? '#f85149' : '#484f58'
   const { label: momLabel, color: momCol } = getMomentumLabel(data.sparkline)
-  const barCol = data.percentile >= 90 ? '#f85149' : data.percentile >= 75 ? '#d29922' : '#388bfd'
+  const barCol = data.percentile >= 90 ? '#f85149' : data.percentile >= 75 ? '#d29922' : '#34d399'
 
   return (
     <div style={{ padding: '20px 24px' }}>
       {/* Back nav */}
-      <span onClick={onBack} style={{ fontSize: 12, color: '#388bfd', cursor: 'pointer' }}>← Positioning Pressure</span>
+      <span onClick={onBack} style={{ fontSize: 12, color: '#34d399', cursor: 'pointer' }}>← Positioning Pressure</span>
 
       {/* Header */}
       <div style={{ marginTop: 14, display: 'flex', alignItems: 'flex-start', gap: 16 }}>
@@ -149,7 +149,7 @@ function PositioningDetail({ instrumentId, onBack }: { instrumentId: string; onB
         {[
           { l: 'Percentile', v: `${data.percentile}th`, c: '#c9d1d9' },
           { l: 'Z-Score', v: `${data.zScore > 0 ? '+' : ''}${data.zScore}`, c: '#c9d1d9' },
-          { l: 'Direction', v: data.direction, c: data.direction === 'Long crowded' ? '#d29922' : data.direction === 'Short crowded' ? '#388bfd' : '#484f58' },
+          { l: 'Direction', v: data.direction, c: data.direction === 'Long crowded' ? '#d29922' : data.direction === 'Short crowded' ? '#34d399' : '#484f58' },
           { l: 'Driver', v: data.driverCategory, c: '#8b949e' },
           { l: 'OI Trend', v: data.oiTrend, c: '#8b949e' },
           { l: 'Wks at Extreme', v: data.weeksAtExtreme > 0 ? `${data.weeksAtExtreme}` : '—', c: '#8b949e' },
@@ -167,7 +167,7 @@ function PositioningDetail({ instrumentId, onBack }: { instrumentId: string; onB
       </div>
       {data.percentileHistory && data.percentileHistory.length > 2 ? (
         <TvLineChart title="" sub="" unit="%" dec={0} height={320} fill
-          lines={[{ label: 'Percentile', color: '#388bfd', data: data.percentileHistory }]}
+          lines={[{ label: 'Percentile', color: '#34d399', data: data.percentileHistory }]}
           refs={[
             { val: 90, color: '#f85149', label: 'Extreme (90th)', dash: true },
             { val: 75, color: '#d29922', label: 'Extended (75th)', dash: true },
@@ -193,7 +193,7 @@ function PositioningDetail({ instrumentId, onBack }: { instrumentId: string; onB
         {data.netPositioning && data.netPositioning.length > 2 ? (
           <div style={{ marginTop: 4 }}>
             <TvLineChart title="" sub="" unit=" contracts" dec={0} height={120} fill
-              lines={[{ label: 'Net Speculative', color: '#388bfd', data: data.netPositioning }]}
+              lines={[{ label: 'Net Speculative', color: '#34d399', data: data.netPositioning }]}
               refs={[{ val: 0, color: '#21262d', label: 'Zero', dash: true }]} />
           </div>
         ) : (
@@ -216,7 +216,7 @@ function PositioningDetail({ instrumentId, onBack }: { instrumentId: string; onB
             </thead>
             <tbody>
               {data.traderCategories.map(tc => (
-                <tr key={tc.name} style={{ borderBottom: '1px solid #161b22', borderLeft: tc.isDriver ? '2px solid #388bfd' : '2px solid transparent' }}>
+                <tr key={tc.name} style={{ borderBottom: '1px solid #161b22', borderLeft: tc.isDriver ? '2px solid #34d399' : '2px solid transparent' }}>
                   <td style={{ padding: '6px 8px', color: tc.isDriver ? '#c9d1d9' : '#8b949e', fontWeight: tc.isDriver ? 500 : 400 }}>{tc.name}</td>
                   <td style={{ padding: '6px 8px', textAlign: 'right', fontFamily: mono, color: tc.net >= 0 ? '#c9d1d9' : '#c9d1d9' }}>{fmtContracts(tc.net)}</td>
                   <td style={{ padding: '6px 8px', textAlign: 'right' }}><DeltaChip val={tc.change4w} /></td>
@@ -282,7 +282,7 @@ function PositioningDetail({ instrumentId, onBack }: { instrumentId: string; onB
       {/* COT cross-navigation */}
       {POSITIONING_TO_COT[instrumentId] && (
         <div style={{ marginTop: 12 }}>
-          <span onClick={() => navigate('/cot')} style={{ fontSize: 10, color: '#388bfd', cursor: 'pointer' }}>
+          <span onClick={() => navigate('/cot')} style={{ fontSize: 10, color: '#34d399', cursor: 'pointer' }}>
             View raw COT data for {POSITIONING_TO_COT[instrumentId]} →
           </span>
         </div>
@@ -419,7 +419,7 @@ export function PositioningPage() {
                     <td style={{ padding: '8px 8px', textAlign: 'right' }}><DeltaChip val={inst.weeklyChange} /></td>
                     <td style={{ padding: '8px 8px', textAlign: 'center' }}>
                       <svg width={sW} height={sH} style={{ display: 'block', margin: '0 auto' }}>
-                        <polyline fill="none" stroke="#388bfd" strokeWidth={1} opacity={0.4} points={pts} />
+                        <polyline fill="none" stroke="#34d399" strokeWidth={1} opacity={0.4} points={pts} />
                       </svg>
                     </td>
                   </tr>

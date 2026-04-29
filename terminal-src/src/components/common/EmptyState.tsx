@@ -50,8 +50,8 @@ export function EmptyState({
           style={{
             width: 36, height: 36,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            background: '#388bfd15', color: '#388bfd',
-            border: '1px solid #388bfd33',
+            background: '#34d39915', color: '#34d399',
+            border: '1px solid #34d39933',
             fontSize: 16, fontWeight: 700,
           }}
         >
@@ -71,7 +71,7 @@ export function EmptyState({
               textTransform: 'uppercase',
               cursor: 'pointer',
               border: a.variant === 'secondary' ? '1px solid #30363d' : 'none',
-              background: a.variant === 'secondary' ? 'transparent' : '#388bfd',
+              background: a.variant === 'secondary' ? 'transparent' : '#34d399',
               color: a.variant === 'secondary' ? '#c9d1d9' : '#fff',
               textDecoration: 'none',
               display: 'inline-flex',

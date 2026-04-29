@@ -18,9 +18,10 @@ import {
 
 interface AppState {
   // Connection
-  apiOnline:   boolean
-  fredKey:     boolean
-  lastChecked: string | null
+  apiOnline:       boolean
+  apiFailedChecks: number
+  fredKey:         boolean
+  lastChecked:     string | null
 
   // Market data
   prices:    Record<string, PriceSnapshot>
@@ -132,7 +133,8 @@ export const useStore = create<AppState>()(
   persist(
     (set, get) => ({
       // Initial state
-      apiOnline:     false,
+      apiOnline:       false,
+      apiFailedChecks: 0,
       fredKey:       false,
       lastChecked:   null,
       prices:        {},
@@ -152,10 +154,15 @@ export const useStore = create<AppState>()(
       // ── API health check ──────────────────────────────────
       checkApi: async () => {
         const status = await fetchStatus()
+        const ok = status?.status === 'ok'
+        const prev = get() as any
         set({
-          apiOnline:   status?.status === 'ok',
+          apiOnline:   ok,
           fredKey:     status?.fred_key ?? false,
           lastChecked: new Date().toISOString(),
+          // Track consecutive failed checks so the UI can switch from
+          // "Connecting..." to "Offline" instead of looping forever.
+          apiFailedChecks: ok ? 0 : (prev.apiFailedChecks ?? 0) + 1,
         })
       },
 
