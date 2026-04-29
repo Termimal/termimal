@@ -116,15 +116,15 @@ export default function AffiliatesPage() {
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <label className="mb-1.5 block text-xs font-medium" style={{ color: "var(--t2)" }}>Full name *</label>
-                  <input required type="text" value={form.name} onChange={set("name")} style={inputStyle} placeholder="Alex Reeves" />
+                  <input required type="text" autoComplete="name" value={form.name} onChange={set("name")} style={inputStyle} placeholder="Alex Reeves" />
                 </div>
                 <div>
                   <label className="mb-1.5 block text-xs font-medium" style={{ color: "var(--t2)" }}>Email address *</label>
-                  <input required type="email" value={form.email} onChange={set("email")} style={inputStyle} placeholder="you@example.com" />
+                  <input required type="email" autoComplete="email" inputMode="email" value={form.email} onChange={set("email")} style={inputStyle} placeholder="you@example.com" />
                 </div>
                 <div>
                   <label className="mb-1.5 block text-xs font-medium" style={{ color: "var(--t2)" }}>Website or social profile *</label>
-                  <input required type="text" value={form.website} onChange={set("website")} style={inputStyle} placeholder="https://youtube.com/..." />
+                  <input required type="url" autoComplete="url" inputMode="url" value={form.website} onChange={set("website")} style={inputStyle} placeholder="https://youtube.com/..." />
                 </div>
                 <div>
                   <label className="mb-1.5 block text-xs font-medium" style={{ color: "var(--t2)" }}>Audience size</label>
@@ -140,7 +140,7 @@ export default function AffiliatesPage() {
               </div>
               <div>
                 <label className="mb-1.5 block text-xs font-medium" style={{ color: "var(--t2)" }}>Country</label>
-                <input type="text" value={form.country} onChange={set("country")} style={inputStyle} placeholder="Finland" />
+                <input type="text" autoComplete="country-name" value={form.country} onChange={set("country")} style={inputStyle} placeholder="Finland" />
               </div>
               <div>
                 <label className="mb-1.5 block text-xs font-medium" style={{ color: "var(--t2)" }}>How do you plan to promote Termimal? *</label>

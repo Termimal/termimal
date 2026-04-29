@@ -73,7 +73,7 @@ export default function SignupPage() {
       email,
       password,
       options: {
-        emailRedirectTo: `${window.location.origin}/api/auth/callback?next=/web-terminal`,
+        emailRedirectTo: `${window.location.origin}/api/auth/callback?next=/terminal`,
       },
     })
 
@@ -98,7 +98,7 @@ export default function SignupPage() {
     >
       {/* Social sign-up at the top */}
       <div className="mb-4">
-        <OAuthButtons next="/web-terminal" />
+        <OAuthButtons next="/terminal" />
       </div>
 
       {/* Email / Phone toggle */}
@@ -126,7 +126,7 @@ export default function SignupPage() {
         ))}
       </div>
 
-      {method === 'phone' && <PhoneAuth mode="signup" next="/web-terminal" />}
+      {method === 'phone' && <PhoneAuth mode="signup" next="/terminal" />}
 
       {method === 'email' && (
       <form onSubmit={handleSubmit} noValidate>

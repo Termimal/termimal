@@ -45,9 +45,11 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/login', request.url))
   }
 
-  // Redirect logged-in users away from auth pages → straight into the terminal
+  // Redirect logged-in users away from auth pages — straight into the terminal.
+  // /web-terminal also 301-redirects to /terminal in next.config.js, but going
+  // direct here saves a round-trip.
   if ((request.nextUrl.pathname === '/login' || request.nextUrl.pathname === '/signup') && user) {
-    return NextResponse.redirect(new URL('/web-terminal', request.url))
+    return NextResponse.redirect(new URL('/terminal', request.url))
   }
 
   return response

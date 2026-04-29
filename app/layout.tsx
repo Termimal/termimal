@@ -62,6 +62,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
+        {/* Keyboard skip-link — appears on first Tab. CSS lives in globals.css */}
+        <a href="#main" className="skip-link">Skip to main content</a>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{

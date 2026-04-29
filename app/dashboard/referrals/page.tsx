@@ -19,7 +19,10 @@ export default function ReferralsPage() {
   }, [])
 
   const refCode = profile?.referral_code || '...'
-  const refLink = `https://termimal-website.vercel.app/signup?ref=${refCode}`
+  // Use current origin so the same page works on localhost, preview deploys,
+  // and production without hardcoding a Vercel-era URL.
+  const origin = typeof window !== 'undefined' ? window.location.origin : 'https://termimal.com'
+  const refLink = `${origin}/signup?ref=${refCode}`
   const handleCopy = () => { navigator.clipboard.writeText(refLink); setCopied(true); setTimeout(() => setCopied(false), 2000) }
 
   return (

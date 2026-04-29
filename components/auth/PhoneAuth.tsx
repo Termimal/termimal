@@ -24,7 +24,7 @@ import { createClient } from '@/lib/supabase/client'
  */
 export function PhoneAuth({
   mode,
-  next = '/dashboard',
+  next = '/terminal',
 }: {
   mode: 'login' | 'signup'
   next?: string

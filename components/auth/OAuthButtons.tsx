@@ -8,7 +8,7 @@ import { createClient } from '@/lib/supabase/client'
  * Add more providers (Apple, GitHub, etc.) by enabling them in Supabase →
  * Authentication → Providers and pushing another button here.
  */
-export function OAuthButtons({ next = '/web-terminal' }: { next?: string }) {
+export function OAuthButtons({ next = '/terminal' }: { next?: string }) {
   const [loading, setLoading] = useState<string | null>(null)
   const [error, setError] = useState('')
   const supabase = createClient()

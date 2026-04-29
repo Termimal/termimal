@@ -32,7 +32,7 @@ export default function LoginPage() {
       return
     }
 
-    window.location.href = '/web-terminal'
+    window.location.href = '/terminal'
   }
 
   return (
@@ -42,7 +42,7 @@ export default function LoginPage() {
     >
       {/* Social sign-in at the top */}
       <div className="mb-4">
-        <OAuthButtons next="/web-terminal" />
+        <OAuthButtons next="/terminal" />
       </div>
 
       {/* Email / Phone toggle */}
@@ -70,7 +70,7 @@ export default function LoginPage() {
         ))}
       </div>
 
-      {method === 'phone' && <PhoneAuth mode="login" next="/web-terminal" />}
+      {method === 'phone' && <PhoneAuth mode="login" next="/terminal" />}
 
       {method === 'email' && (
         <form onSubmit={handleSubmit} noValidate>
