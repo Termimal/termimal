@@ -1,0 +1,238 @@
+/* ============================================================
+   TERMIMAL — animations.css
+   Single source of truth for all animation primitives.
+   Import in app/globals.css:  @import './animations.css';
+   ============================================================ */
+
+/* ----------------------------------------------------------
+   1. SCROLL REVEAL UTILITIES
+      Add .reveal / .reveal-left / .reveal-right / .reveal-scale
+      to any element. They start hidden. When a parent section
+      is observed, add .visible to each child (via useReveal hook
+      or the IntersectionObserver in sections/index.tsx).
+   ---------------------------------------------------------- */
+.reveal,
+.reveal-left,
+.reveal-right,
+.reveal-scale {
+  opacity: 0;
+  transition:
+    opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal       { transform: translateY(20px); }
+.reveal-left  { transform: translateX(-28px); }
+.reveal-right { transform: translateX(28px); }
+.reveal-scale { transform: scale(0.96); }
+
+.reveal.visible,
+.reveal-left.visible,
+.reveal-right.visible,
+.reveal-scale.visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Convenience stagger delays — apply alongside .reveal */
+.stagger-0 { transition-delay: 0ms !important; }
+.stagger-1 { transition-delay: 70ms !important; }
+.stagger-2 { transition-delay: 140ms !important; }
+.stagger-3 { transition-delay: 210ms !important; }
+.stagger-4 { transition-delay: 280ms !important; }
+.stagger-5 { transition-delay: 350ms !important; }
+
+/* Prefers reduced motion — collapse to instant reveal */
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .reveal-left,
+  .reveal-right,
+  .reveal-scale {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* ----------------------------------------------------------
+   2. NAVBAR ENTRANCE
+      Applied to the <header> element once on load.
+   ---------------------------------------------------------- */
+.anim-nav-entrance {
+  animation: navSlideDown 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes navSlideDown {
+  from { opacity: 0; transform: translateY(-100%); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ----------------------------------------------------------
+   3. FLOATING (slow, lazy drift)
+      .anim-float        — short float (hero widget, terminal)
+      .anim-float-slow   — very long float (background orbs)
+   ---------------------------------------------------------- */
+.anim-float {
+  animation: float 6s ease-in-out infinite;
+}
+.anim-float-slow {
+  animation: floatSlow 14s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-12px); }
+}
+@keyframes floatSlow {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50%       { transform: translateY(-22px) scale(1.02); }
+}
+
+/* ----------------------------------------------------------
+   4. BADGE PULSE
+      Applied to the live status badge in HeroSection.
+   ---------------------------------------------------------- */
+.anim-badge-pulse {
+  animation: badgePulse 3.5s ease-in-out infinite;
+}
+
+@keyframes badgePulse {
+  0%, 100% { box-shadow: 0 0 0 0   rgba(52, 211, 153, 0); }
+  40%       { box-shadow: 0 0 0 6px rgba(52, 211, 153, 0.14); }
+  70%       { box-shadow: 0 0 0 12px rgba(52, 211, 153, 0); }
+}
+
+/* ----------------------------------------------------------
+   5. CTA GLOW PULSE
+      Applied to primary CTA buttons.
+   ---------------------------------------------------------- */
+.anim-glow-pulse {
+  animation: ctaGlowPulse 4s ease-in-out infinite;
+}
+
+@keyframes ctaGlowPulse {
+  0%, 100% { box-shadow: 0 0 0  0   rgba(52, 211, 153, 0); }
+  50%       { box-shadow: 0 0 22px 4px rgba(52, 211, 153, 0.22); }
+}
+
+/* ----------------------------------------------------------
+   6. ANIMATED BORDER GLOW
+      Applied to the dashboard screenshot frame and CTA box.
+      Uses a CSS conic-gradient that rotates continuously.
+   ---------------------------------------------------------- */
+.anim-border-glow {
+  position: relative;
+}
+
+.anim-border-glow::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from var(--angle, 0deg),
+    transparent 25%,
+    rgba(52, 211, 153, 0.3) 50%,
+    transparent 75%
+  );
+  animation: rotateBorder 6s linear infinite;
+  z-index: -1;
+  pointer-events: none;
+}
+
+@property --angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+@keyframes rotateBorder {
+  to { --angle: 360deg; }
+}
+
+/* ----------------------------------------------------------
+   7. MARKET TICKER SCROLL
+      Applied to the inner flex row inside MarketRibbon.
+   ---------------------------------------------------------- */
+.animate-scroll {
+  animation: tickerScroll 32s linear infinite;
+}
+.animate-scroll:hover {
+  animation-play-state: paused;
+}
+
+@keyframes tickerScroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* ----------------------------------------------------------
+   8. LOGO SWITCH — THEME AWARE
+      Controls which logo variant is visible per theme.
+      --logo-light-theme-display : shown in light mode (dark logo)
+      --logo-dark-theme-display  : shown in dark mode (light logo)
+   ---------------------------------------------------------- */
+:root,
+[data-theme="light"] {
+  --logo-light-theme-display: block;
+  --logo-dark-theme-display:  none;
+}
+[data-theme="dark"],
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --logo-light-theme-display: none;
+    --logo-dark-theme-display:  block;
+  }
+}
+
+/* ----------------------------------------------------------
+   9. PRICING CARD BORDER GLOW
+      Applied inline to the popular pricing card.
+   ---------------------------------------------------------- */
+@keyframes borderGlow {
+  0%,  100% { box-shadow: 0  0 0   0   rgba(52, 211, 153, 0); }
+  50%        { box-shadow: 0  0 28px 4px rgba(52, 211, 153, 0.1); }
+}
+
+/* ----------------------------------------------------------
+   10. SHIMMER SKELETON
+       Utility class for skeleton loaders.
+   ---------------------------------------------------------- */
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--surface-offset, #1a1a1a) 25%,
+    var(--surface-dynamic, #242424) 50%,
+    var(--surface-offset, #1a1a1a) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+/* ----------------------------------------------------------
+   11. FADE IN (generic)
+       Simple fade-in utility for modals, toasts, dropdowns.
+   ---------------------------------------------------------- */
+.anim-fade-in {
+  animation: fadeIn 0.22s ease both;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ----------------------------------------------------------
+   12. SCALE IN (popups, menus)
+   ---------------------------------------------------------- */
+.anim-scale-in {
+  animation: scaleIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+  transform-origin: top center;
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.93); }
+  to   { opacity: 1; transform: scale(1); }
+}

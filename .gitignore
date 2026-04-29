@@ -1,0 +1,38 @@
+node_modules/
+.next/
+out/
+.DS_Store
+*.tsbuildinfo
+next-env.d.ts
+.env*.local
+.vercel
+
+# Claude / Cursor / IDE metadata
+.claude/
+.cursor/
+.vscode/settings.json
+.idea/
+
+# Secrets
+.env
+.env.local
+.env.production
+.env.development
+*.pem
+*.key
+*.p12
+
+# Claude / Cursor / IDE metadata
+.claude/
+.cursor/
+.vscode/settings.json
+.idea/
+
+# Secrets
+.env
+.env.local
+.env.production
+.env.development
+*.pem
+*.key
+*.p12

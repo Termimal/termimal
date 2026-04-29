@@ -1,0 +1,12 @@
+Contact: mailto:security@termimal.com
+Expires: 2027-04-28T00:00:00.000Z
+Preferred-Languages: en, fr
+Canonical: https://termimal.com/.well-known/security.txt
+
+# Termimal vulnerability disclosure
+#
+# We welcome reports of security issues affecting termimal.com, the web terminal,
+# the desktop app, or our APIs. Please email security@termimal.com with a clear
+# description, reproduction steps, and the impact you observed. We acknowledge
+# valid reports within 72 hours and aim to patch high-severity issues within
+# 7 days. Do not disclose publicly before we have confirmed remediation.
