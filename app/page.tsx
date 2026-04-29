@@ -15,14 +15,14 @@ import { Footer } from '@/components/sections/Footer'
 import HomeFaq from '@/components/HomeFaq'
 
 export const metadata: Metadata = {
-  title: 'Termimal â€” Trading Analysis Platform',
+  title: 'Termimal — Trading Analysis Platform',
   description:
     'Termimal is a professional trading analysis platform for charting, macro intelligence, CFTC COT positioning, on-chain analytics, sentiment, and risk research.',
   alternates: {
     canonical: '/',
   },
   openGraph: {
-    title: 'Termimal â€” Trading Analysis Platform',
+    title: 'Termimal — Trading Analysis Platform',
     description:
       'Termimal is a professional trading analysis platform for charting, macro intelligence, CFTC COT positioning, on-chain analytics, sentiment, and risk research.',
     url: '/',

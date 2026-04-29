@@ -124,9 +124,9 @@ export default function HelpPage() {
               }}>
               Open live chat
             </button>
-            <Link href="/contact" className="rounded-2xl border px-5 py-3 text-sm font-semibold"
+            <Link href="/support" className="rounded-2xl border px-5 py-3 text-sm font-semibold"
               style={{ borderColor: "color-mix(in srgb, var(--border) 84%, white 16%)", color: "var(--t1)" }}>
-              Contact page
+              Contact support
             </Link>
           </div>
         </div>

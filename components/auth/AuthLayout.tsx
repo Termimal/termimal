@@ -1,20 +1,35 @@
 'use client'
 import Link from 'next/link'
 import Image from 'next/image'
+import BackToHome from '@/components/BackToHome'
 
-interface AuthLayoutProps { children: React.ReactNode; title: string; subtitle: string; footer?: React.ReactNode }
+interface AuthLayoutProps {
+  children: React.ReactNode
+  title: string
+  subtitle: string
+  footer?: React.ReactNode
+}
 
 export default function AuthLayout({ children, title, subtitle, footer }: AuthLayoutProps) {
   return (
-    <div className="min-h-screen flex" style={{ background: 'var(--bg)' }}>
-      {/* LEFT SIDE - ALWAYS DARK */}
-      <div className="hidden lg:flex flex-1 relative overflow-hidden items-center justify-center" style={{ background: 'var(--terminal-bg)' }}>
+    // <main> as the page-level landmark — assistive tech gets a single,
+    // unambiguous main region. Skip-to-content link in app/layout.tsx
+    // targets the #main anchor here.
+    <main id="main" className="min-h-screen flex" style={{ background: 'var(--bg)' }}>
+      {/* LEFT SIDE — decorative panel, hidden below lg. role="presentation"
+          tells screen readers to skip the duplicate marketing copy. */}
+      <aside
+        role="presentation"
+        aria-hidden="true"
+        className="hidden lg:flex flex-1 relative overflow-hidden items-center justify-center"
+        style={{ background: 'var(--terminal-bg)' }}
+      >
         <div
           className="absolute inset-0 opacity-[.02]"
           style={{
             backgroundImage:
               'linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px)',
-            backgroundSize: '40px 40px'
+            backgroundSize: '40px 40px',
           }}
         />
         <div
@@ -23,10 +38,10 @@ export default function AuthLayout({ children, title, subtitle, footer }: AuthLa
         />
 
         <div className="relative z-10 max-w-md px-12">
-          <Link href="/" className="flex items-center gap-3 mb-12">
+          <div className="flex items-center gap-3 mb-12">
             <Image
               src="/logo-light.png"
-              alt="Termimal Logo"
+              alt=""
               width={44}
               height={44}
               className="object-contain"
@@ -34,12 +49,13 @@ export default function AuthLayout({ children, title, subtitle, footer }: AuthLa
             <span className="text-2xl font-bold text-white" style={{ letterSpacing: '-0.03em' }}>
               Termimal
             </span>
-          </Link>
+          </div>
 
-          <h2 className="text-2xl font-bold text-white mb-3" style={{ letterSpacing: '-0.02em' }}>
+          {/* Marketing copy — uses <p> not <h2> so the right column's <h1>
+              is unambiguously the page heading. */}
+          <p className="text-2xl font-bold text-white mb-3" style={{ letterSpacing: '-0.02em' }}>
             Professional market analysis, built for speed.
-          </h2>
-
+          </p>
           <p className="text-sm leading-relaxed" style={{ color: 'var(--t2)' }}>
             One terminal for charting, macro intelligence, COT positioning, and risk analytics.
           </p>
@@ -56,32 +72,25 @@ export default function AuthLayout({ children, title, subtitle, footer }: AuthLa
             ))}
           </div>
         </div>
-      </div>
+      </aside>
 
-      {/* RIGHT SIDE - CHANGES WITH THEME */}
-      {/*
-        Fix: changed px-4 sm:px-8 → px-4 sm:px-4 sm:px-8 to prevent overflow on small screens (375px).
-        max-w-[380px] + 2*32px padding = 444px which overflows 375px viewport.
-        With px-4 (16px each side): 380px + 32px = 412px → still clips on 375px,
-        so we also add w-full to ensure the inner div never exceeds the container.
-      */}
-      <div className="flex-1 flex items-center justify-center px-4 sm:px-4 sm:px-8 py-12 min-w-0">
+      {/* RIGHT SIDE — form column. Padding scales: 16px on phones, 32px from
+          sm and up. (Previous version had duplicate sm:px-* classes.) */}
+      <section className="flex-1 flex items-center justify-center px-4 sm:px-8 py-12 min-w-0">
         <div className="w-full max-w-[380px] min-w-0">
-        <BackToHome />
+          <BackToHome />
           <Link href="/" className="flex items-center gap-2.5 mb-10 lg:hidden">
-            {/* Light Mode Logo (Black) */}
             <Image
               src="/logo-dark.png"
-              alt="Termimal Logo"
+              alt=""
               width={36}
               height={36}
               className="object-contain"
               style={{ display: 'var(--logo-light-theme-display)' }}
             />
-            {/* Dark Mode Logo (White) */}
             <Image
               src="/logo-light.png"
-              alt="Termimal Logo"
+              alt=""
               width={36}
               height={36}
               className="object-contain"
@@ -112,8 +121,7 @@ export default function AuthLayout({ children, title, subtitle, footer }: AuthLa
             Termimal is a market analysis platform. No trade execution. No financial advice.
           </p>
         </div>
-      </div>
-    </div>
+      </section>
+    </main>
   )
 }
-import BackToHome from '@/components/BackToHome'

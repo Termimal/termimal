@@ -7,35 +7,52 @@
 // not forwarded), users see the Free tier with upgrade prompts that link
 // back to the marketing site.
 
-import { useEffect, useState } from 'react'
+import { lazy, Suspense, useEffect, useState } from 'react'
 import { Routes, Route, useParams } from 'react-router-dom'
 import { useStore } from '@/store/useStore'
 
 import { Navbar }     from '@/components/layout/Navbar'
 import { Watchlist }  from '@/components/layout/Watchlist'
 
-import { Dashboard }        from '@/pages/Dashboard'
-import { MacroPage }        from '@/pages/MacroPage'
-import { RiskPage }         from '@/pages/RiskPage'
-import { COTPage }          from '@/pages/COTPage'
-import { Screener }         from '@/pages/Screener'
-import { Fundamentals }     from '@/pages/Fundamentals'
-import { TickerWorkspace }  from '@/pages/ticker/TickerWorkspace'
-import { Settings }         from '@/pages/Settings'
-import { NewTab }           from '@/pages/NewTab'
-import { Portfolio }        from '@/pages/Portfolio'
-import { Indicators }       from '@/pages/Indicators'
-import { Charts }           from '@/pages/Charts'
-import { NewsFlow }         from '@/pages/NewsFlow'
-import { Polymarket }       from '@/pages/Polymarket'
+// Route-level code splitting. Each page becomes its own chunk so the initial
+// payload is small and only the screens a user actually visits are fetched.
+// Pages export named symbols, so we map each named export back to React.lazy's
+// expected `{ default }` shape.
+const Dashboard       = lazy(() => import('@/pages/Dashboard').then(m => ({ default: m.Dashboard })))
+const MacroPage       = lazy(() => import('@/pages/MacroPage').then(m => ({ default: m.MacroPage })))
+const RiskPage        = lazy(() => import('@/pages/RiskPage').then(m => ({ default: m.RiskPage })))
+const COTPage         = lazy(() => import('@/pages/COTPage').then(m => ({ default: m.COTPage })))
+const Screener        = lazy(() => import('@/pages/Screener').then(m => ({ default: m.Screener })))
+const Fundamentals    = lazy(() => import('@/pages/Fundamentals').then(m => ({ default: m.Fundamentals })))
+const TickerWorkspace = lazy(() => import('@/pages/ticker/TickerWorkspace').then(m => ({ default: m.TickerWorkspace })))
+const Settings        = lazy(() => import('@/pages/Settings').then(m => ({ default: m.Settings })))
+const NewTab          = lazy(() => import('@/pages/NewTab').then(m => ({ default: m.NewTab })))
+const Portfolio       = lazy(() => import('@/pages/Portfolio').then(m => ({ default: m.Portfolio })))
+const Indicators      = lazy(() => import('@/pages/Indicators').then(m => ({ default: m.Indicators })))
+const Charts          = lazy(() => import('@/pages/Charts').then(m => ({ default: m.Charts })))
+const NewsFlow        = lazy(() => import('@/pages/NewsFlow').then(m => ({ default: m.NewsFlow })))
+const Polymarket      = lazy(() => import('@/pages/Polymarket').then(m => ({ default: m.Polymarket })))
 
-import { TermsPage, PrivacyPage, CookiesPage, RiskDisclaimerPage, SecurityPage } from '@/pages/legal/LegalPages'
+const TermsPage          = lazy(() => import('@/pages/legal/LegalPages').then(m => ({ default: m.TermsPage })))
+const PrivacyPage        = lazy(() => import('@/pages/legal/LegalPages').then(m => ({ default: m.PrivacyPage })))
+const CookiesPage        = lazy(() => import('@/pages/legal/LegalPages').then(m => ({ default: m.CookiesPage })))
+const RiskDisclaimerPage = lazy(() => import('@/pages/legal/LegalPages').then(m => ({ default: m.RiskDisclaimerPage })))
+const SecurityPage       = lazy(() => import('@/pages/legal/LegalPages').then(m => ({ default: m.SecurityPage })))
 import { CookieConsentBanner, openCookiePreferences } from '@/components/common/CookieConsent'
 import { OnboardingTour } from '@/components/common/OnboardingTour'
 import { PaywallGate } from '@/components/common/PaywallGate'
 import { UpgradeModalHost } from '@/components/common/UpgradeModalHost'
 import { TrialBanner } from '@/components/common/TrialBanner'
 import { ConnectionBanner } from '@/components/common/ConnectionBanner'
+
+// Lightweight skeleton shown while a route chunk is being fetched.
+function RouteFallback() {
+  return (
+    <div style={{ padding: 24, color: '#8b949e', fontSize: 13, fontFamily: "'SF Mono', Menlo, Consolas, monospace" }}>
+      Loading…
+    </div>
+  )
+}
 
 
 function TickerRoute() {
@@ -148,42 +165,46 @@ export default function App() {
     <>
       <CookieConsentBanner />
       <UpgradeModalHost />
-      <Routes>
-        {/* ═══ Legal pages — bare, no Layout ═══ */}
-        <Route path="/terms"            element={<TermsPage />} />
-        <Route path="/privacy"          element={<PrivacyPage />} />
-        <Route path="/cookies"          element={<CookiesPage />} />
-        <Route path="/risk-disclaimer"  element={<RiskDisclaimerPage />} />
-        <Route path="/security"         element={<SecurityPage />} />
+      <Suspense fallback={<RouteFallback />}>
+        <Routes>
+          {/* ═══ Legal pages — bare, no Layout ═══ */}
+          <Route path="/terms"            element={<TermsPage />} />
+          <Route path="/privacy"          element={<PrivacyPage />} />
+          <Route path="/cookies"          element={<CookiesPage />} />
+          <Route path="/risk-disclaimer"  element={<RiskDisclaimerPage />} />
+          <Route path="/security"         element={<SecurityPage />} />
 
-        {/* ═══ Terminal — every other path ═══ */}
-        <Route path="*" element={
-          <Layout>
-            <Routes>
-              <Route path="/"                element={<Dashboard />} />
-              {/* AI weekly briefing — Premium only (intelligence layer) */}
-              <Route path="/saturday"        element={<PaywallGate feature="aiBriefing"><Dashboard /></PaywallGate>} />
-              <Route path="/fundamentals"    element={<Fundamentals />} />
-              {/* ── Pro tier (professional baseline — TradingView equivalent) ── */}
-              <Route path="/macro"           element={<PaywallGate feature="macroIntelligence"><MacroPage /></PaywallGate>} />
-              <Route path="/screener"        element={<PaywallGate feature="screenerAdvanced"><Screener /></PaywallGate>} />
-              <Route path="/risk"            element={<PaywallGate feature="riskEngine"><RiskPage /></PaywallGate>} />
-              <Route path="/cot"             element={<PaywallGate feature="cotReport"><COTPage /></PaywallGate>} />
-              <Route path="/charts"          element={<PaywallGate feature="chartsAdvanced"><Charts /></PaywallGate>} />
-              {/* ── Premium tier (intelligence layer — Termimal moat) ── */}
-              <Route path="/polymarket"      element={<PaywallGate feature="eventProbabilities"><Polymarket /></PaywallGate>} />
-              {/* ── Free tier ── */}
-              <Route path="/ticker/:symbol"  element={<TickerRoute />} />
-              <Route path="/portfolio"       element={<Portfolio />} />
-              <Route path="/indicators"      element={<Indicators />} />
-              <Route path="/news"            element={<NewsFlow />} />
-              <Route path="/newtab"          element={<NewTab />} />
-              <Route path="/settings"        element={<Settings />} />
-              <Route path="*"                element={<Dashboard />} />
-            </Routes>
-          </Layout>
-        } />
-      </Routes>
+          {/* ═══ Terminal — every other path ═══ */}
+          <Route path="*" element={
+            <Layout>
+              <Suspense fallback={<RouteFallback />}>
+                <Routes>
+                  <Route path="/"                element={<Dashboard />} />
+                  {/* AI weekly briefing — Premium only (intelligence layer) */}
+                  <Route path="/saturday"        element={<PaywallGate feature="aiBriefing"><Dashboard /></PaywallGate>} />
+                  <Route path="/fundamentals"    element={<Fundamentals />} />
+                  {/* ── Pro tier (professional baseline — TradingView equivalent) ── */}
+                  <Route path="/macro"           element={<PaywallGate feature="macroIntelligence"><MacroPage /></PaywallGate>} />
+                  <Route path="/screener"        element={<PaywallGate feature="screenerAdvanced"><Screener /></PaywallGate>} />
+                  <Route path="/risk"            element={<PaywallGate feature="riskEngine"><RiskPage /></PaywallGate>} />
+                  <Route path="/cot"             element={<PaywallGate feature="cotReport"><COTPage /></PaywallGate>} />
+                  <Route path="/charts"          element={<PaywallGate feature="chartsAdvanced"><Charts /></PaywallGate>} />
+                  {/* ── Premium tier (intelligence layer — Termimal moat) ── */}
+                  <Route path="/polymarket"      element={<PaywallGate feature="eventProbabilities"><Polymarket /></PaywallGate>} />
+                  {/* ── Free tier ── */}
+                  <Route path="/ticker/:symbol"  element={<TickerRoute />} />
+                  <Route path="/portfolio"       element={<Portfolio />} />
+                  <Route path="/indicators"      element={<Indicators />} />
+                  <Route path="/news"            element={<NewsFlow />} />
+                  <Route path="/newtab"          element={<NewTab />} />
+                  <Route path="/settings"        element={<Settings />} />
+                  <Route path="*"                element={<Dashboard />} />
+                </Routes>
+              </Suspense>
+            </Layout>
+          } />
+        </Routes>
+      </Suspense>
     </>
   )
 }

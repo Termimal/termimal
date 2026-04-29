@@ -69,26 +69,44 @@ export default function SignupPage() {
       return
     }
 
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/api/auth/callback?next=/terminal`,
-      },
-    })
+    try {
+      // Capture optional ?ref= referral code so the trigger / signup callback
+      // can attribute the new account.
+      const refCode =
+        typeof window !== 'undefined'
+          ? new URLSearchParams(window.location.search).get('ref') || undefined
+          : undefined
 
-    if (error) {
-      setError(error.message)
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/api/auth/callback?next=/terminal`,
+          data: refCode ? { referral_code: refCode } : undefined,
+        },
+      })
+
+      if (error) {
+        // Map known Supabase error strings to generic messages so we don't
+        // leak account-existence (enumeration) on signup.
+        const msg = error.message?.toLowerCase() || ''
+        if (msg.includes('already registered') || msg.includes('already in use')) {
+          setError('If that email can be used, we\'ve sent a confirmation link.')
+        } else if (msg.includes('password')) {
+          setError('Password does not meet the requirements.')
+        } else {
+          setError('Could not create your account right now. Please try again.')
+        }
+        setLoading(false)
+        return
+      }
+
+      setSuccess('Check your email to confirm your account.')
       setLoading(false)
-      return
+    } catch {
+      setError('Network error. Please try again.')
+      setLoading(false)
     }
-
-    setSuccess('Check your email to confirm your account.')
-    setLoading(false)
-
-    setTimeout(() => {
-      router.push('/login')
-    }, 1200)
   }
 
   return (

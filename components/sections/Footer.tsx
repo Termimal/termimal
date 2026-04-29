@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { footerLinks } from '@/data'
 
 const footerUrlMap: Record<string, string> = {
-  'Web Terminal': '/web-terminal', 'Desktop App': '/download', 'Features': '/features',
+  'Web Terminal': '/terminal', 'Desktop App': '/download', 'Features': '/features',
   'Markets': '/#markets', 'Pricing': '/pricing', 'Status': '/status', 'Help Center': '/support',
   'About': '/about', 'Careers': '/careers', 'Affiliates': '/affiliates', 'Refer a Friend': '/refer',
   'Terms': '/terms', 'Privacy': '/privacy', 'Cookies': '/cookies', 'Risk Disclaimer': '/risk-disclaimer', 'Refund Policy': '/refund-policy', 'Sitemap': '/sitemap.xml',

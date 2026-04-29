@@ -70,26 +70,36 @@ export default function AffiliatesPage() {
         <div className="mb-14">
           <div className="mb-6 text-xs font-semibold uppercase tracking-[0.22em]" style={{ color: "var(--t4)" }}>Commission Tiers</div>
           <div className="overflow-hidden rounded-2xl border" style={{ borderColor: "color-mix(in srgb, var(--border) 84%, white 16%)" }}>
-            <div className="grid grid-cols-4 border-b px-6 py-3 text-xs font-semibold uppercase tracking-wide"
+            {/* Desktop: 4-col grid header. Hidden on mobile, where each row is a card. */}
+            <div className="hidden md:grid grid-cols-4 border-b px-6 py-3 text-xs font-semibold uppercase tracking-wide"
               style={{ borderColor: "color-mix(in srgb, var(--border) 84%, white 16%)", background: "var(--surface)", color: "var(--t3)" }}>
               <span>Tier</span><span>Volume</span><span>Commission</span><span>Payout</span>
             </div>
             {TIERS.map((t, i) => (
-              <div key={t.label} className="grid grid-cols-4 items-center border-b px-6 py-4 last:border-b-0"
+              <div key={t.label} className="grid grid-cols-2 md:grid-cols-4 items-start gap-2 md:gap-0 md:items-center border-b px-4 md:px-6 py-4 last:border-b-0"
                 style={{
                   borderColor: "color-mix(in srgb, var(--border) 50%, transparent 50%)",
                   background: i % 2 === 0 ? "var(--bg)" : "color-mix(in srgb, var(--surface) 60%, var(--bg) 40%)",
                 }}>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 col-span-2 md:col-span-1">
                   <span className="text-sm font-medium">{t.label}</span>
                   {t.badge && (
                     <span className="rounded-full px-2 py-0.5 text-xs font-semibold"
                       style={{ background: "rgba(16,185,129,.12)", color: "#388bfd" }}>{t.badge}</span>
                   )}
                 </div>
-                <span className="text-xs" style={{ color: "var(--t3)" }}>{t.threshold}</span>
-                <span className="text-sm font-semibold" style={{ color: "#388bfd" }}>{t.commission}</span>
-                <span className="text-xs" style={{ color: "var(--t3)" }}>{t.payout}</span>
+                <span className="text-xs" style={{ color: "var(--t3)" }}>
+                  <span className="md:hidden text-[10px] uppercase tracking-wider mr-1" style={{ color: "var(--t3)" }}>Volume:</span>
+                  {t.threshold}
+                </span>
+                <span className="text-sm font-semibold" style={{ color: "#388bfd" }}>
+                  <span className="md:hidden text-[10px] uppercase tracking-wider mr-1" style={{ color: "var(--t3)" }}>Commission:</span>
+                  {t.commission}
+                </span>
+                <span className="text-xs" style={{ color: "var(--t3)" }}>
+                  <span className="md:hidden text-[10px] uppercase tracking-wider mr-1" style={{ color: "var(--t3)" }}>Payout:</span>
+                  {t.payout}
+                </span>
               </div>
             ))}
           </div>
@@ -115,20 +125,20 @@ export default function AffiliatesPage() {
             <form onSubmit={submit} className="space-y-4">
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
-                  <label className="mb-1.5 block text-xs font-medium" style={{ color: "var(--t2)" }}>Full name *</label>
-                  <input required type="text" autoComplete="name" value={form.name} onChange={set("name")} style={inputStyle} placeholder="Alex Reeves" />
+                  <label htmlFor="aff-name" className="mb-1.5 block text-xs font-medium" style={{ color: "var(--t2)" }}>Full name *</label>
+                  <input id="aff-name" required type="text" autoComplete="name" value={form.name} onChange={set("name")} style={inputStyle} placeholder="Alex Reeves" />
                 </div>
                 <div>
-                  <label className="mb-1.5 block text-xs font-medium" style={{ color: "var(--t2)" }}>Email address *</label>
-                  <input required type="email" autoComplete="email" inputMode="email" value={form.email} onChange={set("email")} style={inputStyle} placeholder="you@example.com" />
+                  <label htmlFor="aff-email" className="mb-1.5 block text-xs font-medium" style={{ color: "var(--t2)" }}>Email address *</label>
+                  <input id="aff-email" required type="email" autoComplete="email" inputMode="email" value={form.email} onChange={set("email")} style={inputStyle} placeholder="you@example.com" />
                 </div>
                 <div>
-                  <label className="mb-1.5 block text-xs font-medium" style={{ color: "var(--t2)" }}>Website or social profile *</label>
-                  <input required type="url" autoComplete="url" inputMode="url" value={form.website} onChange={set("website")} style={inputStyle} placeholder="https://youtube.com/..." />
+                  <label htmlFor="aff-website" className="mb-1.5 block text-xs font-medium" style={{ color: "var(--t2)" }}>Website or social profile *</label>
+                  <input id="aff-website" required type="url" autoComplete="url" inputMode="url" value={form.website} onChange={set("website")} style={inputStyle} placeholder="https://youtube.com/..." />
                 </div>
                 <div>
-                  <label className="mb-1.5 block text-xs font-medium" style={{ color: "var(--t2)" }}>Audience size</label>
-                  <select value={form.audience} onChange={set("audience")} style={inputStyle}>
+                  <label htmlFor="aff-audience" className="mb-1.5 block text-xs font-medium" style={{ color: "var(--t2)" }}>Audience size</label>
+                  <select id="aff-audience" value={form.audience} onChange={set("audience")} style={inputStyle}>
                     <option value="">Select range</option>
                     <option>Under 1,000</option>
                     <option>1,000 – 10,000</option>
@@ -139,12 +149,12 @@ export default function AffiliatesPage() {
                 </div>
               </div>
               <div>
-                <label className="mb-1.5 block text-xs font-medium" style={{ color: "var(--t2)" }}>Country</label>
-                <input type="text" autoComplete="country-name" value={form.country} onChange={set("country")} style={inputStyle} placeholder="Finland" />
+                <label htmlFor="aff-country" className="mb-1.5 block text-xs font-medium" style={{ color: "var(--t2)" }}>Country</label>
+                <input id="aff-country" type="text" autoComplete="country-name" value={form.country} onChange={set("country")} style={inputStyle} placeholder="Finland" />
               </div>
               <div>
-                <label className="mb-1.5 block text-xs font-medium" style={{ color: "var(--t2)" }}>How do you plan to promote Termimal? *</label>
-                <textarea required rows={4} value={form.about} onChange={set("about")}
+                <label htmlFor="aff-about" className="mb-1.5 block text-xs font-medium" style={{ color: "var(--t2)" }}>How do you plan to promote Termimal? *</label>
+                <textarea id="aff-about" required rows={4} value={form.about} onChange={set("about")}
                   style={{ ...inputStyle, resize: "vertical" } as React.CSSProperties}
                   placeholder="Tell us about your audience, content style, and how you'd introduce Termimal…" />
               </div>

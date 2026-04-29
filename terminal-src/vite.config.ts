@@ -28,6 +28,26 @@ export default defineConfig(({ mode }) => {
       outDir: 'dist',
       emptyOutDir: true,
       sourcemap: false,
+      // Push the chunk-warning ceiling down — anything over 600 KB (gzipped:
+      // ~150 KB) should split. The single 1.47 MB chunk we used to ship is
+      // now broken into vendor + per-route chunks below.
+      chunkSizeWarningLimit: 600,
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            // React core stays one chunk so router/state can hit it without
+            // pulling a fresh copy.
+            'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+            // Supabase auth client — loaded on every page but rarely
+            // re-rendered, perfect for a separate long-lived chunk.
+            'supabase':    ['@supabase/supabase-js', '@supabase/ssr'],
+            // Charting library is large and only some routes use it.
+            'charts':      ['lightweight-charts'],
+            // State + http stay together (small).
+            'state':       ['zustand'],
+          },
+        },
+      },
     },
     server: {
       port: 3000,

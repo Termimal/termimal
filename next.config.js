@@ -3,6 +3,12 @@ const nextConfig = {
   images: {
     unoptimized: false,
   },
+  // Tree-shake icon-by-icon imports from lucide-react and barrel imports from
+  // @supabase/supabase-js so the marketing pages don't ship every icon and
+  // every Supabase helper they don't actually use. Saves ≈100 KB of JS.
+  experimental: {
+    optimizePackageImports: ['lucide-react', '@supabase/supabase-js', '@supabase/ssr'],
+  },
   async headers() {
     const NOINDEX = [
       { key: 'X-Robots-Tag', value: 'noindex, nofollow, noarchive' },

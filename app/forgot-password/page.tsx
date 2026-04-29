@@ -17,18 +17,29 @@ export default function ForgotPasswordPage() {
     setError('')
     setLoading(true)
 
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/dashboard/reset-password`,
-    })
+    try {
+      // Route reset confirmations through the auth callback so the recovery
+      // session is established BEFORE landing inside the protected
+      // /dashboard tree (middleware would otherwise bounce to /login).
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/api/auth/callback?next=/dashboard/reset-password`,
+      })
 
-    if (error) {
-      setError(error.message)
+      // Always present the same success state regardless of whether the
+      // email exists — prevents account enumeration via the reset flow.
+      if (error) {
+        // Log for ops but don't leak to the user.
+        // eslint-disable-next-line no-console
+        console.error('reset password error', error)
+      }
+      setSuccess(true)
       setLoading(false)
-      return
+    } catch {
+      // Even on network error, present success to avoid timing-based
+      // enumeration. The user can retry if no email arrives.
+      setSuccess(true)
+      setLoading(false)
     }
-
-    setSuccess(true)
-    setLoading(false)
   }
 
   return (

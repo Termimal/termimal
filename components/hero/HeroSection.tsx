@@ -91,7 +91,7 @@ export default function HeroSection() {
 
             <div className="anim-fade-up hero-d5 flex gap-2 flex-wrap mb-6">
               <Link href="/signup" className="btn-primary py-2.5 px-6 text-sm anim-glow-pulse">Start Free →</Link>
-              <Link href="/web-terminal" className="btn-secondary py-2.5 px-5">Launch Web Terminal</Link>
+              <Link href="/terminal" className="btn-secondary py-2.5 px-5">Launch Web Terminal</Link>
             </div>
 
             <div

@@ -17,24 +17,69 @@ import {
   Zap
 } from 'lucide-react'
 
+type Profile = {
+  plan?: string
+  email?: string | null
+  full_name?: string | null
+  billing_interval?: string | null
+  subscription_status?: string | null
+  current_period_end?: string | null
+  created_at?: string | null
+  referral_code?: string | null
+}
+
 export default function DashboardPage() {
-  const [profile, setProfile] = useState<any>(null)
+  const [profile, setProfile] = useState<Profile | null>(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
   const supabase = useMemo(() => createClient(), [])
 
   useEffect(() => {
+    let cancelled = false
     const loadProfile = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (user) {
-        const { data } = await supabase.from('profiles').select('*').eq('id', user.id).single()
-        setProfile(data || { plan: 'free', email: user.email, full_name: user.user_metadata?.full_name || '' })
+      try {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) {
+          window.location.href = '/login'
+          return
+        }
+        const { data, error: profErr } = await supabase.from('profiles').select('*').eq('id', user.id).single()
+        if (cancelled) return
+        if (profErr && profErr.code !== 'PGRST116') {
+          setError('We could not load your account. Please refresh.')
+        } else {
+          setProfile(data || { plan: 'free', email: user.email, full_name: user.user_metadata?.full_name || '' })
+        }
+      } catch {
+        if (!cancelled) setError('Network error while loading your account.')
+      } finally {
+        if (!cancelled) setLoading(false)
       }
-      setLoading(false)
     }
     loadProfile()
+    return () => { cancelled = true }
   }, [supabase])
 
-  if (loading) return <div className="text-sm" style={{ color: 'var(--t3)' }}>Loading...</div>
+  if (loading) {
+    return (
+      <div className="space-y-4" aria-busy="true" aria-label="Loading dashboard">
+        <div className="h-32 rounded-3xl animate-pulse" style={{ background: 'var(--surface)' }} />
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="h-28 rounded-2xl animate-pulse" style={{ background: 'var(--surface)' }} />
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div role="alert" className="p-6 rounded-xl text-sm" style={{ border: '1px solid rgba(248,113,113,.3)', background: 'rgba(248,113,113,.05)', color: 'var(--red-val)' }}>
+        {error}
+      </div>
+    )
+  }
 
   const plan = profile?.plan || 'free'
   const planLimits: Record<string, { alerts: number; watchlists: number; layouts: number }> = {
@@ -76,7 +121,7 @@ export default function DashboardPage() {
   const quickActions = [
     {
       label: 'Launch Web Termimal',
-      href: '/web-terminal',
+      href: '/terminal',
       icon: Sparkles,
       primary: true,
       note: 'Open the live market terminal in your browser',

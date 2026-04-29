@@ -33,7 +33,16 @@ export async function middleware(request: NextRequest) {
     }
   )
 
-  const { data: { user } } = await supabase.auth.getUser()
+  // If Supabase is unreachable we don't want every request to /dashboard to
+  // 500 — degrade gracefully and let the request through. Per-page auth
+  // checks will redirect to /login if needed.
+  let user: { id: string } | null = null
+  try {
+    const { data } = await supabase.auth.getUser()
+    user = data.user as { id: string } | null
+  } catch {
+    return response
+  }
 
   // Protect dashboard routes
   if (request.nextUrl.pathname.startsWith('/dashboard') && !user) {

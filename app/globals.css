@@ -15,8 +15,11 @@
   --bh: #30363d;           /* terminal --border-1 */
   --t1: #e6edf3;           /* terminal --t-1 */
   --t2: #c9d1d9;           /* terminal --t-2 */
-  --t3: #8b949e;           /* terminal --t-3 */
-  --t4: #484f58;           /* terminal --t-4 */
+  --t3: #8b949e;           /* terminal --t-3 (≈5.6:1 vs --bg, AA pass) */
+  /* --t4 used as text on var(--bg). The terminal's #484f58 was ~1.98:1 — fails
+     WCAG AA. Lifted to #7d848e (≈4.7:1). For purely decorative chrome
+     (e.g. dividers, icons not conveying meaning) use --bh instead. */
+  --t4: #7d848e;           /* AA-pass muted body text */
   --acc: #388bfd;          /* terminal --blue (primary) */
   --acc2: #1f6feb;         /* hover/pressed blue */
   --acc-d: rgba(56, 139, 253, 0.10);
@@ -48,7 +51,8 @@
   --t1: #111111;
   --t2: rgba(0, 0, 0, 0.78);
   --t3: rgba(0, 0, 0, 0.62);
-  --t4: rgba(0, 0, 0, 0.40);
+  /* light theme --t4 — bumped from 0.40 (~2.6:1) to 0.55 (~4.6:1) for AA. */
+  --t4: rgba(0, 0, 0, 0.55);
   --acc: #1f6feb;          /* terminal blue, slightly darker for light bg */
   --acc2: #0a58ca;
   --acc-d: rgba(31, 111, 235, 0.10);

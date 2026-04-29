@@ -53,15 +53,16 @@ export default function ProfilePage() {
   }, [supabase])
 
   const handleSave = async () => {
+    if (!profile) return
     setSaving(true)
     setMessage('')
     const { data: { user } } = await supabase.auth.getUser()
     if (user) {
       const { error } = await supabase.from('profiles').update({
-        full_name: profile.full_name,
-        country: profile.country,
-        timezone: profile.timezone,
-        language: profile.language,
+        full_name: profile.full_name ?? '',
+        country: profile.country ?? '',
+        timezone: profile.timezone ?? 'UTC',
+        language: profile.language ?? 'en',
       }).eq('id', user.id)
       setMessage(error ? 'Error saving.' : 'Saved successfully.')
     }
@@ -69,10 +70,34 @@ export default function ProfilePage() {
   }
 
   const handlePasswordReset = async () => {
+    if (!profile?.email) {
+      setMessage('Could not determine your email address.')
+      return
+    }
     const { error } = await supabase.auth.resetPasswordForEmail(profile.email, {
       redirectTo: `${window.location.origin}/api/auth/callback?next=/dashboard/profile`,
     })
     setMessage(error ? 'Error sending reset email.' : 'Password reset email sent. Check your inbox.')
+  }
+
+  const handleDeleteAccount = async () => {
+    if (!confirm('Are you sure you want to delete your account? This action cannot be undone — all your watchlists, alerts, and saved layouts will be permanently removed.')) {
+      return
+    }
+    setMessage('')
+    try {
+      const res = await fetch('/api/account/delete', { method: 'POST' })
+      const data = await res.json().catch(() => ({} as { error?: string }))
+      if (!res.ok) {
+        setMessage(data.error || 'Could not delete account. Please contact support.')
+        return
+      }
+      // Sign out + bounce home.
+      await supabase.auth.signOut()
+      window.location.href = '/'
+    } catch {
+      setMessage('Network error while deleting account.')
+    }
   }
 
   /** Clears all local 2FA setup state without unenrolling the factor. */
@@ -260,13 +285,15 @@ export default function ProfilePage() {
               { label: 'Language', key: 'language', value: profile?.language || 'en' },
             ].map(f => (
               <div key={f.key} className={f.key === 'language' ? 'sm:col-span-2' : ''}>
-                <label className="block text-xs font-semibold uppercase tracking-[0.18em] mb-2" style={{ color: 'var(--t4)' }}>
+                <label htmlFor={`profile-${f.key}`} className="block text-xs font-semibold uppercase tracking-[0.18em] mb-2" style={{ color: 'var(--t3)' }}>
                   {f.label}
                 </label>
                 <input
-                  defaultValue={f.value}
+                  id={`profile-${f.key}`}
+                  value={f.value}
                   disabled={f.disabled}
-                  onChange={e => setProfile({ ...profile, [f.key]: e.target.value })}
+                  autoComplete={f.key === 'email' ? 'email' : f.key === 'full_name' ? 'name' : f.key === 'country' ? 'country-name' : undefined}
+                  onChange={e => profile && setProfile({ ...profile, [f.key]: e.target.value })}
                   className="w-full px-3 py-3 rounded-xl text-sm disabled:opacity-50"
                   style={{ background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--t1)' }}
                 />
@@ -395,7 +422,9 @@ export default function ProfilePage() {
             </div>
 
             <button
-              className="mt-5 text-xs font-semibold px-4 py-2.5 rounded-xl"
+              type="button"
+              onClick={handleDeleteAccount}
+              className="mt-5 text-sm font-semibold px-4 py-2.5 rounded-xl min-h-[44px]"
               style={{ color: 'var(--red-val)', border: '1px solid rgba(220,38,38,.3)' }}
             >
               Delete account

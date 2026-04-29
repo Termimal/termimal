@@ -95,7 +95,7 @@ export default function DownloadPage() {
 
           <div className="max-w-3xl mx-auto mb-20">
             <h2 className="text-xl font-bold text-center mb-8">Desktop vs Web</h2>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="p-6 rounded-xl" style={{ border: '1px solid var(--border)', background: 'var(--surface)' }}>
                 <div className="flex items-center gap-2 mb-4">
                   <Monitor size={18} style={{ color: 'var(--t2)' }} />
@@ -127,7 +127,7 @@ export default function DownloadPage() {
 
           <div className="max-w-3xl mx-auto mb-20">
             <h2 className="text-xl font-bold mb-6">System requirements</h2>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="p-5 rounded-xl" style={{ border: '1px solid var(--border)', background: 'var(--surface)' }}>
                 <h3 className="text-sm font-bold mb-3">macOS</h3>
                 <div className="space-y-1.5 text-xs" style={{ color: 'var(--t3)' }}>

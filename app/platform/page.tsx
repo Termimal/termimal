@@ -87,7 +87,7 @@ export default function PlatformPage() {
               Explore features
             </Link>
             <Link
-              href="/web-terminal"
+              href="/terminal"
               className="rounded-xl border px-5 py-2.5 text-sm font-semibold"
               style={{ borderColor: "var(--border)", background: "var(--surface)", color: "var(--t1)" }}
             >

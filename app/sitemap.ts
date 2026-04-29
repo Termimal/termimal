@@ -15,7 +15,7 @@ const routes: Entry[] = [
   { path: '/features',        changeFrequency: 'weekly',  priority: 0.9 },
   { path: '/pricing',         changeFrequency: 'weekly',  priority: 0.9 },
   { path: '/platform',        changeFrequency: 'weekly',  priority: 0.8 },
-  { path: '/web-terminal',    changeFrequency: 'weekly',  priority: 0.8 },
+  { path: '/terminal',    changeFrequency: 'weekly',  priority: 0.8 },
   { path: '/download',        changeFrequency: 'weekly',  priority: 0.8 },
   { path: '/reports',         changeFrequency: 'daily',   priority: 0.8 },
   { path: '/about',           changeFrequency: 'monthly', priority: 0.6 },

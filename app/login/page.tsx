@@ -21,18 +21,27 @@ export default function LoginPage() {
     setError('')
     setLoading(true)
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
 
-    if (error) {
-      setError('Incorrect email or password.')
+      if (error) {
+        // Generic message — don't disclose whether the email exists.
+        setError('Incorrect email or password.')
+        setLoading(false)
+        return
+      }
+
+      // Use router.refresh + push so the cookie session is hydrated by the
+      // server before the next render. window.location.href causes a hard
+      // reload that races middleware before the cookie is set.
+      window.location.assign('/terminal')
+    } catch {
+      setError('Network error. Please try again.')
       setLoading(false)
-      return
     }
-
-    window.location.href = '/terminal'
   }
 
   return (

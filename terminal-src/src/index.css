@@ -235,3 +235,21 @@ td, th { padding: 0 8px; height: 26px; }
 .pm-hoverable { transition: background-color 80ms ease-out; }
 .pm-hoverable:hover { background: var(--pm-row-hover) !important; }
 
+/* ── Reduced motion ──────────────────────────────────────────────
+   Respect the user's OS-level animation preference. Without this
+   block the @keyframes above (flash-up, flash-down, pulse-dot,
+   shimmer, spin, pm-progress-sweep) keep firing for users who have
+   asked the system to minimise motion (vestibular disorders, motion
+   sickness). The override neutralises animation + transition timing
+   without breaking layout. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
