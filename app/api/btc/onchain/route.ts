@@ -27,6 +27,9 @@ export const runtime = 'edge'
 import { NextResponse } from 'next/server'
 
 // ── Source 1: CoinMetrics Community ─────────────────────────────────
+// Includes the SplyAct* age-cohort series so we can derive LTH/STH
+// supply, age bands, and the realized-cap-by-cohort approximations
+// Glassnode charges for. All free, no key.
 const CM_METRICS = [
   'PriceUSD',
   'CapMrktCurUSD',
@@ -36,6 +39,15 @@ const CM_METRICS = [
   'AdrActCnt',
   'NVTAdj',
   'SplyCur',
+  // Age-cohort supply (BTC moved within the trailing window)
+  'SplyAct1d',
+  'SplyAct7d',
+  'SplyAct30d',
+  'SplyAct90d',
+  'SplyAct180d',
+  'SplyAct1yr',
+  'SplyAct2yr',
+  'SplyAct5yr',
 ] as const
 
 type CMRow = Record<string, string | number>
@@ -156,6 +168,43 @@ export async function GET() {
   const mvrvCtx    = mvrvState(mvrv)
   const nuplCtx    = nuplState(nuplVal)
 
+  // ── Age-cohort derivation ───────────────────────────────────────
+  // LTH (Long-Term Holders) ≈ coins not moved in >155 days; we use
+  // the 180d boundary CoinMetrics ships natively.
+  const sply180 = (cm.SplyAct180d as number) ?? null     // coins moved in last 180d
+  const sply1yr = (cm.SplyAct1yr  as number) ?? null
+  const sply30  = (cm.SplyAct30d  as number) ?? null
+  const sply7   = (cm.SplyAct7d   as number) ?? null
+  const sply1d  = (cm.SplyAct1d   as number) ?? null
+  const sply2yr = (cm.SplyAct2yr  as number) ?? null
+  const sply5yr = (cm.SplyAct5yr  as number) ?? null
+
+  const lth_supply = supply != null && sply180 != null ? supply - sply180 : null  // age >180d
+  const sth_supply = sply180 ?? null
+  const lthPct = lth_supply != null && supply ? (lth_supply / supply) * 100 : null
+  const sthPct = sth_supply != null && supply ? (sth_supply / supply) * 100 : null
+
+  // Age bands (mutually exclusive layers, oldest first).
+  const band = (older: number | null, younger: number | null) =>
+    (older != null && younger != null) ? older - younger : null
+
+  const ageBands = supply == null ? null : {
+    '5y_plus':   supply != null && sply5yr != null ? supply - sply5yr : null,
+    '2y_to_5y':  band(sply5yr, sply2yr),
+    '1y_to_2y':  band(sply2yr, sply1yr),
+    '180d_to_1y':band(sply1yr, sply180),
+    '30d_to_180d': band(sply180, sply30),
+    '7d_to_30d': band(sply30, sply7),
+    '1d_to_7d':  band(sply7, sply1d),
+    'lt_1d':     sply1d,
+  }
+  const lthState = lthPct == null
+    ? { state: 'NEEDS-FEED', interp: '' }
+    : lthPct > 80 ? { state: 'STRONG-HODL',     interp: '>80% supply hasn\'t moved in 180d. Late accumulation / pre-rally reload.' }
+    : lthPct > 70 ? { state: 'ACCUMULATING',    interp: '70-80% LTH share — typical mid-cycle.' }
+    : lthPct > 60 ? { state: 'NEUTRAL',         interp: '60-70% LTH share — normal market.' }
+    :               { state: 'DISTRIBUTION',    interp: '<60% LTH share — long-term holders selling, late-cycle behaviour.' }
+
   const metrics: Record<string, {
     name: string; value: number | null; formula: string
     state: string; interpretation: string
@@ -241,6 +290,27 @@ export async function GET() {
       state: supply ? 'OK' : 'NEEDS-FEED',
       interpretation: supply ? `${supply.toFixed(0)} / 21,000,000 BTC mined.` : '',
     },
+    lth_supply: {
+      name: 'LTH supply',
+      value: lth_supply,
+      formula: 'Supply not moved in 180d (≈ Long-Term Holders)',
+      state: lthState.state,
+      interpretation: lthState.interp,
+    },
+    sth_supply: {
+      name: 'STH supply',
+      value: sth_supply,
+      formula: 'Supply moved within last 180d (≈ Short-Term Holders)',
+      state: sthPct == null ? 'NEEDS-FEED' : 'OK',
+      interpretation: sthPct == null ? '' : `${sthPct.toFixed(1)}% of supply has changed hands recently — typical churn.`,
+    },
+    lth_pct: {
+      name: 'LTH %',
+      value: lthPct,
+      formula: 'LTH / Circulating',
+      state: lthState.state,
+      interpretation: 'Higher = more conviction; <60% historically marks distribution tops.',
+    },
   }
 
   // Build a multi_metric "alignment" summary the SPA can use.
@@ -261,6 +331,11 @@ export async function GET() {
       updated: new Date().toISOString(),
       metrics,
       multi_metric,
+      // Cohort breakdown surfaced as its own object so the SPA's
+      // age-band stacked bar can read it directly.
+      age_bands: ageBands,
+      lth_pct: lthPct,
+      sth_pct: sthPct,
     },
     source: 'Multi-source (free)',
     updated: new Date().toISOString(),

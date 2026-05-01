@@ -296,6 +296,217 @@ async function fetchTradesForMarket(market: string, limit = 200): Promise<ClobTr
   return j?.data ?? []
 }
 
+/**
+ * Live cross-market reference quotes (BTC, ETH, /ES, VIX, GLD).
+ * Used to confirm a Polymarket signal direction against the broader
+ * macro tape — e.g. a YES "recession" signal aligns with rising VIX
+ * and falling /ES; a "BTC > $100k" YES aligns with positive BTC 24h.
+ */
+interface RefQuote { price: number; pct: number }
+async function fetchRefQuotes(): Promise<Record<string, RefQuote>> {
+  try {
+    const symbols = ['ES=F', 'BTC-USD', 'ETH-USD', '^VIX', 'GC=F']
+    const r = await fetch(
+      `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${symbols.join(',')}`,
+      {
+        next: { revalidate: 60 },
+        headers: {
+          'user-agent': 'Mozilla/5.0',
+          accept: 'application/json',
+        },
+      },
+    )
+    if (!r.ok) return {}
+    const j = await r.json() as { quoteResponse?: { result?: Array<{ symbol: string; regularMarketPrice?: number; regularMarketChangePercent?: number }> } }
+    const out: Record<string, RefQuote> = {}
+    for (const q of j?.quoteResponse?.result ?? []) {
+      out[q.symbol] = {
+        price: Number(q.regularMarketPrice ?? 0),
+        pct:   Number(q.regularMarketChangePercent ?? 0),
+      }
+    }
+    return out
+  } catch { return {} }
+}
+
+/**
+ * Pick which references are relevant to a market based on its tag/title,
+ * and return cross-market alignment checks.
+ */
+function crossMarketChecks(market: string, tag: string, direction: 'YES' | 'NO', refs: Record<string, RefQuote>): { confirmed: boolean; checks: string[] } {
+  const checks: string[] = []
+  const m = `${market} ${tag}`.toLowerCase()
+  // YES = directional bullish for this market's stated outcome.
+  // We translate into expected sign on each reference instrument.
+  const want = (key: string, expectPositive: boolean, label: string) => {
+    const q = refs[key]
+    if (!q) return
+    const aligned = expectPositive ? q.pct > 0 : q.pct < 0
+    if (aligned) checks.push(`${label} ${q.pct >= 0 ? '+' : ''}${q.pct.toFixed(2)}%`)
+  }
+  if (m.includes('btc') || m.includes('bitcoin')) {
+    want('BTC-USD', direction === 'YES', 'BTC')
+  }
+  if (m.includes('eth') || m.includes('ethereum')) {
+    want('ETH-USD', direction === 'YES', 'ETH')
+  }
+  if (m.includes('recession') || m.includes('shutdown') || m.includes('crash')) {
+    // YES = bearish risk → /ES down, VIX up
+    want('ES=F', direction === 'NO', '/ES')
+    want('^VIX', direction === 'YES', 'VIX')
+  }
+  if (m.includes('s&p') || m.includes('sp500') || m.includes('spx')) {
+    want('ES=F', direction === 'YES', '/ES')
+  }
+  if (m.includes('gold')) {
+    want('GC=F', direction === 'YES', 'Gold')
+  }
+  // Generic: rising VIX = risk-off; if direction is YES on a "bad
+  // outcome" word, VIX rising is confirmation.
+  if (m.match(/war|crisis|fail|default/) && direction === 'YES') {
+    want('^VIX', true, 'VIX')
+  }
+  return { confirmed: checks.length >= 1, checks }
+}
+
+/**
+ * Per-wallet historical accuracy across resolved markets.
+ *
+ * For each top wallet, fetch their trade history from the Polymarket
+ * data-api (https://data-api.polymarket.com/trades?user=ADDR), see
+ * which RESOLVED markets they participated in, compare their
+ * dominant direction to the actual outcome, and aggregate.
+ *
+ * Free, no key. We only do this for the top 10 wallets per scan to
+ * stay inside Edge runtime limits.
+ */
+const POLY_DATA = 'https://data-api.polymarket.com'
+
+interface UserTrade {
+  proxyWallet?: string
+  market?: string
+  conditionId?: string
+  outcome?: string         // 'Yes' | 'No'
+  side?: string            // 'BUY' | 'SELL'
+  price?: number
+  size?: number
+  timestamp?: number
+}
+
+interface ResolvedMarketInfo {
+  conditionId: string
+  resolved_yes: boolean | null
+}
+
+const RESOLUTION_CACHE = new Map<string, ResolvedMarketInfo>()
+
+async function getMarketResolution(conditionId: string): Promise<ResolvedMarketInfo | null> {
+  if (!conditionId) return null
+  if (RESOLUTION_CACHE.has(conditionId)) return RESOLUTION_CACHE.get(conditionId)!
+  try {
+    // Gamma API exposes resolved/outcome on closed markets.
+    const r = await fetch(
+      `https://gamma-api.polymarket.com/markets?condition_ids=${encodeURIComponent(conditionId)}&closed=true`,
+      { next: { revalidate: 86400 } },
+    )
+    if (!r.ok) {
+      const info: ResolvedMarketInfo = { conditionId, resolved_yes: null }
+      RESOLUTION_CACHE.set(conditionId, info)
+      return info
+    }
+    const j = await r.json() as Array<{ outcomes?: string; outcomePrices?: string }> | { data?: Array<unknown> }
+    const arr = Array.isArray(j) ? j : (j as { data?: Array<{ outcomes?: string; outcomePrices?: string }> }).data ?? []
+    const m = arr[0] as { outcomes?: string; outcomePrices?: string } | undefined
+    if (!m) {
+      const info: ResolvedMarketInfo = { conditionId, resolved_yes: null }
+      RESOLUTION_CACHE.set(conditionId, info)
+      return info
+    }
+    // outcomePrices arrives as a JSON-encoded string, e.g. '["1","0"]'.
+    let resolved_yes: boolean | null = null
+    try {
+      const prices = JSON.parse(m.outcomePrices ?? '[]') as string[]
+      if (prices.length >= 2) {
+        const yp = Number(prices[0])
+        const np = Number(prices[1])
+        if (Number.isFinite(yp) && Number.isFinite(np)) {
+          resolved_yes = yp >= 0.99 ? true : np >= 0.99 ? false : null
+        }
+      }
+    } catch { /* ignore */ }
+    const info: ResolvedMarketInfo = { conditionId, resolved_yes }
+    RESOLUTION_CACHE.set(conditionId, info)
+    return info
+  } catch {
+    return { conditionId, resolved_yes: null }
+  }
+}
+
+async function fetchUserTrades(address: string, limit = 200): Promise<UserTrade[]> {
+  try {
+    const r = await fetch(
+      `${POLY_DATA}/trades?user=${encodeURIComponent(address)}&limit=${limit}`,
+      { next: { revalidate: 600 } },
+    )
+    if (!r.ok) return []
+    const j = await r.json().catch(() => null) as UserTrade[] | { data?: UserTrade[] } | null
+    if (Array.isArray(j)) return j
+    return j?.data ?? []
+  } catch { return [] }
+}
+
+/**
+ * Compute REAL historical accuracy for an address: aggregate their
+ * trades into per-market net direction, look up each market's
+ * resolution, and tally win/loss.
+ */
+async function computeWalletAccuracy(address: string): Promise<{
+  trades: number; resolved: number; correct: number; accuracy_real: number | null
+}> {
+  const trades = await fetchUserTrades(address, 200)
+  if (!trades.length) return { trades: 0, resolved: 0, correct: 0, accuracy_real: null }
+
+  // Group by conditionId, compute net YES vs NO notional.
+  const byMarket = new Map<string, { yesNotional: number; noNotional: number }>()
+  for (const t of trades) {
+    const cid = t.conditionId ?? t.market
+    if (!cid) continue
+    const out = String(t.outcome ?? '').toLowerCase()
+    const side = String(t.side ?? '').toUpperCase()
+    const price = Number(t.price ?? 0)
+    const size  = Number(t.size ?? 0)
+    const notional = price * size
+    if (!Number.isFinite(notional) || notional <= 0) continue
+    // Buying YES or selling NO = bullish on YES outcome.
+    const bullishYes = (out === 'yes' && side === 'BUY') || (out === 'no' && side === 'SELL')
+    const e = byMarket.get(cid) ?? { yesNotional: 0, noNotional: 0 }
+    if (bullishYes) e.yesNotional += notional
+    else            e.noNotional  += notional
+    byMarket.set(cid, e)
+  }
+
+  // For each market the wallet positioned in, look up resolution.
+  const cids = Array.from(byMarket.keys()).slice(0, 30)  // cap upstream calls
+  const resolutions = await Promise.all(cids.map(getMarketResolution))
+
+  let resolved = 0
+  let correct = 0
+  for (let i = 0; i < cids.length; i++) {
+    const r = resolutions[i]
+    if (!r || r.resolved_yes == null) continue
+    resolved++
+    const e = byMarket.get(cids[i])!
+    const wallet_dir_yes = e.yesNotional >= e.noNotional
+    if (wallet_dir_yes === r.resolved_yes) correct++
+  }
+  return {
+    trades: trades.length,
+    resolved,
+    correct,
+    accuracy_real: resolved >= 3 ? (correct / resolved) * 100 : null,
+  }
+}
+
 async function runDeepScan(limit: number): Promise<Response> {
   // 1. Pull markets snapshot.
   const marketsRes = await proxyClob('/markets', new URLSearchParams(), 30)
@@ -313,6 +524,9 @@ async function runDeepScan(limit: number): Promise<Response> {
     .slice()
     .sort((a, b) => (Number(b.liquidity) || 0) - (Number(a.liquidity) || 0))
     .slice(0, limit)
+
+  // 2b. Cross-market reference quotes (live, fetched once per scan).
+  const refQuotes = await fetchRefQuotes()
 
   // 3. Compute real volume + direction + per-wallet stats in parallel.
   //    Wallet score (0-100) is now computed honestly from this market's
@@ -460,14 +674,18 @@ async function runDeepScan(limit: number): Promise<Response> {
       ? highScore.reduce((a, w) => a + w.score, 0) / highScore.length
       : 0
 
+    // Cross-market alignment using live ref quotes.
+    const direction: 'YES' | 'NO' = (clusterDirection as 'YES' | 'NO' | null) ?? (shift > 0 ? 'YES' : 'NO')
+    const xref = crossMarketChecks(String(m.question), String(m.tag), direction, refQuotes)
+
     const conditions = {
       volume_spike: spike,
       directional_shift: directional,
       wallet_consensus: clusterConfirmed,
+      cross_market: xref.confirmed,
     }
     const passed = Object.values(conditions).filter(Boolean).length
-    const level: 'STRONG' | 'WEAK' | 'NONE' = passed >= 2 ? 'STRONG' : passed === 1 ? 'WEAK' : 'NONE'
-    const direction = clusterDirection ?? (shift > 0 ? 'YES' : 'NO')
+    const level: 'STRONG' | 'WEAK' | 'NONE' = passed >= 3 ? 'STRONG' : passed >= 1 ? 'WEAK' : 'NONE'
 
     return {
       ...m,
@@ -507,8 +725,8 @@ async function runDeepScan(limit: number): Promise<Response> {
             reasoning:
               `Volume ${multiplier.toFixed(1)}× baseline · direction shift ${(shift * 100).toFixed(0)}%` +
               (clusterConfirmed ? ` · wallet cluster on ${direction}` : ''),
-            cross_market_confirmation: false,
-            cross_market_checks: [],
+            cross_market_confirmation: xref.confirmed,
+            cross_market_checks: xref.checks,
             signal_level: level,
             conditions_met: passed,
             yes_price: yesPrice,
@@ -518,6 +736,42 @@ async function runDeepScan(limit: number): Promise<Response> {
         : null,
     }
   }))
+
+  // 4. REAL historical accuracy for the top wallets (capped at 10
+  //    addresses per scan to stay inside Edge timeout). Computed from
+  //    Polymarket data-api per-user trade history + Gamma resolution
+  //    lookup.
+  const topWallets = new Map<string, { score: number; market_id: string }>()
+  for (const m of enriched) {
+    const wd = (m as { wallet_data?: { wallets?: Array<{ address: string; score: number }> } }).wallet_data
+    for (const w of (wd?.wallets ?? []).slice(0, 5)) {
+      if (!topWallets.has(w.address)) {
+        topWallets.set(w.address, { score: w.score, market_id: String((m as { id?: string }).id ?? '') })
+      }
+    }
+    if (topWallets.size >= 10) break
+  }
+  const accuracies = await Promise.all(
+    Array.from(topWallets.keys()).slice(0, 10).map((addr) => computeWalletAccuracy(addr).then((a) => [addr, a] as const)),
+  )
+  const accuracyByAddr = new Map(accuracies)
+  // Patch the enriched markets' wallet entries with real historical
+  // accuracy + score blend (60% real, 40% market-local entry edge).
+  for (const m of enriched) {
+    const wd = (m as { wallet_data?: { wallets?: Array<{ address: string; accuracy: number; score: number }> } }).wallet_data
+    const arr = wd?.wallets ?? []
+    for (const w of arr) {
+      const real = accuracyByAddr.get(w.address)
+      if (!real || real.accuracy_real == null) continue
+      // Blend: real historical accuracy weighted 60%, single-market
+      // entry edge 40%.
+      const blended = Math.round(real.accuracy_real * 0.6 + w.accuracy * 0.4)
+      ;(w as { accuracy: number; score: number; trades_resolved?: number; trades_correct?: number }).accuracy = blended
+      ;(w as { accuracy: number; score: number }).score = Math.max(w.score, Math.round(blended * 0.7 + w.score * 0.3))
+      ;(w as { trades_resolved?: number; trades_correct?: number }).trades_resolved = real.resolved
+      ;(w as { trades_correct?: number }).trades_correct = real.correct
+    }
+  }
 
   // The transformClobMarket helper widens its return shape to
   // Record<string, unknown>, so TS can't see the signal field we
