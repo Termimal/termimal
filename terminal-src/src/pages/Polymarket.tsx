@@ -1,7 +1,9 @@
 // pages/Polymarket.tsx — Termimal Polymarket Intelligence (Bloomberg-style rewrite)
-import { useEffect, useState, useCallback, useRef } from 'react'
+import { useEffect, useState, useCallback, useRef, useMemo } from 'react'
 import axios from 'axios'
 import { OrderflowDrilldown } from './polymarket/OrderflowDrilldown'
+import { OrderBook } from './polymarket/OrderBook'
+import { TradeFeed } from './polymarket/TradeFeed'
 import { PM, fmtUsd, fmtExpires, fmtTime } from './polymarket/_ui/tokens'
 import {
   MetricCell, ProbabilityBar, SegmentedControl, Chip, Badge, SignalBadge, StatusDot,
@@ -24,8 +26,26 @@ interface Signal { signal_id: string; timestamp: string; market: string; tag: st
 interface Market { id: string; question: string; tag: string; yes_price: number; outcomes: Outcome[]; volume_24h: number; volume_total: number; liquidity: number; end_date: string; url: string; trades_analyzed?: number; vol_stats?: VolStats; dir_shift?: DirShift; wallet_data?: WalletData; anomaly?: Anomaly; signal?: Signal | null }
 interface ScanResult { markets: Market[]; strong_signals: Signal[]; weak_signals: Signal[]; scanned: number; timestamp: string }
 
-const TABS = ['MARKETS', 'WALLETS', 'SIGNALS', 'HISTORY'] as const
+const TABS = ['MARKETS', 'BOOK', 'TRADES', 'WALLETS', 'SIGNALS', 'HISTORY'] as const
 type Tab = typeof TABS[number]
+
+/**
+ * useIsMobile — flips on at < 768 px wide, off at ≥ 768 px. Drives
+ * the layout swap between the dense desktop grid and the stacked
+ * single-column mobile view + bottom tab bar.
+ */
+function useIsMobile(breakpoint = 768): boolean {
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window !== 'undefined' ? window.innerWidth < breakpoint : false,
+  )
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const onResize = () => setIsMobile(window.innerWidth < breakpoint)
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [breakpoint])
+  return isMobile
+}
 
 // ─── Sub-tab Strip (§3.2) ─────────────────────────────────────────────────────
 function SubTabStrip({ tab, setTab, counts }: { tab: Tab; setTab: (t: Tab) => void; counts: Record<string, number> }) {
@@ -105,11 +125,12 @@ function MetricStrip({ history, scanning }: { history: Signal[]; scanning: boole
 
 // ─── Market Row (§Feature1) — 7-col dense table row ───────────────────────────
 function MarketRow({
-  m, onOpen, selected,
+  m, onOpen, selected, isMobile,
 }: {
   m: Market
   onOpen: () => void
   selected: boolean
+  isMobile: boolean
 }) {
   const rowRef = useRef<HTMLDivElement | null>(null)
   const prevPriceRef = useRef(m.yes_price)
@@ -137,14 +158,21 @@ function MarketRow({
     : PM.text.disabled
   const strengthTxt = sig ? `${level.toLowerCase()} ${sig.confidence}pc` : ''
 
+  // Mobile: drop LIQUID, EXPIRES, SIGNAL, chevron — just MARKET / YES ODDS / 24H VOL.
+  // Bumped row height to 52 px on mobile to clear the WCAG tap-target floor.
+  const template = isMobile
+    ? 'minmax(0, 1fr) 96px 70px'
+    : 'minmax(360px, 1fr) 160px 100px 100px 110px 130px 40px'
+
   return (
     <div ref={rowRef} role="button" tabIndex={0} onClick={onOpen} onKeyDown={onActivate(onOpen)}
       className={selected ? '' : 'pm-hoverable'}
       style={{
         display: 'grid',
-        gridTemplateColumns: 'minmax(360px, 1fr) 160px 100px 100px 110px 130px 40px',
-        alignItems: 'center', gap: 10,
-        padding: '6px 14px', minHeight: 36,
+        gridTemplateColumns: template,
+        alignItems: 'center', gap: isMobile ? 6 : 10,
+        padding: isMobile ? '8px 10px' : '6px 14px',
+        minHeight: isMobile ? 52 : 36,
         background: selected ? PM.row.selected : 'transparent',
         borderBottom: `1px solid ${PM.bg.app}`,
         cursor: 'pointer',
@@ -185,54 +213,59 @@ function MarketRow({
         )}
       </div>
 
-      {/* LIQUID */}
-      <div style={{
-        textAlign: 'right', fontSize: 12, fontFamily: PM.font.mono,
-        fontVariantNumeric: 'tabular-nums', color: PM.text.secondary,
-      }}>{fmtUsd(m.liquidity)}</div>
-
-      {/* EXPIRES */}
-      <div style={{
-        textAlign: 'right', fontSize: 12, fontFamily: PM.font.mono,
-        fontVariantNumeric: 'tabular-nums', color: expires.color,
-      }}>{expires.text}</div>
-
-      {/* SIGNAL: 2-line (direction + strength) */}
-      <div style={{ minWidth: 0 }}>
-        <div style={{
-          fontSize: 12, fontWeight: 500, fontFamily: PM.font.mono,
-          color: sigColor, letterSpacing: '0.3px',
-          overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-        }}>{sigDir}</div>
-        {strengthTxt && (
+      {/* Desktop-only columns — LIQUID, EXPIRES, SIGNAL, chevron.
+          On mobile we collapse to MARKET / YES ODDS / 24H VOL only. */}
+      {!isMobile && (
+        <>
+          {/* LIQUID */}
           <div style={{
-            fontSize: 10, fontFamily: PM.font.mono, color: PM.text.muted,
-            textTransform: 'lowercase', letterSpacing: '0.2px',
-          }}>{strengthTxt}</div>
-        )}
-      </div>
+            textAlign: 'right', fontSize: 12, fontFamily: PM.font.mono,
+            fontVariantNumeric: 'tabular-nums', color: PM.text.secondary,
+          }}>{fmtUsd(m.liquidity)}</div>
 
-      {/* FLOW chevron */}
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        <Icon.ArrowRight size={14} color={PM.text.muted} />
-      </div>
+          {/* EXPIRES */}
+          <div style={{
+            textAlign: 'right', fontSize: 12, fontFamily: PM.font.mono,
+            fontVariantNumeric: 'tabular-nums', color: expires.color,
+          }}>{expires.text}</div>
+
+          {/* SIGNAL: 2-line (direction + strength) */}
+          <div style={{ minWidth: 0 }}>
+            <div style={{
+              fontSize: 12, fontWeight: 500, fontFamily: PM.font.mono,
+              color: sigColor, letterSpacing: '0.3px',
+              overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+            }}>{sigDir}</div>
+            {strengthTxt && (
+              <div style={{
+                fontSize: 10, fontFamily: PM.font.mono, color: PM.text.muted,
+                textTransform: 'lowercase', letterSpacing: '0.2px',
+              }}>{strengthTxt}</div>
+            )}
+          </div>
+
+          {/* FLOW chevron */}
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <Icon.ArrowRight size={14} color={PM.text.muted} />
+          </div>
+        </>
+      )}
     </div>
   )
 }
 
 // ─── Header Row (sticky column labels) ────────────────────────────────────────
-function HeaderRow() {
-  return (
-    <div style={{
-      display: 'grid',
-      gridTemplateColumns: 'minmax(360px, 1fr) 160px 100px 100px 110px 130px 40px',
-      alignItems: 'center', gap: 10,
-      padding: '0 14px', height: 26,
-      background: PM.bg.panel,
-      borderBottom: `1px solid ${PM.border.prominent}`,
-      flexShrink: 0, position: 'sticky', top: 0, zIndex: 2,
-    }}>
-      {[
+function HeaderRow({ isMobile }: { isMobile: boolean }) {
+  // On mobile we collapse to a 3-column row: market title, YES odds,
+  // 24h volume. The other columns are hidden via display:none-equivalent
+  // empty slots so we don't recompute the grid template here.
+  const cols = isMobile
+    ? [
+        ['MARKET',    'left'],
+        ['YES ODDS',  'left'],
+        ['24H VOL',   'right'],
+      ]
+    : [
         ['MARKET',    'left'],
         ['YES ODDS',  'left'],
         ['24H VOL',   'right'],
@@ -240,7 +273,23 @@ function HeaderRow() {
         ['EXPIRES',   'right'],
         ['SIGNAL',    'left'],
         ['',          'center'],
-      ].map(([l, a], i) => (
+      ]
+  const template = isMobile
+    ? 'minmax(0, 1fr) 96px 70px'
+    : 'minmax(360px, 1fr) 160px 100px 100px 110px 130px 40px'
+
+  return (
+    <div style={{
+      display: 'grid',
+      gridTemplateColumns: template,
+      alignItems: 'center', gap: isMobile ? 6 : 10,
+      padding: isMobile ? '0 10px' : '0 14px',
+      height: 26,
+      background: PM.bg.panel,
+      borderBottom: `1px solid ${PM.border.prominent}`,
+      flexShrink: 0, position: 'sticky', top: 0, zIndex: 2,
+    }}>
+      {cols.map(([l, a], i) => (
         <span key={i} style={{
           fontSize: 11, fontWeight: 500, letterSpacing: '0.5px',
           textTransform: 'uppercase', color: PM.text.muted,
@@ -596,6 +645,7 @@ function HistoryView({ history, onOutcome }: { history: Signal[]; onOutcome: (id
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
 export function Polymarket() {
+  const isMobile = useIsMobile()
   const [tab, setTab] = useState<Tab>('MARKETS')
   const [scanData, setScanData] = useState<ScanResult | null>(null)
   const [markets, setMarkets] = useState<Market[]>([])
@@ -608,6 +658,10 @@ export function Polymarket() {
   const [scanLimit, setScanLimit] = useState<number>(10)
   const [activeChips, setActiveChips] = useState<Set<string>>(new Set(['$1M+ ONLY']))
   const [focusedIdx, setFocusedIdx] = useState(0)
+  // The BOOK and TRADES tabs operate on the most-recently-tapped market
+  // from the MARKETS list. Independent of the drilldown view (which is a
+  // full-screen replacement panel).
+  const [activeMarketId, setActiveMarketId] = useState<string | null>(null)
   const listRef = useRef<HTMLDivElement | null>(null)
 
   const loadMarkets = useCallback(async () => {
@@ -666,6 +720,32 @@ export function Polymarket() {
   const strongSigs = scanData?.strong_signals || []
   const weakSigs = scanData?.weak_signals || []
 
+  // Resolve the market chosen for the BOOK / TRADES tabs. Default to the
+  // first market once the list arrives, so the panels never sit blank.
+  const activeMarket: Market | null = useMemo(() => {
+    if (!filteredMarkets.length) return null
+    const found = activeMarketId
+      ? filteredMarkets.find(m => m.id === activeMarketId)
+      : null
+    return found ?? filteredMarkets[0]
+  }, [filteredMarkets, activeMarketId])
+  const activeYesTokenId = useMemo(() => {
+    const out = activeMarket?.outcomes?.find(o => /yes/i.test(o.name))
+      ?? activeMarket?.outcomes?.[0]
+    // Some payloads carry token_id on the outcome; older shapes may not.
+    return (out as unknown as { token_id?: string })?.token_id ?? null
+  }, [activeMarket])
+  const handleMarketSelected = useCallback((m: Market) => {
+    setActiveMarketId(m.id)
+    if (isMobile) {
+      // On mobile the user expects "tap → detail". Drop them on the
+      // BOOK tab; they can flip to TRADES via the bottom bar.
+      setTab('BOOK')
+    } else {
+      setDrilldownId(m.id)
+    }
+  }, [isMobile])
+
   // Keyboard bindings (§3.12)
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -709,8 +789,10 @@ export function Polymarket() {
       background: PM.bg.app, color: PM.text.secondary, overflow: 'hidden',
       fontFamily: PM.font.ui,
     }}>
-      {/* Sub-tab strip */}
-      <SubTabStrip tab={tab} setTab={setTab} counts={{ SIGNALS: strongSigs.length, WALLETS: walletCount, HISTORY: history.length }} />
+      {/* Sub-tab strip — desktop only. Mobile uses the bottom tab bar. */}
+      {!isMobile && (
+        <SubTabStrip tab={tab} setTab={setTab} counts={{ SIGNALS: strongSigs.length, WALLETS: walletCount, HISTORY: history.length, BOOK: 0, TRADES: 0, MARKETS: 0 }} />
+      )}
 
       {/* Metric strip */}
       <MetricStrip history={history} scanning={scanning} />
@@ -780,10 +862,10 @@ export function Polymarket() {
       </div>
 
       {/* Body */}
-      <div style={{ flex: 1, overflow: 'hidden', display: 'flex' }}>
+      <div className={isMobile ? 'pm-mobile-padded' : ''} style={{ flex: 1, overflow: 'hidden', display: 'flex' }}>
         {tab === 'MARKETS' && (
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
-            <HeaderRow />
+            <HeaderRow isMobile={isMobile} />
             <div ref={listRef} style={{ flex: 1, overflowY: 'auto' }}>
               {loading && !markets.length ? (
                 <div style={{
@@ -803,12 +885,28 @@ export function Polymarket() {
                     key={m.id}
                     m={m}
                     selected={focusedIdx === i}
-                    onOpen={() => setDrilldownId(m.id)}
+                    isMobile={isMobile}
+                    onOpen={() => handleMarketSelected(m)}
                   />
                 ))
               )}
             </div>
           </div>
+        )}
+
+        {tab === 'BOOK' && (
+          <OrderBook
+            tokenId={activeYesTokenId}
+            marketLabel={activeMarket?.question}
+          />
+        )}
+
+        {tab === 'TRADES' && (
+          <TradeFeed
+            marketId={activeMarket?.id ?? null}
+            yesTokenId={activeYesTokenId}
+            marketLabel={activeMarket?.question}
+          />
         )}
 
         {tab === 'WALLETS' && <WalletsView markets={walletMarkets} />}
@@ -829,6 +927,32 @@ export function Polymarket() {
 
         {tab === 'HISTORY' && <HistoryView history={history} onOutcome={markOutcome} />}
       </div>
+
+      {/* Mobile bottom tab bar — fixed; respects iOS home bar inset. */}
+      {isMobile && (
+        <nav className="pm-bottom-tabs" aria-label="Polymarket sections">
+          {(['MARKETS', 'BOOK', 'TRADES', 'SIGNALS', 'WALLETS'] as const).map(t => {
+            const labelMap: Record<string, string> = {
+              MARKETS: 'Markets',
+              BOOK: 'Book',
+              TRADES: 'Trades',
+              SIGNALS: 'Signals',
+              WALLETS: 'Wallets',
+            }
+            return (
+              <button
+                key={t}
+                type="button"
+                aria-selected={tab === t}
+                aria-label={labelMap[t]}
+                onClick={() => setTab(t)}
+              >
+                {labelMap[t]}
+              </button>
+            )
+          })}
+        </nav>
+      )}
     </div>
   )
 }
