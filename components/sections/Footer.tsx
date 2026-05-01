@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { footerLinks } from '@/data'
+import SocialIcons from '@/components/ui/SocialIcons'
 
 const footerUrlMap: Record<string, string> = {
   'Web Terminal': '/terminal', 'Desktop App': '/download', 'Features': '/features',
@@ -28,6 +29,14 @@ export function Footer() {
               <span className="text-[1.05rem] font-bold" style={{ letterSpacing: '-0.02em', color: 'var(--t1)' }}>Termimal</span>
             </Link>
             <p className="text-sm leading-relaxed max-w-[260px]" style={{ color: 'var(--t2)' }}>Professional market analysis terminal. Research only — no trade execution, no financial advice.</p>
+
+            {/* Social — sits in the brand column directly under the
+                description. The label is intentionally muted so it
+                doesn't compete with the actual nav columns. */}
+            <div className="mt-6">
+              <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--t3)' }}>Follow us</p>
+              <SocialIcons />
+            </div>
           </div>
           {cols.map(col => (
             <div key={col.title}>

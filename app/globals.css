@@ -39,6 +39,13 @@
   /* DARK MODE: Show white logo, hide black logo */
   --logo-light-theme-display: none;
   --logo-dark-theme-display: block;
+
+  /* Social icons: dark theme renders them white at 70% then full on
+     hover. The CDN serves black SVGs by default — `brightness(0) invert(1)`
+     repaints them to white, then `opacity` provides the muted/active
+     transition. */
+  --social-icon-filter: brightness(0) invert(1);
+  --social-icon-opacity: 0.7;
 }
 
 [data-theme="light"] {
@@ -72,10 +79,29 @@
   /* LIGHT MODE: Show black logo, hide white logo */
   --logo-light-theme-display: block;
   --logo-dark-theme-display: none;
+
+  /* Social icons in light mode: keep them black at 60%, full on hover. */
+  --social-icon-filter: brightness(0);
+  --social-icon-opacity: 0.6;
 }
 
 html {
   scroll-behavior: smooth;
+}
+
+/* ─── Social icons ──────────────────────────────────────────────
+   The Simple Icons CDN ships solid-black SVGs. We tint them to the
+   active theme via CSS filters so we don't have to host two copies
+   per platform. The link wrapper handles hover transform; this
+   selector only handles colour + opacity. */
+.social-icon {
+  filter: var(--social-icon-filter);
+  opacity: var(--social-icon-opacity);
+  transition: opacity 150ms ease;
+}
+.social-icon-link:hover .social-icon,
+.social-icon-link:focus-visible .social-icon {
+  opacity: 1;
 }
 
 body {

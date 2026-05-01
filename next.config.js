@@ -2,6 +2,14 @@
 const nextConfig = {
   images: {
     unoptimized: false,
+    // Allow next/image to load brand-accurate social icons from the
+    // Simple Icons CDN. Used by <SocialIcons /> in the footer.
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'cdn.simpleicons.org',
+      },
+    ],
   },
   // Tree-shake icon-by-icon imports from lucide-react and barrel imports from
   // @supabase/supabase-js so the marketing pages don't ship every icon and
