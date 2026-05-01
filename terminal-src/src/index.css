@@ -278,46 +278,63 @@ td, th { padding: 0 8px; height: 26px; }
 }
 
 /* Bottom tab bar — fixed-position on mobile, respects iOS home bar
-   via env(safe-area-inset-bottom). The tab bar lifts the page's
-   bottom edge by its height, so add padding to the page scroller. */
+   via env(safe-area-inset-bottom). Active tab gets a top accent bar
+   and a stronger label colour so it reads as the current section
+   without relying solely on background. */
 .pm-bottom-tabs {
   position: fixed;
   left: 0; right: 0;
   bottom: 0;
   height: calc(56px + env(safe-area-inset-bottom));
   padding-bottom: env(safe-area-inset-bottom);
-  background: var(--bg-1, #0e1117);
-  border-top: 1px solid var(--border-0, #21262d);
+  /* Solid surface, NOT transparent — must not bleed content under it. */
+  background: #111118;
+  border-top: 1px solid rgba(255,255,255,0.07);
   display: flex;
   z-index: 50;
+  /* Subtle lift so it visually sits above the page. */
+  box-shadow: 0 -8px 24px rgba(0,0,0,0.32);
 }
 .pm-bottom-tabs button {
   flex: 1;
   background: transparent;
   border: none;
-  color: var(--t-3, #8b949e);
-  font-family: var(--font, system-ui);
+  color: #6b6b7a;
+  font-family: var(--font, system-ui, -apple-system, "Segoe UI", sans-serif);
+  /* 11 px label per spec — readable, doesn't crowd 5 tabs at 375 px. */
   font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2px;
+  gap: 4px;
   min-height: 56px;
-  padding: 6px 4px;
-  transition: color 120ms ease, background 120ms ease;
+  /* WCAG 44 px tap target floor; we exceed it. */
+  padding: 8px 4px;
+  transition: color 150ms ease, background 150ms ease;
+  -webkit-tap-highlight-color: transparent;
 }
 .pm-bottom-tabs button[aria-selected="true"] {
-  color: var(--blue, #388bfd);
-  background: rgba(56,139,253,0.06);
-  box-shadow: inset 0 2px 0 var(--blue, #388bfd);
+  color: #7c3aed;                            /* Termimal accent */
+  background: rgba(124,58,237,0.10);
+  box-shadow: inset 0 2px 0 #7c3aed;
+}
+.pm-bottom-tabs button:focus-visible {
+  outline: 2px solid #7c3aed;
+  outline-offset: -2px;
 }
 /* Pad the body so fixed bottom tabs don't cover content. */
 .pm-mobile-padded { padding-bottom: calc(56px + env(safe-area-inset-bottom)); }
+
+/* Search overlay open animation. */
+@keyframes pm-overlay-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0);   }
+}
 
 /* ── Reduced motion ──────────────────────────────────────────────
    Respect the user's OS-level animation preference. Without this

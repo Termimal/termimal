@@ -35,7 +35,51 @@ export const PM = {
     ui: 'system-ui, -apple-system, "Segoe UI", sans-serif',
     mono: '"SF Mono", "JetBrains Mono", Menlo, Consolas, monospace',
   },
+  /**
+   * Typography scale — readable institutional terminal type.
+   * The previous design leaned heavily on 9–11 px text for "density",
+   * which read as illegible on normal monitors and unusable on phones.
+   * Every text element should reference one of these — no hardcoded
+   * font sizes anywhere in the Polymarket components.
+   */
+  size: {
+    label:   11,  // column headers, badges, timestamps
+    meta:    12,  // secondary info, muted context
+    body:    13,  // trade-feed rows, order-book rows, helper text
+    data:    15,  // market titles, primary data labels
+    price:   17,  // order-book prices, inline prices
+    hero:    20,  // YES/NO percentages on cards
+    display: 28,  // YES/NO tiles in the mobile market detail
+  } as const,
+  /** Touch-target / hit-area sizes. */
+  hit: {
+    rowDesktop: 48,
+    rowMobile:  88,   // mobile market cards: thumb-friendly
+    bookRowDesktop: 36,
+    bookRowMobile:  44,
+    tab: 56,
+    btn: 44,
+  } as const,
   motion: '120ms ease-out',
+}
+
+/**
+ * Category badge colors — consistent across MarketRow (desktop) and
+ * MarketCard (mobile). Uppercase keys; falls back to "OTHER" colour
+ * for anything not listed.
+ */
+export const CATEGORY_COLOR: Record<string, string> = {
+  POLITICS:      '#3b82f6',
+  CRYPTO:        '#f97316',
+  SPORTS:        '#22c55e',
+  FINANCE:       '#eab308',
+  SCIENCE:       '#a855f7',
+  ENTERTAINMENT: '#ec4899',
+  OTHER:         '#6b7280',
+}
+export function categoryColor(tag: string | null | undefined): string {
+  if (!tag) return CATEGORY_COLOR.OTHER
+  return CATEGORY_COLOR[tag.toUpperCase()] ?? CATEGORY_COLOR.OTHER
 }
 
 // Formatting helpers — all numbers in mono, all dollar-values abbreviated

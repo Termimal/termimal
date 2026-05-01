@@ -126,7 +126,7 @@ export function TradeFeed({ marketId, yesTokenId, marketLabel }: TradeFeedProps)
         display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0,
       }}>
         <span style={{
-          fontSize: 11, fontWeight: 500, letterSpacing: '0.5px',
+          fontSize: PM.size.label, fontWeight: 600, letterSpacing: '0.08em',
           textTransform: 'uppercase', color: PM.text.muted,
         }}>Trades</span>
         {marketLabel && (
@@ -151,7 +151,7 @@ export function TradeFeed({ marketId, yesTokenId, marketLabel }: TradeFeedProps)
         background: PM.bg.panel,
         borderBottom: `1px solid ${PM.border.prominent}`,
         flexShrink: 0,
-        fontSize: 10, fontWeight: 500, letterSpacing: '0.5px',
+        fontSize: PM.size.label, fontWeight: 600, letterSpacing: '0.08em',
         textTransform: 'uppercase', color: PM.text.muted,
         fontFamily: PM.font.ui, alignItems: 'center',
       }}>
@@ -179,17 +179,18 @@ export function TradeFeed({ marketId, yesTokenId, marketLabel }: TradeFeedProps)
               <div key={t.id} className={isNewest ? 'pm-slide-in' : ''}
                 style={{
                   display: 'grid',
-                  gridTemplateColumns: '90px 60px 90px 1fr 70px',
+                  gridTemplateColumns: '92px 56px 92px 1fr 80px',
                   gap: 12,
-                  padding: '0 14px', height: 28, alignItems: 'center',
-                  borderBottom: `1px solid ${PM.bg.app}`,
-                  fontSize: 12, fontFamily: PM.font.mono, fontVariantNumeric: 'tabular-nums',
+                  padding: '0 14px', minHeight: PM.hit.rowDesktop - 4, alignItems: 'center',
+                  borderBottom: `1px solid ${PM.border.subtle}`,
+                  borderLeft: `3px solid ${sideColor}`,
+                  fontSize: PM.size.body, fontFamily: PM.font.mono, fontVariantNumeric: 'tabular-nums',
                 }}>
-                <span style={{ color: PM.text.tertiary }}>{fmtTime(new Date(t.ts).toISOString())}</span>
-                <span style={{ color: sideColor, fontWeight: 600 }}>{t.side}</span>
-                <span style={{ textAlign: 'right', color: PM.text.secondary }}>{fmtUsd(t.size)}</span>
-                <span style={{ textAlign: 'right', color: PM.text.primary }}>{t.price.toFixed(3)}</span>
-                <span style={{ textAlign: 'right', color: t.direction === 'BUY' ? PM.up : PM.down, fontWeight: 600 }}>
+                <span style={{ color: PM.text.muted, fontSize: PM.size.meta }}>{fmtTime(new Date(t.ts).toISOString())}</span>
+                <span style={{ color: sideColor, fontWeight: 700 }}>{t.side}</span>
+                <span style={{ textAlign: 'right', color: PM.text.secondary, fontSize: PM.size.data, fontWeight: 600 }}>{fmtUsd(t.size)}</span>
+                <span style={{ textAlign: 'right', color: PM.text.primary, fontSize: PM.size.price, fontWeight: 600 }}>{t.price.toFixed(3)}</span>
+                <span style={{ textAlign: 'right', color: t.direction === 'BUY' ? PM.up : PM.down, fontWeight: 700 }}>
                   {t.direction === 'BUY' ? '↑' : '↓'} {t.direction}
                 </span>
               </div>

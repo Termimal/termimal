@@ -4,7 +4,9 @@ import axios from 'axios'
 import { OrderflowDrilldown } from './polymarket/OrderflowDrilldown'
 import { OrderBook } from './polymarket/OrderBook'
 import { TradeFeed } from './polymarket/TradeFeed'
-import { PM, fmtUsd, fmtExpires, fmtTime } from './polymarket/_ui/tokens'
+import { MarketCard } from './polymarket/MarketCard'
+import { MobileSearchOverlay } from './polymarket/MobileSearchOverlay'
+import { PM, fmtUsd, fmtExpires, fmtTime, categoryColor } from './polymarket/_ui/tokens'
 import {
   MetricCell, ProbabilityBar, SegmentedControl, Chip, Badge, SignalBadge, StatusDot,
   PrimaryButton, SecondaryButton, Icon,
@@ -124,13 +126,31 @@ function MetricStrip({ history, scanning }: { history: Signal[]; scanning: boole
 }
 
 // ─── Market Row (§Feature1) — 7-col dense table row ───────────────────────────
+/**
+ * MarketRow — desktop row layout, redesigned for readability.
+ *
+ * Old version used 13 px titles, 12 px volume, and a thin probability
+ * bar — readable but not at-a-glance scannable. New version:
+ *
+ *   Height          48 px (was 36)
+ *   Title           15 px / weight 500 (was 13)
+ *   YES / NO chips  green/red translucent pill, 14 px bold mono
+ *   Volume          13 px mono, right-aligned
+ *   24h change      13 px with arrow, color-coded
+ *   Category badge  4 px pill on the left edge of the row, colour-coded
+ *   Selected state  full-row highlight + 2 px accent left bar
+ *
+ * The dense intelligence-derived columns (LIQUID, EXPIRES, SIGNAL,
+ * chevron) are still there because power users rely on them — but
+ * sized in the muted secondary scale so the YES/NO chips stay the
+ * loudest element on the row.
+ */
 function MarketRow({
-  m, onOpen, selected, isMobile,
+  m, onOpen, selected,
 }: {
   m: Market
   onOpen: () => void
   selected: boolean
-  isMobile: boolean
 }) {
   const rowRef = useRef<HTMLDivElement | null>(null)
   const prevPriceRef = useRef(m.yes_price)
@@ -158,144 +178,161 @@ function MarketRow({
     : PM.text.disabled
   const strengthTxt = sig ? `${level.toLowerCase()} ${sig.confidence}pc` : ''
 
-  // Mobile: drop LIQUID, EXPIRES, SIGNAL, chevron — just MARKET / YES ODDS / 24H VOL.
-  // Bumped row height to 52 px on mobile to clear the WCAG tap-target floor.
-  const template = isMobile
-    ? 'minmax(0, 1fr) 96px 70px'
-    : 'minmax(360px, 1fr) 160px 100px 100px 110px 130px 40px'
+  const tagLabel = (m.tag || 'OTHER').toUpperCase()
+  const tagColor = categoryColor(tagLabel)
+  const yesPct = Math.round(m.yes_price * 100)
+  const noPct = 100 - yesPct
 
   return (
     <div ref={rowRef} role="button" tabIndex={0} onClick={onOpen} onKeyDown={onActivate(onOpen)}
       className={selected ? '' : 'pm-hoverable'}
       style={{
         display: 'grid',
-        gridTemplateColumns: template,
-        alignItems: 'center', gap: isMobile ? 6 : 10,
-        padding: isMobile ? '8px 10px' : '6px 14px',
-        minHeight: isMobile ? 52 : 36,
+        // [category-bar | title | YES chip | NO chip | volume | liquidity | expires | signal | chevron]
+        gridTemplateColumns: '4px minmax(280px, 1fr) 78px 78px 100px 90px 90px 130px 32px',
+        alignItems: 'center', gap: 12,
+        padding: '0 16px', minHeight: PM.hit.rowDesktop,
         background: selected ? PM.row.selected : 'transparent',
-        borderBottom: `1px solid ${PM.bg.app}`,
+        borderBottom: `1px solid ${PM.border.subtle}`,
         cursor: 'pointer',
         borderLeft: selected ? `2px solid ${PM.accent}` : '2px solid transparent',
       }}>
 
-      {/* MARKET: 2-line cell (question + tag badges) */}
+      {/* Category color stripe */}
+      <div style={{ width: 4, height: 28, borderRadius: 2, background: tagColor }} />
+
+      {/* MARKET: title + tags row */}
       <div style={{ minWidth: 0 }}>
         <div style={{
-          fontSize: 13, fontWeight: 500, color: PM.text.primary,
-          lineHeight: 1.35, fontFamily: PM.font.ui,
-          overflow: 'hidden', textOverflow: 'ellipsis',
-          display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical',
-        } as any}>{m.question}</div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 3 }}>
-          {level !== 'NONE' && <SignalBadge level={level} />}
-          <Badge label={m.tag || 'OTHER'} variant={m.tag} />
-          {m.anomaly?.conditions.volume_spike && <Badge label="VOL SPIKE" variant="VOL SPIKE" />}
-          {m.anomaly?.conditions.directional_shift && <Badge label="DIR SHIFT" variant="DIR SHIFT" />}
+          fontSize: PM.size.data, fontWeight: 500, color: PM.text.primary,
+          lineHeight: 1.3, fontFamily: PM.font.ui,
+          overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+        }}>{m.question}</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginTop: 4 }}>
+          <span style={{
+            fontSize: PM.size.label, fontWeight: 600,
+            letterSpacing: '0.06em', color: tagColor,
+            textTransform: 'uppercase', fontFamily: PM.font.ui,
+          }}>{tagLabel}</span>
+          {level !== 'NONE' && <span style={{ marginLeft: 4 }}><SignalBadge level={level} /></span>}
+          {m.anomaly?.conditions.volume_spike && <span style={{ marginLeft: 4 }}><Badge label="VOL SPIKE" variant="VOL SPIKE" /></span>}
+          {m.anomaly?.conditions.directional_shift && <span style={{ marginLeft: 4 }}><Badge label="DIR SHIFT" variant="DIR SHIFT" /></span>}
         </div>
       </div>
 
-      {/* YES ODDS: probability bar + pct */}
-      <div className="pm-odds-cell" style={{ padding: '2px 4px', borderRadius: 2 }}>
-        <ProbabilityBar odds={m.yes_price} />
-      </div>
-
-      {/* 24H VOL */}
-      <div style={{ textAlign: 'right' }}>
-        <div style={{
-          fontSize: 12, fontFamily: PM.font.mono, fontVariantNumeric: 'tabular-nums',
-          color: m.vol_stats?.spike ? PM.down : m.volume_24h < 10000 ? PM.text.tertiary : PM.text.secondary,
+      {/* YES chip */}
+      <div className="pm-odds-cell" aria-label={`Yes probability ${yesPct} percent`}
+        style={{
+          padding: '4px 10px', borderRadius: 4,
+          background: PM.upFill, border: `1px solid ${PM.up}33`,
+          textAlign: 'center',
         }}>
-          {m.vol_stats?.multiplier ? `${m.vol_stats.multiplier.toFixed(1)}×` : fmtUsd(m.volume_24h)}
-        </div>
+        <span style={{
+          fontSize: PM.size.label, fontWeight: 700,
+          letterSpacing: '0.05em', color: PM.up,
+        }}>YES </span>
+        <span style={{
+          fontSize: PM.size.body + 1, fontWeight: 700,
+          fontFamily: PM.font.mono, fontVariantNumeric: 'tabular-nums', color: PM.up,
+        }}>{yesPct}%</span>
+      </div>
+
+      {/* NO chip */}
+      <div aria-label={`No probability ${noPct} percent`}
+        style={{
+          padding: '4px 10px', borderRadius: 4,
+          background: PM.downFill, border: `1px solid ${PM.down}33`,
+          textAlign: 'center',
+        }}>
+        <span style={{
+          fontSize: PM.size.label, fontWeight: 700,
+          letterSpacing: '0.05em', color: PM.down,
+        }}>NO </span>
+        <span style={{
+          fontSize: PM.size.body + 1, fontWeight: 700,
+          fontFamily: PM.font.mono, fontVariantNumeric: 'tabular-nums', color: PM.down,
+        }}>{noPct}%</span>
+      </div>
+
+      {/* 24h vol */}
+      <div style={{
+        textAlign: 'right', fontSize: PM.size.body, fontFamily: PM.font.mono,
+        fontVariantNumeric: 'tabular-nums',
+        color: m.vol_stats?.spike ? PM.down : m.volume_24h < 10000 ? PM.text.tertiary : PM.text.secondary,
+      }}>
+        {fmtUsd(m.volume_24h)}
         {m.vol_stats?.spike && (
-          <div style={{ fontSize: 9, color: PM.down, marginTop: 1, fontFamily: PM.font.mono, letterSpacing: '0.3px' }}>SPIKE</div>
+          <div style={{ fontSize: PM.size.label - 1, color: PM.down, marginTop: 1, fontFamily: PM.font.mono, letterSpacing: '0.3px' }}>SPIKE</div>
         )}
       </div>
 
-      {/* Desktop-only columns — LIQUID, EXPIRES, SIGNAL, chevron.
-          On mobile we collapse to MARKET / YES ODDS / 24H VOL only. */}
-      {!isMobile && (
-        <>
-          {/* LIQUID */}
+      {/* Liquidity */}
+      <div style={{
+        textAlign: 'right', fontSize: PM.size.body, fontFamily: PM.font.mono,
+        fontVariantNumeric: 'tabular-nums', color: PM.text.muted,
+      }}>{fmtUsd(m.liquidity)}</div>
+
+      {/* Expires */}
+      <div style={{
+        textAlign: 'right', fontSize: PM.size.body, fontFamily: PM.font.mono,
+        fontVariantNumeric: 'tabular-nums', color: expires.color,
+      }}>{expires.text}</div>
+
+      {/* Signal */}
+      <div style={{ minWidth: 0 }}>
+        <div style={{
+          fontSize: PM.size.body, fontWeight: 600, fontFamily: PM.font.mono,
+          color: sigColor, letterSpacing: '0.3px',
+          overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+        }}>{sigDir}</div>
+        {strengthTxt && (
           <div style={{
-            textAlign: 'right', fontSize: 12, fontFamily: PM.font.mono,
-            fontVariantNumeric: 'tabular-nums', color: PM.text.secondary,
-          }}>{fmtUsd(m.liquidity)}</div>
+            fontSize: PM.size.label, fontFamily: PM.font.mono, color: PM.text.muted,
+            textTransform: 'lowercase', letterSpacing: '0.2px',
+          }}>{strengthTxt}</div>
+        )}
+      </div>
 
-          {/* EXPIRES */}
-          <div style={{
-            textAlign: 'right', fontSize: 12, fontFamily: PM.font.mono,
-            fontVariantNumeric: 'tabular-nums', color: expires.color,
-          }}>{expires.text}</div>
-
-          {/* SIGNAL: 2-line (direction + strength) */}
-          <div style={{ minWidth: 0 }}>
-            <div style={{
-              fontSize: 12, fontWeight: 500, fontFamily: PM.font.mono,
-              color: sigColor, letterSpacing: '0.3px',
-              overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-            }}>{sigDir}</div>
-            {strengthTxt && (
-              <div style={{
-                fontSize: 10, fontFamily: PM.font.mono, color: PM.text.muted,
-                textTransform: 'lowercase', letterSpacing: '0.2px',
-              }}>{strengthTxt}</div>
-            )}
-          </div>
-
-          {/* FLOW chevron */}
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            <Icon.ArrowRight size={14} color={PM.text.muted} />
-          </div>
-        </>
-      )}
+      {/* Chevron */}
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <Icon.ArrowRight size={14} color={PM.text.muted} />
+      </div>
     </div>
   )
 }
 
-// ─── Header Row (sticky column labels) ────────────────────────────────────────
-function HeaderRow({ isMobile }: { isMobile: boolean }) {
-  // On mobile we collapse to a 3-column row: market title, YES odds,
-  // 24h volume. The other columns are hidden via display:none-equivalent
-  // empty slots so we don't recompute the grid template here.
-  const cols = isMobile
-    ? [
-        ['MARKET',    'left'],
-        ['YES ODDS',  'left'],
-        ['24H VOL',   'right'],
-      ]
-    : [
-        ['MARKET',    'left'],
-        ['YES ODDS',  'left'],
-        ['24H VOL',   'right'],
-        ['LIQUID',    'right'],
-        ['EXPIRES',   'right'],
-        ['SIGNAL',    'left'],
-        ['',          'center'],
-      ]
-  const template = isMobile
-    ? 'minmax(0, 1fr) 96px 70px'
-    : 'minmax(360px, 1fr) 160px 100px 100px 110px 130px 40px'
-
+// ─── Header Row (sticky column labels — desktop only) ─────────────────────────
+function HeaderRow() {
+  // Match the MarketRow desktop grid exactly so labels line up.
+  // [stripe | title | YES | NO | 24h vol | liquidity | expires | signal | chevron]
   return (
     <div style={{
       display: 'grid',
-      gridTemplateColumns: template,
-      alignItems: 'center', gap: isMobile ? 6 : 10,
-      padding: isMobile ? '0 10px' : '0 14px',
-      height: 26,
+      gridTemplateColumns: '4px minmax(280px, 1fr) 78px 78px 100px 90px 90px 130px 32px',
+      alignItems: 'center', gap: 12,
+      padding: '0 16px', height: 34,
       background: PM.bg.panel,
       borderBottom: `1px solid ${PM.border.prominent}`,
       flexShrink: 0, position: 'sticky', top: 0, zIndex: 2,
     }}>
-      {cols.map(([l, a], i) => (
+      <span />{/* category stripe column */}
+      {[
+        ['MARKET',  'left'],
+        ['YES',     'center'],
+        ['NO',      'center'],
+        ['24H VOL', 'right'],
+        ['LIQUID',  'right'],
+        ['EXPIRES', 'right'],
+        ['SIGNAL',  'left'],
+      ].map(([l, a], i) => (
         <span key={i} style={{
-          fontSize: 11, fontWeight: 500, letterSpacing: '0.5px',
-          textTransform: 'uppercase', color: PM.text.muted,
-          fontFamily: PM.font.ui, textAlign: a as any,
+          fontSize: PM.size.label, fontWeight: 600,
+          letterSpacing: '0.08em', textTransform: 'uppercase',
+          color: PM.text.muted, fontFamily: PM.font.ui,
+          textAlign: a as React.CSSProperties['textAlign'],
         }}>{l}</span>
       ))}
+      <span /> {/* chevron column */}
     </div>
   )
 }
@@ -658,6 +695,9 @@ export function Polymarket() {
   const [scanLimit, setScanLimit] = useState<number>(10)
   const [activeChips, setActiveChips] = useState<Set<string>>(new Set(['$1M+ ONLY']))
   const [focusedIdx, setFocusedIdx] = useState(0)
+  // Mobile search overlay — opened by tapping the magnifier in the header.
+  const [searchOpen, setSearchOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
   // The BOOK and TRADES tabs operate on the most-recently-tapped market
   // from the MARKETS list. Independent of the drilldown view (which is a
   // full-screen replacement panel).
@@ -696,18 +736,25 @@ export function Polymarket() {
   useEffect(() => { loadMarkets(); loadHistory() }, [loadMarkets, loadHistory])
   useEffect(() => { const id = setInterval(loadMarkets, 5 * 60 * 1000); return () => clearInterval(id) }, [loadMarkets])
 
-  // Filter markets by active chips
-  const filteredMarkets = markets.filter(m => {
-    if (activeChips.has('$1M+ ONLY') && m.liquidity < 1_000_000) return false
-    if (activeChips.has('LIVE') && !m.vol_stats?.spike) return false
-    if (activeChips.has('ENDING 7D')) {
-      try {
-        const d = (new Date(m.end_date).getTime() - Date.now()) / 86400000
-        if (d > 7 || d < 0) return false
-      } catch { return false }
-    }
-    return true
-  })
+  // Filter markets by active chips + free-text search.
+  const filteredMarkets = useMemo(() => {
+    const needle = searchQuery.trim().toLowerCase()
+    return markets.filter(m => {
+      if (activeChips.has('$1M+ ONLY') && m.liquidity < 1_000_000) return false
+      if (activeChips.has('LIVE') && !m.vol_stats?.spike) return false
+      if (activeChips.has('ENDING 7D')) {
+        try {
+          const d = (new Date(m.end_date).getTime() - Date.now()) / 86400000
+          if (d > 7 || d < 0) return false
+        } catch { return false }
+      }
+      if (needle) {
+        const hay = `${m.question} ${m.tag ?? ''}`.toLowerCase()
+        if (!hay.includes(needle)) return false
+      }
+      return true
+    })
+  }, [markets, activeChips, searchQuery])
 
   const toggleChip = (label: string) => {
     const s = new Set(activeChips)
@@ -797,27 +844,44 @@ export function Polymarket() {
       {/* Metric strip */}
       <MetricStrip history={history} scanning={scanning} />
 
-      {/* Page header: title + chips */}
+      {/* Page header: title + chips. On mobile, replaces the title with a
+          search affordance so the overlay is one tap away. */}
       <div style={{
-        padding: '0 14px', height: 36,
-        display: 'flex', alignItems: 'center',
+        padding: '0 14px', height: isMobile ? 44 : 36,
+        display: 'flex', alignItems: 'center', gap: 8,
         background: PM.bg.panel, borderBottom: `1px solid ${PM.border.subtle}`,
         flexShrink: 0,
       }}>
         <span style={{
-          fontSize: 13, fontWeight: 600, color: PM.text.primary, letterSpacing: '0.2px',
-        }}>Polymarket Intelligence</span>
+          fontSize: PM.size.data, fontWeight: 600, color: PM.text.primary, letterSpacing: '0.2px',
+        }}>Polymarket</span>
         {error && (
           <span style={{
-            marginLeft: 12, fontSize: 11, fontFamily: PM.font.mono,
+            marginLeft: 8, fontSize: PM.size.label, fontFamily: PM.font.mono,
             color: PM.down, letterSpacing: '0.3px',
           }}>{error.toUpperCase()}</span>
         )}
-        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6 }}>
-          {(['$1M+ ONLY', 'LIVE', 'ENDING 7D'] as const).map(c =>
-            <Chip key={c} label={c} active={activeChips.has(c)} onClick={() => toggleChip(c)} />
-          )}
-        </div>
+        {isMobile ? (
+          <button
+            type="button"
+            aria-label="Search markets"
+            onClick={() => setSearchOpen(true)}
+            style={{
+              marginLeft: 'auto',
+              minWidth: PM.hit.btn, minHeight: PM.hit.btn,
+              display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+              background: PM.bg.elevated, border: `1px solid ${PM.border.subtle}`,
+              borderRadius: 6, color: PM.text.secondary, cursor: 'pointer',
+              fontSize: PM.size.price,
+            }}
+          >🔍</button>
+        ) : (
+          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 6 }}>
+            {(['$1M+ ONLY', 'LIVE', 'ENDING 7D'] as const).map(c =>
+              <Chip key={c} label={c} active={activeChips.has(c)} onClick={() => toggleChip(c)} />
+            )}
+          </div>
+        )}
       </div>
 
       {/* Status row */}
@@ -865,27 +929,40 @@ export function Polymarket() {
       <div className={isMobile ? 'pm-mobile-padded' : ''} style={{ flex: 1, overflow: 'hidden', display: 'flex' }}>
         {tab === 'MARKETS' && (
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
-            <HeaderRow isMobile={isMobile} />
-            <div ref={listRef} style={{ flex: 1, overflowY: 'auto' }}>
+            {/* Desktop: dense table with column headers. Mobile: card list. */}
+            {!isMobile && <HeaderRow />}
+            <div ref={listRef} style={{ flex: 1, overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
               {loading && !markets.length ? (
                 <div style={{
                   padding: 60, textAlign: 'center',
-                  fontSize: 11, color: PM.text.muted, fontFamily: PM.font.mono, letterSpacing: '0.5px',
-                  textTransform: 'uppercase',
+                  fontSize: PM.size.body, color: PM.text.muted, fontFamily: PM.font.mono,
+                  letterSpacing: '0.5px', textTransform: 'uppercase',
                 }}>LOADING MARKETS…</div>
               ) : !filteredMarkets.length ? (
                 <div style={{
                   padding: 60, textAlign: 'center',
-                  fontSize: 11, color: PM.text.muted, fontFamily: PM.font.mono, letterSpacing: '0.5px',
-                  textTransform: 'uppercase',
+                  fontSize: PM.size.body, color: PM.text.muted, fontFamily: PM.font.mono,
+                  letterSpacing: '0.5px', textTransform: 'uppercase',
                 }}>NO MARKETS MATCH FILTER</div>
+              ) : isMobile ? (
+                filteredMarkets.map((m, i) => (
+                  <MarketCard
+                    key={m.id}
+                    question={m.question}
+                    tag={m.tag}
+                    yesPrice={m.yes_price}
+                    volume24h={m.volume_24h}
+                    change24h={m.dir_shift?.shift ?? null}
+                    selected={focusedIdx === i}
+                    onOpen={() => handleMarketSelected(m)}
+                  />
+                ))
               ) : (
                 filteredMarkets.map((m, i) => (
                   <MarketRow
                     key={m.id}
                     m={m}
                     selected={focusedIdx === i}
-                    isMobile={isMobile}
                     onOpen={() => handleMarketSelected(m)}
                   />
                 ))
@@ -952,6 +1029,41 @@ export function Polymarket() {
             )
           })}
         </nav>
+      )}
+
+      {/* Mobile search overlay — full-screen, glassmorphism, 16 px input
+          to defeat iOS auto-zoom on focus. */}
+      {isMobile && (
+        <MobileSearchOverlay
+          open={searchOpen}
+          query={searchQuery}
+          onChange={setSearchQuery}
+          onClose={() => setSearchOpen(false)}
+        >
+          {filteredMarkets.length === 0 ? (
+            <div style={{
+              padding: 32, textAlign: 'center',
+              fontSize: PM.size.body, color: PM.text.muted, fontFamily: PM.font.mono,
+            }}>
+              {searchQuery ? `No markets matching "${searchQuery}"` : 'Type to search markets'}
+            </div>
+          ) : (
+            filteredMarkets.slice(0, 50).map((m) => (
+              <MarketCard
+                key={m.id}
+                question={m.question}
+                tag={m.tag}
+                yesPrice={m.yes_price}
+                volume24h={m.volume_24h}
+                change24h={m.dir_shift?.shift ?? null}
+                onOpen={() => {
+                  handleMarketSelected(m)
+                  setSearchOpen(false)
+                }}
+              />
+            ))
+          )}
+        </MobileSearchOverlay>
       )}
     </div>
   )

@@ -184,7 +184,7 @@ export function OrderBook({ tokenId, marketLabel }: OrderBookProps) {
         flexShrink: 0,
       }}>
         <span style={{
-          fontSize: 11, fontWeight: 500, letterSpacing: '0.5px',
+          fontSize: PM.size.label, fontWeight: 600, letterSpacing: '0.08em',
           textTransform: 'uppercase', color: PM.text.muted,
         }}>Order Book</span>
         {marketLabel && (
@@ -237,12 +237,12 @@ function Stat({ label, value, color }: { label: string; value: string; color: st
       display: 'flex', flexDirection: 'column', gap: 2,
     }}>
       <span style={{
-        fontSize: 10, fontWeight: 500, letterSpacing: '0.5px',
+        fontSize: PM.size.label, fontWeight: 600, letterSpacing: '0.08em',
         textTransform: 'uppercase', color: PM.text.muted,
       }}>{label}</span>
       <span style={{
-        fontSize: 16, fontFamily: PM.font.mono, fontVariantNumeric: 'tabular-nums',
-        color, fontWeight: 600,
+        fontSize: PM.size.price, fontFamily: PM.font.mono, fontVariantNumeric: 'tabular-nums',
+        color, fontWeight: 700,
       }}>{value}</span>
     </div>
   )
@@ -269,7 +269,7 @@ function Side({
         padding: '6px 12px', height: 24,
         background: PM.bg.panel,
         borderBottom: `1px solid ${PM.border.prominent}`,
-        fontSize: 10, fontWeight: 500, letterSpacing: '0.5px',
+        fontSize: PM.size.label, fontWeight: 600, letterSpacing: '0.08em',
         textTransform: 'uppercase', color: PM.text.muted,
         fontFamily: PM.font.ui,
       }}>
@@ -278,7 +278,7 @@ function Side({
       </div>
       {!levels.length && (
         <div style={{
-          padding: 24, fontSize: 11, color: PM.text.muted,
+          padding: 24, fontSize: PM.size.body, color: PM.text.muted,
           textAlign: 'center', fontFamily: PM.font.mono,
         }}>NO ORDERS</div>
       )}
@@ -288,7 +288,7 @@ function Side({
           <div key={`${lv.price}-${lv.size}`} style={{
             position: 'relative',
             display: 'grid', gridTemplateColumns: '1fr 1fr',
-            padding: '4px 12px', height: 26, alignItems: 'center',
+            padding: '6px 12px', minHeight: PM.hit.bookRowDesktop, alignItems: 'center',
             borderBottom: `1px solid ${PM.bg.app}`,
           }}>
             <div style={{
@@ -300,14 +300,14 @@ function Side({
             }} />
             <span style={{
               position: 'relative',
-              fontSize: 12, fontFamily: PM.font.mono,
-              fontVariantNumeric: 'tabular-nums', color: colour, fontWeight: 600,
+              fontSize: PM.size.price, fontFamily: PM.font.mono,
+              fontVariantNumeric: 'tabular-nums', color: colour, fontWeight: 700,
             }}>{lv.price.toFixed(3)}</span>
             <span style={{
               position: 'relative',
               textAlign: 'right',
-              fontSize: 12, fontFamily: PM.font.mono,
-              fontVariantNumeric: 'tabular-nums', color: PM.text.secondary,
+              fontSize: PM.size.body, fontFamily: PM.font.mono,
+              fontVariantNumeric: 'tabular-nums', color: PM.text.muted,
             }}>{fmtUsd(lv.size)}</span>
           </div>
         )
