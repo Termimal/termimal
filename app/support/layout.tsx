@@ -1,11 +1,12 @@
 import type { Metadata } from 'next'
+import { getCanonicalUrl } from '@/lib/seo/canonical'
 import type { ReactNode } from 'react'
 
 export const metadata: Metadata = {
   title: 'Support — Contact Termimal',
   description:
     "Get support from the Termimal team. Reach out about billing, technical issues, or product questions — we typically respond within one business day.",
-  alternates: { canonical: '/support' },
+  alternates: { canonical: getCanonicalUrl('/support') },
   openGraph: {
     title: 'Support — Contact Termimal',
     description:

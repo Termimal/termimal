@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { getCanonicalUrl } from '@/lib/seo/canonical'
 import BackToHome from '@/components/BackToHome'
 import Link from "next/link"
 
@@ -6,7 +7,7 @@ export const metadata: Metadata = {
   title: 'About Termimal — Trading Analysis Platform',
   description:
     "Learn about Termimal, the team building professional charting, COT positioning, on-chain, and macro intelligence tools for serious traders.",
-  alternates: { canonical: '/about' },
+  alternates: { canonical: getCanonicalUrl('/about') },
   openGraph: {
     title: 'About Termimal — Trading Analysis Platform',
     description:

@@ -13,13 +13,14 @@ import {
 } from '@/components/sections'
 import { Footer } from '@/components/sections/Footer'
 import HomeFaq from '@/components/HomeFaq'
+import { getCanonicalUrl } from '@/lib/seo/canonical'
 
 export const metadata: Metadata = {
   title: 'Termimal — Trading Analysis Platform',
   description:
     'Termimal is a professional trading analysis platform for charting, macro intelligence, CFTC COT positioning, on-chain analytics, sentiment, and risk research.',
   alternates: {
-    canonical: '/',
+    canonical: getCanonicalUrl('/'),
   },
   openGraph: {
     title: 'Termimal — Trading Analysis Platform',

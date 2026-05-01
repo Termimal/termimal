@@ -1,5 +1,7 @@
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { createServerSupabase } from '@/lib/supabase/server'
+import { getCanonicalUrl } from '@/lib/seo/canonical'
 import Link from 'next/link'
 
 export const runtime = 'edge'
@@ -7,6 +9,15 @@ export const revalidate = 60
 
 type PageProps = {
   params: Promise<{ id: string }>
+}
+
+// Per-article canonical derived from the actual id, never hardcoded.
+// Generated on the fly so each /reports/<id> URL canonicalises to itself.
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { id } = await params
+  return {
+    alternates: { canonical: getCanonicalUrl(`/reports/${id}`) },
+  }
 }
 
 export default async function ReportDetailPage({ params }: PageProps) {

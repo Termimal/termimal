@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { getCanonicalUrl } from '@/lib/seo/canonical'
 import { createClient } from '@supabase/supabase-js'
 import Link from 'next/link'
 
@@ -6,7 +7,7 @@ export const metadata: Metadata = {
   title: 'Reports — Macro, COT & On-Chain Research',
   description:
     "Read Termimal's research reports: weekly CFTC COT positioning, macro intelligence briefs, on-chain flow analysis, and sentiment overviews.",
-  alternates: { canonical: '/reports' },
+  alternates: { canonical: getCanonicalUrl('/reports') },
   openGraph: {
     title: 'Reports — Macro, COT & On-Chain Research | Termimal',
     description:

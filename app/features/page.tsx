@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { getCanonicalUrl } from '@/lib/seo/canonical'
 import Navbar from '@/components/layout/Navbar'
 import { ExploreSection, ProductStories, CTASection } from '@/components/sections'
 import { Footer } from '@/components/sections/Footer'
@@ -7,7 +8,7 @@ export const metadata: Metadata = {
   title: 'Features — Charting, COT, On-Chain, Macro',
   description:
     "Explore Termimal's full feature set: advanced charting, CFTC COT positioning, on-chain analytics, macro intelligence, sentiment, and risk research.",
-  alternates: { canonical: '/features' },
+  alternates: { canonical: getCanonicalUrl('/features') },
   openGraph: {
     title: 'Features — Charting, COT, On-Chain, Macro | Termimal',
     description:

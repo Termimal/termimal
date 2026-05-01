@@ -1,11 +1,12 @@
 import type { Metadata } from 'next'
+import { getCanonicalUrl } from '@/lib/seo/canonical'
 import Link from "next/link"
 
 export const metadata: Metadata = {
   title: 'Careers — Join the Termimal Team',
   description:
     "Join Termimal: we're hiring engineers, designers, and analysts to build the next generation of trading analysis tools.",
-  alternates: { canonical: '/careers' },
+  alternates: { canonical: getCanonicalUrl('/careers') },
   openGraph: {
     title: 'Careers — Join the Termimal Team',
     description:

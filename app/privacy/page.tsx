@@ -1,11 +1,12 @@
 import type { Metadata } from 'next'
+import { getCanonicalUrl } from '@/lib/seo/canonical'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: 'Privacy Policy — Termimal',
   description:
     "How Termimal collects, uses, and protects your data. Read our full privacy policy.",
-  alternates: { canonical: '/privacy' },
+  alternates: { canonical: getCanonicalUrl('/privacy') },
   openGraph: {
     title: 'Privacy Policy — Termimal',
     description:

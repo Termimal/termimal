@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { getCanonicalUrl } from '@/lib/seo/canonical'
 import Navbar from '@/components/layout/Navbar'
 import { Footer } from '@/components/sections/Footer'
 import { Monitor, Globe, ArrowDown } from 'lucide-react'
@@ -7,7 +8,7 @@ export const metadata: Metadata = {
   title: 'Download Termimal — Desktop App for Windows, Mac, Linux',
   description:
     "Download the Termimal desktop trading terminal for Windows, macOS, and Linux. Native performance with full charting, COT, on-chain, and macro coverage.",
-  alternates: { canonical: '/download' },
+  alternates: { canonical: getCanonicalUrl('/download') },
   openGraph: {
     title: 'Download Termimal — Desktop App for Windows, Mac, Linux',
     description:

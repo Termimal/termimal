@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { getCanonicalUrl } from '@/lib/seo/canonical'
 import BackToHome from '@/components/BackToHome'
 import Link from 'next/link'
 
@@ -6,7 +7,7 @@ export const metadata: Metadata = {
   title: 'Cookie Policy — Termimal',
   description:
     "How and why Termimal uses cookies and similar technologies on termimal.com.",
-  alternates: { canonical: '/cookies' },
+  alternates: { canonical: getCanonicalUrl('/cookies') },
   openGraph: {
     title: 'Cookie Policy — Termimal',
     description:

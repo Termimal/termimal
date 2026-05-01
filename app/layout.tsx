@@ -13,10 +13,11 @@ export const metadata: Metadata = {
   description:
     "Termimal is a professional trading analysis platform for charting, macro intelligence, CFTC COT positioning, on-chain analytics, sentiment, and risk research.",
   metadataBase: new URL(siteUrl),
-  // Canonical homepage URL
-  alternates: {
-    canonical: "/",
-  },
+  // NOTE: deliberately NO `alternates.canonical` here. Per SEO policy each
+  // page sets its own canonical via getCanonicalUrl() in its
+  // generateMetadata / metadata export. A global canonical here would
+  // override every child page that forgets to set one — exactly the
+  // "Alternative page with proper canonical tag" GSC issue we're fixing.
   // Open Graph
   openGraph: {
     type: "website",

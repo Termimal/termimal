@@ -1,11 +1,12 @@
 import type { Metadata } from 'next'
+import { getCanonicalUrl } from '@/lib/seo/canonical'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: 'Refund Policy — Termimal',
   description:
     "Termimal's refund and cancellation policy for subscriptions and one-time purchases.",
-  alternates: { canonical: '/refund-policy' },
+  alternates: { canonical: getCanonicalUrl('/refund-policy') },
   openGraph: {
     title: 'Refund Policy — Termimal',
     description:

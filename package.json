@@ -4,9 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 3001",
+    "prebuild": "tsx scripts/check-canonicals.ts",
     "build": "next build",
     "start": "next start -p 3001",
-    "lint": "next lint"
+    "lint": "next lint",
+    "check:seo": "tsx scripts/check-canonicals.ts"
   },
   "dependencies": {
     "@stripe/stripe-js": "^3.0.0",
@@ -30,6 +32,7 @@
     "postcss": "^8.4.0",
     "supabase": "^1.150.0",
     "tailwindcss": "^3.4.0",
+    "tsx": "^4.21.0",
     "typescript": "^5.4.0"
   }
 }

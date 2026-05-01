@@ -1,11 +1,12 @@
 import type { Metadata } from 'next'
+import { getCanonicalUrl } from '@/lib/seo/canonical'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: 'Risk Disclaimer — Termimal',
   description:
     "Important risk disclaimer covering Termimal's research, analytics, and any information presented on the platform.",
-  alternates: { canonical: '/risk-disclaimer' },
+  alternates: { canonical: getCanonicalUrl('/risk-disclaimer') },
   openGraph: {
     title: 'Risk Disclaimer — Termimal',
     description:
