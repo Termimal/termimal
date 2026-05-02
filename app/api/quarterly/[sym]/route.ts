@@ -35,6 +35,20 @@ async function loadSec(): Promise<SecModule> {
   return _sec
 }
 
+// XBRL tags we actually consume. Listing them up-front lets us
+// fan-out one parallel request per tag (each ~50 KB) instead of
+// pulling the full company-facts blob (1-5 MB).
+const SEC_TAGS = [
+  'DepreciationDepletionAndAmortization',
+  'DepreciationAndAmortization',           // alt for some issuers
+  'OperatingIncomeLoss',
+  'InterestExpense',
+  'LongTermDebt',
+  'StockholdersEquity',
+  'IncomeTaxExpenseBenefit',
+  'IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest',
+] as const
+
 type FinNode = { fmt?: string; raw?: number } | undefined
 type Stmt = {
   endDate?: { fmt?: string }
@@ -128,49 +142,49 @@ async function handle(sym: string): Promise<Response> {
     let invCapSeries: Record<string, number> = {}
     let nopatSeries: Record<string, number> = {}
     if (cik) {
-      const facts = await sec.fetchFacts(cik)
-      // Common XBRL tags used by issuers for these line items.
-      const dna = sec.lastNQuarters(facts,
-        'DepreciationDepletionAndAmortization', 12,
-      )
-      const dnaAlt = !dna.length
-        ? sec.lastNQuarters(facts, 'DepreciationAndAmortization', 12)
-        : []
-      for (const f of dna.length ? dna : dnaAlt) dnaSeries[f.end] = f.val
+      // Eight parallel small JSON requests instead of one huge one.
+      // Total upstream payload ~350 KB, JSON.parse cost ~3 ms vs
+      // ~20 ms for companyfacts.
+      const facts = await sec.fetchManyConcepts(cik, [...SEC_TAGS])
 
-      const intExp = sec.lastNQuarters(facts, 'InterestExpense', 12)
-      for (const f of intExp) intExpSeries[f.end] = f.val
+      // Filter each tag's series to quarterly facts only.
+      const onlyQ = (rows: typeof facts[string]): typeof facts[string] =>
+        rows.filter((f) => f.fp && /^Q\d/.test(f.fp)).slice(-12)
+
+      const dnaRows  = onlyQ(facts['DepreciationDepletionAndAmortization'] ?? [])
+      const dnaAlt   = dnaRows.length === 0
+        ? onlyQ(facts['DepreciationAndAmortization'] ?? [])
+        : []
+      for (const f of dnaRows.length ? dnaRows : dnaAlt) dnaSeries[f.end] = f.val
+
+      for (const f of onlyQ(facts['InterestExpense'] ?? [])) intExpSeries[f.end] = f.val
 
       // EBITDA = OperatingIncomeLoss + D&A
-      const op = sec.lastNQuarters(facts, 'OperatingIncomeLoss', 12)
+      const opRows = onlyQ(facts['OperatingIncomeLoss'] ?? [])
       const opMap: Record<string, number> = {}
-      for (const f of op) opMap[f.end] = f.val
+      for (const f of opRows) opMap[f.end] = f.val
       for (const end of Object.keys(opMap)) {
         const dnaVal = dnaSeries[end]
-        if (typeof dnaVal === 'number') {
-          ebitdaSeries[end] = opMap[end] + dnaVal
-        }
+        if (typeof dnaVal === 'number') ebitdaSeries[end] = opMap[end] + dnaVal
       }
 
-      // Invested Capital ≈ Total Debt + Stockholders Equity
-      const debt = sec.lastNQuarters(facts, 'LongTermDebt', 12)
-      const eq   = sec.lastNQuarters(facts, 'StockholdersEquity', 12)
+      // Invested Capital ≈ Long-Term Debt + Stockholders Equity
       const debtMap: Record<string, number> = {}
-      for (const f of debt) debtMap[f.end] = f.val
+      for (const f of onlyQ(facts['LongTermDebt'] ?? [])) debtMap[f.end] = f.val
       const eqMap: Record<string, number> = {}
-      for (const f of eq)   eqMap[f.end] = f.val
+      for (const f of onlyQ(facts['StockholdersEquity'] ?? [])) eqMap[f.end] = f.val
       for (const end of Object.keys(eqMap)) {
         const d = debtMap[end] ?? 0
         invCapSeries[end] = (eqMap[end] ?? 0) + d
       }
 
-      // NOPAT ≈ Operating Income × (1 - effective tax rate).
-      const tax = sec.lastNQuarters(facts, 'IncomeTaxExpenseBenefit', 12)
-      const pre = sec.lastNQuarters(facts, 'IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest', 12)
+      // NOPAT ≈ Operating Income × (1 - effective tax rate)
       const taxMap: Record<string, number> = {}
-      for (const f of tax) taxMap[f.end] = f.val
+      for (const f of onlyQ(facts['IncomeTaxExpenseBenefit'] ?? [])) taxMap[f.end] = f.val
       const preMap: Record<string, number> = {}
-      for (const f of pre) preMap[f.end] = f.val
+      for (const f of onlyQ(facts['IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest'] ?? [])) {
+        preMap[f.end] = f.val
+      }
       for (const end of Object.keys(opMap)) {
         const opVal = opMap[end]
         const taxVal = taxMap[end]

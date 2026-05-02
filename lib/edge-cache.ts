@@ -1,29 +1,23 @@
 /**
  * Two-layer Edge cache helper for our /api/* handlers.
  *
- *   Layer 1 — `caches.default`
- *     Cloudflare's per-colo HTTP cache. Same colo, same URL → no
- *     CPU spent at all. Survives between requests on the same edge
- *     server. Keyed by the full request URL (including query).
+ *   Layer 1 — Cloudflare colo HTTP cache (`caches.default`)
+ *     Same colo, same URL → 0 CPU. The cached Response is returned
+ *     by streaming `body` directly — we NEVER call `text()` on it.
  *
- *   Layer 2 — module-level `Map`
- *     Per-isolate in-memory fallback for hot data. Useful when
- *     `caches.default.match` misses (cold colo) but a previous
- *     request on the same isolate already fetched the upstream.
- *     LRU-bounded so memory stays predictable.
+ *   Layer 2 — module-level Map (LRU 256, body kept as string)
+ *     Per-isolate fallback for hot URLs when caches.default isn't
+ *     populated yet. Only used as a tiebreaker; once Cloudflare's
+ *     cache warms up (typically within seconds of first hit) the
+ *     Map's entries become redundant.
  *
- * Use it like:
- *
- *     export async function GET(request: Request) {
- *       return cachedJson(request, 60, async () => {
- *         const data = await heavyComputation()
- *         return NextResponse.json(data)
- *       })
- *     }
- *
- * `ttlSeconds` is forwarded to a `cache-control` header AND to the
- * in-memory fallback's TTL. The Cloudflare HTTP cache respects
- * cache-control automatically.
+ * CPU-aware design choices (Free plan, 10 ms ceiling):
+ *   - On a cache HIT we never touch the body. No JSON.parse, no
+ *     text(). Pure stream pass-through.
+ *   - On a MISS we do NOT call `await res.text()` to read the body
+ *     for the Layer-2 cache; we use `res.clone()` so the original
+ *     response streams to the client and the clone is consumed
+ *     fire-and-forget for cache writes.
  */
 import { NextResponse } from 'next/server'
 
@@ -49,16 +43,18 @@ function memSet(key: string, e: Entry) {
 }
 
 /**
- * Fetch-or-compute pattern. Tries Cloudflare colo cache, then the
- * isolate Map, then runs `compute()`. The result is written back
- * to both layers.
+ * Fetch-or-compute. Returns the cached Response by streaming
+ * `body` directly — no parse, no rebuild. On a miss the original
+ * Response streams to the client; a clone is consumed for cache
+ * writes in the background (fire-and-forget — does not block the
+ * client response).
  */
 export async function cachedJson(
   request: Request,
   ttlSeconds: number,
   compute: () => Promise<Response>,
 ): Promise<Response> {
-  // Layer 1: Cloudflare HTTP cache.
+  // Layer 1: Cloudflare colo cache. Pass-through stream, zero CPU.
   const cache = (globalThis as unknown as { caches?: { default?: Cache } }).caches?.default
   if (cache) {
     const hit = await cache.match(request).catch(() => null)
@@ -69,7 +65,7 @@ export async function cachedJson(
     }
   }
 
-  // Layer 2: isolate Map.
+  // Layer 2: per-isolate Map fallback (string-cached body).
   const key = request.url
   const m = memGet(key)
   if (m) {
@@ -83,32 +79,52 @@ export async function cachedJson(
     })
   }
 
-  // Miss — compute.
+  // ── Miss ────────────────────────────────────────────────────────
   const res = await compute()
-  // Read body once so we can both store + return.
-  const body = await res.text()
-  const status = res.status
-  const type = res.headers.get('content-type') ?? 'application/json'
-  if (status < 500) {
-    memSet(key, { at: Date.now(), body, status, type, ttl: ttlSeconds })
-  }
+
+  // Make sure cache-control is set for the colo cache to honour TTL.
   const headers = new Headers(res.headers)
   if (!headers.get('cache-control')) {
     headers.set('cache-control', `public, max-age=${ttlSeconds}, s-maxage=${ttlSeconds}`)
   }
   headers.set('x-termimal-cache', 'MISS')
-  const out = new Response(body, { status, headers })
-  if (cache && status < 500) {
-    // ctx.waitUntil isn't available here (no per-request ctx in Next.js
-    // route handlers); just fire-and-forget the put. Errors swallowed.
-    cache.put(request, out.clone()).catch(() => null)
+
+  // Two-pronged caching, both fire-and-forget so the client gets
+  // bytes immediately:
+  //
+  //   (a) caches.default — store a clone of the response so the
+  //       Cloudflare colo cache can serve subsequent requests.
+  //   (b) Layer-2 Map — read the cloned body asynchronously and
+  //       drop it in the per-isolate cache. This blocks NOTHING
+  //       on the client response since it runs in a microtask.
+  if (res.status < 500) {
+    if (cache) {
+      // Build the response we want cached (with cache-control).
+      const cacheable = new Response(res.clone().body, {
+        status: res.status,
+        headers,
+      })
+      // Don't await — return to client immediately.
+      cache.put(request, cacheable).catch(() => null)
+    }
+    // Populate Layer-2 in the background. Reading body via .text()
+    // happens asynchronously so it doesn't add to client TTFB.
+    res.clone().text().then((body) => {
+      memSet(key, {
+        at: Date.now(),
+        body,
+        status: res.status,
+        type: res.headers.get('content-type') ?? 'application/json',
+        ttl: ttlSeconds,
+      })
+    }).catch(() => null)
   }
-  return out
+
+  // Original response — body still unconsumed — streams to client.
+  return new Response(res.body, { status: res.status, headers })
 }
 
-/**
- * Plain helper to wrap a NextResponse.json with cache headers.
- */
+/** Plain wrapper that just sets cache-control on a JSON response. */
 export function withCacheHeaders<T>(data: T, ttlSeconds: number): Response {
   return NextResponse.json(data, {
     headers: {

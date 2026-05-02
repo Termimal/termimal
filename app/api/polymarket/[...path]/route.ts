@@ -750,42 +750,21 @@ async function runDeepScan(limit: number): Promise<Response> {
     }
   }))
 
-  // 4. REAL historical accuracy for the top wallets. Capped at 5
-  //    (was 10) so the scan stays comfortably inside the 30 s
-  //    Workers Paid CPU budget AND the 10 s free-tier ceiling for
-  //    cold-isolate calls. Each wallet costs us ~3-5 upstream
-  //    fetches (trades + 1-3 resolution lookups).
-  const topWallets = new Map<string, { score: number; market_id: string }>()
-  for (const m of enriched) {
-    const wd = (m as { wallet_data?: { wallets?: Array<{ address: string; score: number }> } }).wallet_data
-    for (const w of (wd?.wallets ?? []).slice(0, 3)) {
-      if (!topWallets.has(w.address)) {
-        topWallets.set(w.address, { score: w.score, market_id: String((m as { id?: string }).id ?? '') })
-      }
-    }
-    if (topWallets.size >= 5) break
-  }
-  const accuracies = await Promise.all(
-    Array.from(topWallets.keys()).slice(0, 5).map((addr) => computeWalletAccuracy(addr).then((a) => [addr, a] as const)),
-  )
-  const accuracyByAddr = new Map(accuracies)
-  // Patch the enriched markets' wallet entries with real historical
-  // accuracy + score blend (60% real, 40% market-local entry edge).
-  for (const m of enriched) {
-    const wd = (m as { wallet_data?: { wallets?: Array<{ address: string; accuracy: number; score: number }> } }).wallet_data
-    const arr = wd?.wallets ?? []
-    for (const w of arr) {
-      const real = accuracyByAddr.get(w.address)
-      if (!real || real.accuracy_real == null) continue
-      // Blend: real historical accuracy weighted 60%, single-market
-      // entry edge 40%.
-      const blended = Math.round(real.accuracy_real * 0.6 + w.accuracy * 0.4)
-      ;(w as { accuracy: number; score: number; trades_resolved?: number; trades_correct?: number }).accuracy = blended
-      ;(w as { accuracy: number; score: number }).score = Math.max(w.score, Math.round(blended * 0.7 + w.score * 0.3))
-      ;(w as { trades_resolved?: number; trades_correct?: number }).trades_resolved = real.resolved
-      ;(w as { trades_correct?: number }).trades_correct = real.correct
-    }
-  }
+  // ⚠️ CPU-aware decision: per-wallet historical accuracy across
+  // resolved markets is INTENTIONALLY NOT done in this hot path on
+  // the Free plan (10 ms CPU ceiling). Each wallet costs 4-6
+  // upstream fetches + JSON.parse cycles, and even with parallelism
+  // the cumulative CPU spike was the second-largest in the audit.
+  //
+  // The `accuracy` field on each wallet stays at the entry-edge
+  // proxy (computed in the loop above from THIS market's trade
+  // history — cheap, ~0.1 ms per market).
+  //
+  // For real cross-market historical accuracy on a specific wallet,
+  // the SPA calls /api/polymarket/wallet/{addr} on demand (e.g.
+  // when the user opens a wallet drilldown). That endpoint runs the
+  // expensive computeWalletAccuracy() once, caches for an hour, and
+  // returns it without affecting scan latency for everyone else.
 
   // The transformClobMarket helper widens its return shape to
   // Record<string, unknown>, so TS can't see the signal field we
