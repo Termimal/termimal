@@ -21,9 +21,19 @@ export const runtime = 'edge'
 
 import { NextResponse } from 'next/server'
 import { yahooFetch, yahooErrorPayload } from '@/lib/market/yahoo'
-import {
-  tickerToCik, fetchFacts, lastNQuarters, ttmFromQuarters,
-} from '@/lib/market/sec-edgar'
+import { cachedJson } from '@/lib/edge-cache'
+import { withTiming } from '@/lib/observability'
+import { checkRateLimit, rateLimitResponse } from '@/lib/rate-limit-edge'
+
+// SEC EDGAR helpers are dynamically imported on first US-ticker hit
+// so non-US tickers (which never use them) don't pay the bundle cost.
+type SecModule = typeof import('@/lib/market/sec-edgar')
+let _sec: SecModule | null = null
+async function loadSec(): Promise<SecModule> {
+  if (_sec) return _sec
+  _sec = await import('@/lib/market/sec-edgar')
+  return _sec
+}
 
 type FinNode = { fmt?: string; raw?: number } | undefined
 type Stmt = {
@@ -63,11 +73,22 @@ const pct = (num: number | null, den: number | null) =>
   num != null && den != null && den !== 0 ? (num / den) * 100 : null
 
 export async function GET(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ sym: string }> },
 ) {
   const { sym } = await params
   if (!sym) return NextResponse.json({ error: 'missing symbol' }, { status: 400 })
+  // Per-IP cap on quarterly: SEC EDGAR fetches a 1-5 MB JSON per
+  // ticker. Without a cap a hot loop could chew through CPU.
+  const rl = checkRateLimit(request, '/api/quarterly', { max: 30, windowSec: 60 })
+  const limited = rateLimitResponse(rl)
+  if (limited) return limited
+  return cachedJson(request, 1800, () =>
+    withTiming(`/api/quarterly/${sym}`, () => handle(sym)),
+  )
+}
+
+async function handle(sym: string): Promise<Response> {
 
   const modules = [
     'incomeStatementHistoryQuarterly',
@@ -78,12 +99,13 @@ export async function GET(
 
   try {
     // Fire Yahoo + SEC in parallel.
+    const sec = await loadSec()
     const [yahooJson, cik] = await Promise.all([
       yahooFetch<QuoteSummary>(
         `https://query2.finance.yahoo.com/v10/finance/quoteSummary/${encodeURIComponent(sym)}?modules=${modules}`,
         { ttl: 1800 },
       ),
-      tickerToCik(sym),
+      sec.tickerToCik(sym),
     ])
 
     const result = yahooJson?.quoteSummary?.result?.[0]
@@ -106,21 +128,21 @@ export async function GET(
     let invCapSeries: Record<string, number> = {}
     let nopatSeries: Record<string, number> = {}
     if (cik) {
-      const facts = await fetchFacts(cik)
+      const facts = await sec.fetchFacts(cik)
       // Common XBRL tags used by issuers for these line items.
-      const dna = lastNQuarters(facts,
+      const dna = sec.lastNQuarters(facts,
         'DepreciationDepletionAndAmortization', 12,
       )
       const dnaAlt = !dna.length
-        ? lastNQuarters(facts, 'DepreciationAndAmortization', 12)
+        ? sec.lastNQuarters(facts, 'DepreciationAndAmortization', 12)
         : []
       for (const f of dna.length ? dna : dnaAlt) dnaSeries[f.end] = f.val
 
-      const intExp = lastNQuarters(facts, 'InterestExpense', 12)
+      const intExp = sec.lastNQuarters(facts, 'InterestExpense', 12)
       for (const f of intExp) intExpSeries[f.end] = f.val
 
       // EBITDA = OperatingIncomeLoss + D&A
-      const op = lastNQuarters(facts, 'OperatingIncomeLoss', 12)
+      const op = sec.lastNQuarters(facts, 'OperatingIncomeLoss', 12)
       const opMap: Record<string, number> = {}
       for (const f of op) opMap[f.end] = f.val
       for (const end of Object.keys(opMap)) {
@@ -131,8 +153,8 @@ export async function GET(
       }
 
       // Invested Capital ≈ Total Debt + Stockholders Equity
-      const debt = lastNQuarters(facts, 'LongTermDebt', 12)
-      const eq   = lastNQuarters(facts, 'StockholdersEquity', 12)
+      const debt = sec.lastNQuarters(facts, 'LongTermDebt', 12)
+      const eq   = sec.lastNQuarters(facts, 'StockholdersEquity', 12)
       const debtMap: Record<string, number> = {}
       for (const f of debt) debtMap[f.end] = f.val
       const eqMap: Record<string, number> = {}
@@ -142,11 +164,9 @@ export async function GET(
         invCapSeries[end] = (eqMap[end] ?? 0) + d
       }
 
-      // NOPAT ≈ Operating Income × (1 - effective tax rate). We use
-      // the IncomeTaxExpenseBenefit / IncomeBeforeTax ratio as the
-      // tax rate proxy when available, else a 21% default.
-      const tax = lastNQuarters(facts, 'IncomeTaxExpenseBenefit', 12)
-      const pre = lastNQuarters(facts, 'IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest', 12)
+      // NOPAT ≈ Operating Income × (1 - effective tax rate).
+      const tax = sec.lastNQuarters(facts, 'IncomeTaxExpenseBenefit', 12)
+      const pre = sec.lastNQuarters(facts, 'IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest', 12)
       const taxMap: Record<string, number> = {}
       for (const f of tax) taxMap[f.end] = f.val
       const preMap: Record<string, number> = {}
@@ -234,9 +254,6 @@ export async function GET(
       est_eps:    e.epsEstimate?.raw ?? null,
       surprise:   e.surprisePercent?.raw ?? null,
     }))
-
-    // Drop unused `_ttm` lints; keeping the helper around.
-    void ttmFromQuarters
 
     return NextResponse.json({
       data: {

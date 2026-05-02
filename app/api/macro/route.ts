@@ -22,6 +22,8 @@ export const runtime = 'edge'
 
 import { NextResponse } from 'next/server'
 import { yahooFetch, yahooErrorPayload } from '@/lib/market/yahoo'
+import { cachedJson } from '@/lib/edge-cache'
+import { withTiming } from '@/lib/observability'
 
 // ── Yahoo: live intraday for indices/futures ────────────────────────
 interface YahooQuote {
@@ -110,7 +112,14 @@ async function fetchYahooSpark(sym: string): Promise<number[]> {
   } catch { return [] }
 }
 
-export async function GET() {
+export async function GET(request: Request) {
+  // Macro is expensive to compute (10 parallel upstream fetches +
+  // YoY math + 52w window slicing). Cache aggressively at the colo;
+  // FRED data updates monthly/weekly so 5 min is conservative.
+  return cachedJson(request, 300, () => withTiming('/api/macro', () => handle()))
+}
+
+async function handle(): Promise<Response> {
   // Run everything in parallel — Cloudflare Edge will fan out.
   const [yahooQuotes, m2, t10yie, rec, walcl, hyg, vixHist, dxyHist, wtiHist, brentHist, spyHist] =
     await Promise.all([

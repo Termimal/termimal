@@ -25,6 +25,8 @@
 export const runtime = 'edge'
 
 import { NextResponse } from 'next/server'
+import { cachedJson } from '@/lib/edge-cache'
+import { withTiming } from '@/lib/observability'
 
 // ── Source 1: CoinMetrics Community ─────────────────────────────────
 // Includes the SplyAct* age-cohort series so we can derive LTH/STH
@@ -146,7 +148,11 @@ function nuplState(n: number | null): { state: string; interp: string } {
 }
 
 // ── Handler ────────────────────────────────────────────────────────
-export async function GET() {
+export async function GET(request: Request) {
+  return cachedJson(request, 300, () => withTiming('/api/btc/onchain', () => handle()))
+}
+
+async function handle(): Promise<Response> {
   const [cm, cg, bc, mp] = await Promise.all([
     getCoinMetrics(),
     getCoingecko(),

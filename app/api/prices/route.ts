@@ -13,6 +13,8 @@ export const runtime = 'edge'
 
 import { NextResponse } from 'next/server'
 import { yahooFetch, yahooErrorPayload } from '@/lib/market/yahoo'
+import { cachedJson } from '@/lib/edge-cache'
+import { withTiming } from '@/lib/observability'
 
 const DEFAULT_SYMBOLS = [
   // US indices
@@ -46,6 +48,10 @@ interface YahooQuoteResponse {
 }
 
 export async function GET(request: Request) {
+  return cachedJson(request, 15, () => withTiming('/api/prices', () => handle(request)))
+}
+
+async function handle(request: Request): Promise<Response> {
   const url = new URL(request.url)
   const param = url.searchParams.get('symbols')
   const symbols = param

@@ -1,0 +1,54 @@
+# Termimal — Cloudflare Pages / Workers configuration
+#
+# This project is deployed via @cloudflare/next-on-pages onto
+# Cloudflare Pages. Pages reads this file (when present) for
+# compatibility settings + bindings; the per-route Edge runtime
+# limits in [limits] additionally apply if/when we cut over to a
+# dedicated Worker.
+#
+# IMPORTANT: cpu_ms in [limits] takes effect on Workers Paid plan
+# and on Pages projects on the Pages Paid plan (Pages mirrors the
+# Workers limits). Without Paid, cpu_ms is ignored and the 10 ms
+# free-plan ceiling applies.
+
+name = "termimal"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+# Production env — extends the defaults above.
+[env.production]
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+# Per-request CPU budget. 30 s is the default for Workers Paid;
+# we keep it at the default — none of our handlers should burn
+# more than a few hundred ms even worst-case after the caching
+# pass shipped alongside this file.
+[limits]
+cpu_ms = 30000
+
+# Build output for next-on-pages. Pages reads pages_build_output_dir.
+# (next-on-pages emits to .vercel/output/static.)
+pages_build_output_dir = ".vercel/output/static"
+
+# ── Bindings ───────────────────────────────────────────────────────
+# KV namespace for the rate limiter + cross-isolate response cache.
+# Create in Cloudflare dashboard then paste the id here.
+#
+# [[kv_namespaces]]
+# binding = "RATE_LIMITS"
+# id      = "<paste-from-cloudflare-dashboard>"
+#
+# [[kv_namespaces]]
+# binding = "EDGE_CACHE"
+# id      = "<paste-from-cloudflare-dashboard>"
+#
+# Until those KV namespaces exist, the helpers in lib/edge-cache.ts
+# fall back to per-isolate Map() caching, which is good enough for
+# 3 k requests / day. Provision KV when traffic > 100 k/day.
+
+# ── Observability ──────────────────────────────────────────────────
+# Enable Workers Logs so the per-request CPU metrics + structured
+# warn() lines from lib/observability.ts are queryable.
+[observability]
+enabled = true

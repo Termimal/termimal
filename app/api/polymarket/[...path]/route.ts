@@ -23,6 +23,9 @@
 export const runtime = 'edge'
 
 import { NextResponse } from 'next/server'
+import { cachedJson } from '@/lib/edge-cache'
+import { checkRateLimit, rateLimitResponse } from '@/lib/rate-limit-edge'
+import { withTiming } from '@/lib/observability'
 
 const CLOB_BASE = 'https://clob.polymarket.com'
 
@@ -221,8 +224,22 @@ export async function GET(
   //       * anomaly level: STRONG / WEAK / NONE
   //   - Emit a strong/weak signal when both spike + direction agree
   if (path === 'scan') {
-    const limit = Math.min(20, Math.max(3, Number(url.searchParams.get('limit')) || 10))
-    return runDeepScan(limit)
+    // Hard CPU budget caps — the previous Math.min(20) was too high.
+    // Worst-case at 20 markets × 500 trades × 10 wallet histories
+    // = ~5 000 trades aggregated + ~30 cross-market resolution
+    // lookups, which spiked us past the free-plan 10 ms ceiling
+    // under burst traffic. Cap at 8 to keep CPU well inside the
+    // budget and rely on Cache API to serve concurrent callers
+    // from the colo.
+    const limit = Math.min(8, Math.max(3, Number(url.searchParams.get('limit')) || 6))
+    // Per-IP rate limit: scan is the heaviest endpoint we expose.
+    const rl = checkRateLimit(request, '/api/polymarket/scan', { max: 6, windowSec: 60 })
+    const limited = rateLimitResponse(rl)
+    if (limited) return limited
+    // Cache identical concurrent calls (same ?limit=) for 30 s.
+    return cachedJson(request, 30, () =>
+      withTiming('/api/polymarket/scan', () => runDeepScan(limit)),
+    )
   }
 
   // ── 5b. Signal history — no persistence layer at the Edge ─────────
@@ -529,19 +546,15 @@ async function runDeepScan(limit: number): Promise<Response> {
   const refQuotes = await fetchRefQuotes()
 
   // 3. Compute real volume + direction + per-wallet stats in parallel.
-  //    Wallet score (0-100) is now computed honestly from this market's
-  //    trade history, NOT a placeholder zero:
-  //      - 60% from average entry quality: difference between this
-  //        wallet's volume-weighted average buy price and the current
-  //        YES price. Buying YES at 0.30 when YES is now 0.65 = strong
-  //        edge. Buying NO (= shorting YES) at 0.70 when YES is now
-  //        0.35 = strong edge.
-  //      - 40% from trade-count percentile inside this market (more
-  //        trades = more conviction signal, capped to avoid bots).
+  //    CPU-aware caps:
+  //      - 200 trades per market (was 500). 200 still gives us a
+  //        statistically meaningful 1 h vs 24 h breakdown.
+  //      - The aggregation loop runs O(trades) per market.
+  const TRADES_PER_MARKET = 200
   const enriched = await Promise.all(top.map(async (m) => {
     const id = String(m.id)
     if (!id) return m
-    const trades = await fetchTradesForMarket(id, 500).catch(() => [] as ClobTrade[])
+    const trades = await fetchTradesForMarket(id, TRADES_PER_MARKET).catch(() => [] as ClobTrade[])
     const now = Date.now()
     const yesPrice = Number(m.yes_price)
 
@@ -737,22 +750,23 @@ async function runDeepScan(limit: number): Promise<Response> {
     }
   }))
 
-  // 4. REAL historical accuracy for the top wallets (capped at 10
-  //    addresses per scan to stay inside Edge timeout). Computed from
-  //    Polymarket data-api per-user trade history + Gamma resolution
-  //    lookup.
+  // 4. REAL historical accuracy for the top wallets. Capped at 5
+  //    (was 10) so the scan stays comfortably inside the 30 s
+  //    Workers Paid CPU budget AND the 10 s free-tier ceiling for
+  //    cold-isolate calls. Each wallet costs us ~3-5 upstream
+  //    fetches (trades + 1-3 resolution lookups).
   const topWallets = new Map<string, { score: number; market_id: string }>()
   for (const m of enriched) {
     const wd = (m as { wallet_data?: { wallets?: Array<{ address: string; score: number }> } }).wallet_data
-    for (const w of (wd?.wallets ?? []).slice(0, 5)) {
+    for (const w of (wd?.wallets ?? []).slice(0, 3)) {
       if (!topWallets.has(w.address)) {
         topWallets.set(w.address, { score: w.score, market_id: String((m as { id?: string }).id ?? '') })
       }
     }
-    if (topWallets.size >= 10) break
+    if (topWallets.size >= 5) break
   }
   const accuracies = await Promise.all(
-    Array.from(topWallets.keys()).slice(0, 10).map((addr) => computeWalletAccuracy(addr).then((a) => [addr, a] as const)),
+    Array.from(topWallets.keys()).slice(0, 5).map((addr) => computeWalletAccuracy(addr).then((a) => [addr, a] as const)),
   )
   const accuracyByAddr = new Map(accuracies)
   // Patch the enriched markets' wallet entries with real historical
