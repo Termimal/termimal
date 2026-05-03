@@ -1,12 +1,14 @@
 'use client'
 
-import { useState, type FormEvent } from 'react'
+import { useCallback, useState, type FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import AuthLayout from '@/components/auth/AuthLayout'
 import { createClient } from '@/lib/supabase/client'
 import { OAuthButtons } from '@/components/auth/OAuthButtons'
 import { PhoneAuth } from '@/components/auth/PhoneAuth'
+import { Turnstile } from '@/components/auth/Turnstile'
+import { LIMITS, signupSchema } from '@/lib/validation'
 import { Eye, EyeOff, Check } from 'lucide-react'
 
 function PasswordStrength({ password }: { password: string }) {
@@ -51,51 +53,81 @@ export default function SignupPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  const [captchaToken, setCaptchaToken] = useState('')
+  const captchaConfigured = !!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY
 
   const router = useRouter()
   const supabase = createClient()
 
   const passwordsMatch = confirmPassword === '' || password === confirmPassword
-  const canSubmit = email && password && confirmPassword && passwordsMatch
+  const canSubmit =
+    email &&
+    password &&
+    confirmPassword &&
+    passwordsMatch &&
+    (!captchaConfigured || !!captchaToken)
+
+  const handleCaptchaVerify = useCallback((token: string) => {
+    setCaptchaToken(token)
+  }, [])
+
+  const handleCaptchaExpire = useCallback(() => {
+    setCaptchaToken('')
+  }, [])
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setError('')
     setLoading(true)
 
-    if (password !== confirmPassword) {
-      setError('Passwords do not match.')
+    const parsed = signupSchema.safeParse({ email, password, confirmPassword })
+    if (!parsed.success) {
+      setError(parsed.error.issues[0]?.message ?? 'Please check the form and try again.')
+      setLoading(false)
+      return
+    }
+
+    if (captchaConfigured && !captchaToken) {
+      setError('Please complete the captcha challenge.')
       setLoading(false)
       return
     }
 
     try {
-      // Capture optional ?ref= referral code so the trigger / signup callback
-      // can attribute the new account.
       const refCode =
         typeof window !== 'undefined'
           ? new URLSearchParams(window.location.search).get('ref') || undefined
           : undefined
 
       const { error } = await supabase.auth.signUp({
-        email,
-        password,
+        email: parsed.data.email,
+        password: parsed.data.password,
         options: {
           emailRedirectTo: `${window.location.origin}/api/auth/callback?next=/terminal`,
           data: refCode ? { referral_code: refCode } : undefined,
+          ...(captchaToken ? { captchaToken } : {}),
         },
       })
 
       if (error) {
-        // Map known Supabase error strings to generic messages so we don't
-        // leak account-existence (enumeration) on signup.
         const msg = error.message?.toLowerCase() || ''
-        if (msg.includes('already registered') || msg.includes('already in use')) {
+        if (msg.includes('disposable')) {
+          setError('Disposable email addresses are not allowed.')
+        } else if (msg.includes('already registered') || msg.includes('already in use')) {
           setError('If that email can be used, we\'ve sent a confirmation link.')
+        } else if (msg.includes('captcha')) {
+          setError('Captcha verification failed. Please try again.')
         } else if (msg.includes('password')) {
           setError('Password does not meet the requirements.')
         } else {
           setError('Could not create your account right now. Please try again.')
+        }
+        setCaptchaToken('')
+        if (typeof window !== 'undefined' && window.turnstile) {
+          try {
+            window.turnstile.reset()
+          } catch {
+          }
         }
         setLoading(false)
         return
@@ -189,6 +221,7 @@ export default function SignupPage() {
             onChange={(e) => setEmail(e.target.value)}
             required
             autoComplete="email"
+            maxLength={LIMITS.email}
             className="w-full px-3 py-2.5 rounded-lg text-sm outline-none"
             style={{
               background: 'var(--surface)',
@@ -214,6 +247,8 @@ export default function SignupPage() {
               onChange={(e) => setPassword(e.target.value)}
               required
               autoComplete="new-password"
+              minLength={LIMITS.passwordMin}
+              maxLength={LIMITS.passwordMax}
               className="w-full px-3 py-2.5 pr-10 rounded-lg text-sm outline-none"
               style={{
                 background: 'var(--surface)',
@@ -250,6 +285,8 @@ export default function SignupPage() {
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
               autoComplete="new-password"
+              minLength={LIMITS.passwordMin}
+              maxLength={LIMITS.passwordMax}
               className="w-full px-3 py-2.5 pr-10 rounded-lg text-sm outline-none"
               style={{
                 background: 'var(--surface)',
@@ -278,6 +315,12 @@ export default function SignupPage() {
             </p>
           ) : null}
         </div>
+
+        {captchaConfigured && (
+          <div className="mb-4 flex justify-center">
+            <Turnstile onVerify={handleCaptchaVerify} onExpire={handleCaptchaExpire} />
+          </div>
+        )}
 
         <button
           type="submit"
