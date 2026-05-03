@@ -2,7 +2,15 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { LIMITS, profileSchema } from '@/lib/validation'
 import { ArrowRight, KeyRound, ShieldCheck, ShieldOff, UserCircle2, X } from 'lucide-react'
+
+const FIELD_LIMITS: Record<string, number> = {
+  full_name: LIMITS.fullName,
+  country: LIMITS.country,
+  timezone: LIMITS.timezone,
+  language: LIMITS.language,
+}
 
 type Factor = {
   id: string
@@ -56,13 +64,27 @@ export default function ProfilePage() {
     if (!profile) return
     setSaving(true)
     setMessage('')
+
+    const parsed = profileSchema.safeParse({
+      full_name: profile?.full_name ?? '',
+      country: profile?.country ?? '',
+      timezone: profile?.timezone ?? '',
+      language: profile?.language ?? '',
+    })
+
+    if (!parsed.success) {
+      setMessage(`Error: ${parsed.error.issues[0]?.message ?? 'Invalid input.'}`)
+      setSaving(false)
+      return
+    }
+
     const { data: { user } } = await supabase.auth.getUser()
     if (user) {
       const { error } = await supabase.from('profiles').update({
-        full_name: profile.full_name ?? '',
-        country: profile.country ?? '',
-        timezone: profile.timezone ?? 'UTC',
-        language: profile.language ?? 'en',
+        full_name: parsed.data.full_name ?? '',
+        country: parsed.data.country ?? '',
+        timezone: parsed.data.timezone || 'UTC',
+        language: parsed.data.language || 'en',
       }).eq('id', user.id)
       setMessage(error ? 'Error saving.' : 'Saved successfully.')
     }
@@ -293,6 +315,7 @@ export default function ProfilePage() {
                   value={f.value}
                   disabled={f.disabled}
                   autoComplete={f.key === 'email' ? 'email' : f.key === 'full_name' ? 'name' : f.key === 'country' ? 'country-name' : undefined}
+                  maxLength={FIELD_LIMITS[f.key]}
                   onChange={e => profile && setProfile({ ...profile, [f.key]: e.target.value })}
                   className="w-full px-3 py-3 rounded-xl text-sm disabled:opacity-50"
                   style={{ background: 'var(--bg)', border: '1px solid var(--border)', color: 'var(--t1)' }}
