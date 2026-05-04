@@ -459,6 +459,50 @@ td, th { padding: 0 8px; height: 26px; }
     grid-template-columns: 1fr !important;
   }
 
+  /* Catch-all for inline grid templates that mix fixed pixel tracks
+     (Polymarket tables, TickerWorkspace KPI rows, etc.). Anything
+     containing `px` in its grid-template-columns value won't fit a
+     375 px viewport — collapse to single-column. The selector
+     intentionally excludes pure `repeat(...)` grids (handled above)
+     and `1fr 1fr`-style grids (also handled above). */
+  [style*="grid-template-columns: 200px"],
+  [style*="grid-template-columns: 80px"],
+  [style*="grid-template-columns: 4px"],
+  [style*="grid-template-columns: 100px"],
+  [style*="grid-template-columns: 120px"],
+  [style*="grid-template-columns: 140px"],
+  [style*="grid-template-columns: 160px"],
+  [style*="grid-template-columns: 220px"],
+  [style*="grid-template-columns: 240px"],
+  [style*="grid-template-columns: 280px"],
+  [style*="grid-template-columns: minmax(280px"],
+  [style*="grid-template-columns: minmax(200px"],
+  [style*="grid-template-columns: auto 1fr"],
+  [style*="grid-template-columns: 1fr auto"] {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+
+  /* TradingView lightweight-charts library renders into a canvas
+     sized to its parent at mount time. Force the chart container
+     and its canvas children to never exceed the viewport width.
+     The library does its own internal resize on container change. */
+  .tv-lightweight-charts,
+  .tv-lightweight-charts canvas,
+  .tv-lightweight-charts table,
+  .tv-lightweight-charts td {
+    max-width: 100% !important;
+  }
+
+  /* Ticker workspace top KPI strip uses a horizontal flex with many
+     fixed-width cells. Let it scroll horizontally as a fallback for
+     dense data instead of overflowing the page. */
+  main [style*="display: flex"][style*="overflowX: auto"],
+  main [style*="display:flex"][style*="overflowX:auto"] {
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+
   /* Prevent flex/grid children from blowing out their container with
      long tickers. Scoped to direct children of grid/flex panels so
      positioned elements (dropdowns, tooltips) keep their intrinsic
