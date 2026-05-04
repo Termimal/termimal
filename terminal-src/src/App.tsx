@@ -11,9 +11,10 @@ import { lazy, Suspense, useEffect, useState } from 'react'
 import { Routes, Route, useParams } from 'react-router-dom'
 import { useStore } from '@/store/useStore'
 
-import { Navbar }       from '@/components/layout/Navbar'
-import { Watchlist }    from '@/components/layout/Watchlist'
-import { MobileLayout } from '@/components/layout/MobileLayout'
+import { Navbar }            from '@/components/layout/Navbar'
+import { Watchlist }         from '@/components/layout/Watchlist'
+import { MobileLayout }      from '@/components/layout/MobileLayout'
+import { DesktopSideRail }   from '@/components/layout/DesktopSideRail'
 import { UNIVERSE, POPULAR_TICKERS } from '@/constants/universe'
 
 // Route-level code splitting. Each page becomes its own chunk so the initial
@@ -144,6 +145,10 @@ function Layout({ children }: { children: React.ReactNode }) {
       <ConnectionBanner />
       <TrialBanner />
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+        {/* Vertical icon nav — primary destinations always one click
+            away. Complements the existing horizontal tab bar (which
+            is for currently-open workspaces with drag-to-reorder). */}
+        <DesktopSideRail />
         <main style={{ flex: 1, overflow: 'auto', minWidth: 0, background: '#0e1117' }}>
           {children}
         </main>
