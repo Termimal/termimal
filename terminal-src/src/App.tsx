@@ -11,8 +11,10 @@ import { lazy, Suspense, useEffect, useState } from 'react'
 import { Routes, Route, useParams } from 'react-router-dom'
 import { useStore } from '@/store/useStore'
 
-import { Navbar }     from '@/components/layout/Navbar'
-import { Watchlist }  from '@/components/layout/Watchlist'
+import { Navbar }       from '@/components/layout/Navbar'
+import { Watchlist }    from '@/components/layout/Watchlist'
+import { MobileLayout } from '@/components/layout/MobileLayout'
+import { UNIVERSE, POPULAR_TICKERS } from '@/constants/universe'
 
 // Route-level code splitting. Each page becomes its own chunk so the initial
 // payload is small and only the screens a user actually visits are fetched.
@@ -88,6 +90,53 @@ function useIsMobile(breakpoint = 900): boolean {
 function Layout({ children }: { children: React.ReactNode }) {
   const isSignalRoute = SIGNAL_ROUTES.includes(window.location.pathname)
   const isMobile = useIsMobile()
+
+  // Below 900 px we use a dedicated mobile shell — bottom tab bar +
+  // fullscreen search + drawer for secondary pages — instead of
+  // squishing the institutional desktop chrome into a phone viewport.
+  // Pages render unchanged inside both shells; the CSS in index.css
+  // handles per-page collapse via @media (max-width: 899px).
+  if (isMobile) {
+    return (
+      <MobileLayout universe={UNIVERSE} popular={POPULAR_TICKERS}>
+        <OnboardingTour />
+        <ConnectionBanner />
+        <TrialBanner />
+        {children}
+        {/* Single-line legal disclaimer at the bottom of every mobile
+            page; tucked above the bottom-tab bar's safe area. */}
+        <div
+          role="contentinfo"
+          style={{
+            padding: '14px 16px 18px',
+            fontSize: 11,
+            lineHeight: 1.5,
+            color: '#484f58',
+            textAlign: 'center',
+            borderTop: '1px solid #161b22',
+            marginTop: 24,
+          }}
+        >
+          {isSignalRoute
+            ? 'Research only · No execution · Not financial advice · Past performance does not guarantee future results.'
+            : 'Termimal · Research only · No execution · No advice.'}
+          <div style={{ marginTop: 8, display: 'flex', gap: 16, justifyContent: 'center' }}>
+            <a href="/risk-disclaimer" style={{ color: '#484f58', textDecoration: 'none' }}>Risk</a>
+            <a href="/terms" style={{ color: '#484f58', textDecoration: 'none' }}>Terms</a>
+            <a href="/privacy" style={{ color: '#484f58', textDecoration: 'none' }}>Privacy</a>
+            <button
+              type="button"
+              onClick={() => openCookiePreferences()}
+              style={{ background: 'transparent', border: 'none', color: '#484f58', cursor: 'pointer', fontFamily: 'inherit', fontSize: 11, padding: 0 }}
+            >
+              Cookies
+            </button>
+          </div>
+        </div>
+      </MobileLayout>
+    )
+  }
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden', background: '#0e1117' }}>
       <OnboardingTour />
@@ -98,10 +147,7 @@ function Layout({ children }: { children: React.ReactNode }) {
         <main style={{ flex: 1, overflow: 'auto', minWidth: 0, background: '#0e1117' }}>
           {children}
         </main>
-        {/* Watchlist sidebar hidden below ~900px wide — phones + small tablets
-            still get a usable terminal; the watchlist is one tap away inside
-            the New Tab page. */}
-        {!isMobile && <Watchlist />}
+        <Watchlist />
       </div>
       {/* Persistent footer — Bloomberg-style: tiny, muted, one line.
           Heavier disclaimer text only on signal-generating routes. */}
