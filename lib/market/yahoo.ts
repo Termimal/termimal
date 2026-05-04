@@ -9,6 +9,17 @@
  * deployment is needed for the basic "see prices" experience.
  *
  * Cache hints on every call so the upstream isn't slammed.
+ *
+ * NOTE (2024+): Yahoo started returning HTTP 401 on:
+ *   - /v7/finance/quote
+ *   - /v10/finance/quoteSummary
+ *   …unless the request carries an "A1" session cookie + a "crumb"
+ * query parameter. Endpoints that DO still work anonymously:
+ *   - /v7/finance/spark   (batch price snapshot)
+ *   - /v8/finance/chart   (single-symbol price + history)
+ * Prefer those at the call site. Adding full crumb auth to this
+ * helper is tracked as a follow-up — it requires cookie persistence
+ * across Worker isolates, which means a KV binding.
  */
 
 const UA =

@@ -378,15 +378,16 @@ td, th { padding: 0 8px; height: 26px; }
     text-size-adjust: 100%;
   }
   /* Hard cap the document so nothing inside can force a horizontal
-     swipe gesture, even when an inline width or grid is too wide. */
-  html, body, #root { max-width: 100vw; overflow-x: hidden; }
+     swipe gesture. We use `overflow-x: clip` (not `hidden`) so we
+     don't create a new clipping/containing block — that would break
+     `position: absolute` dropdowns (search results, account menu)
+     and `position: fixed` overlays (hamburger drawer, modals). */
+  html, body, #root { max-width: 100vw; overflow-x: clip; }
 
-  /* The terminal Layout (App.tsx) uses display:flex + overflow:hidden
-     on the outer shell and overflow:auto on <main>. On mobile, force
-     <main> to suppress horizontal scroll so a stray wide child gets
-     clipped instead of triggering a side swipe. Pages still scroll
-     vertically. */
-  main { overflow-x: hidden !important; }
+  /* <main> uses overflow:auto by default which traps horizontal
+     scroll; switch to clip on mobile so the side-swipe goes away
+     without breaking dropdowns/popovers anchored inside main. */
+  main { overflow-x: clip; }
 
   /* Lift the institutional typography utilities. */
   .sec-title       { font-size: 13px; padding-bottom: 8px; margin-bottom: 10px; }
@@ -458,12 +459,14 @@ td, th { padding: 0 8px; height: 26px; }
     grid-template-columns: 1fr !important;
   }
 
-  /* Prevent any flex/grid child from blowing out its container.
-     Without min-width:0, long tickers force horizontal overflow.
-     We only set min-width here — max-width:100% on every descendant
-     would clamp the lightweight-charts canvas which is sized in JS
-     and needs to render at its requested pixel width. */
-  main * { min-width: 0; }
+  /* Prevent flex/grid children from blowing out their container with
+     long tickers. Scoped to direct children of grid/flex panels so
+     positioned elements (dropdowns, tooltips) keep their intrinsic
+     widths. */
+  main [style*="display: grid"] > *,
+  main [style*="display: flex"] > *,
+  main [style*="display:grid"] > *,
+  main [style*="display:flex"] > * { min-width: 0; }
 
   /* Inline-style fixed pixel widths often exceed 375px — clamp them. */
   [style*="width: 800px"],

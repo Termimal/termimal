@@ -401,16 +401,27 @@ export function Navbar() {
           <span title="Build version" style={{ fontSize: 8, color: '#484f58', marginLeft: 4, fontFamily: "'SF Mono', Menlo, Consolas, monospace" }}>v6.9</span>
         </a>
         {!isMobile && <div style={{ width: 1, height: 20, background: '#21262d' }} />}
-        {/* Search — narrows on tablet, hides on phone */}
-        {!isMobile && (
-        <div ref={searchBoxRef} style={{ position: 'relative', width: isTablet ? 180 : 240 }}>
+        {/* Search — narrows progressively. On phones it gets a flex:1
+            slot so it fills the rest of the top-bar; on tablet it's
+            180px; on desktop 240px. Hidden only when hamburger drawer
+            is the chosen entry point — but search is too useful to
+            hide entirely, so we keep it on phones too. */}
+        <div
+          ref={searchBoxRef}
+          style={{
+            position: 'relative',
+            width: isMobile ? undefined : isTablet ? 180 : 240,
+            flex: isMobile ? 1 : undefined,
+            minWidth: 0,
+          }}
+        >
           <div style={{ position: 'relative' }}>
             <svg style={{ position: 'absolute', left: 8, top: '50%', transform: 'translateY(-50%)', width: 13, height: 13 }} fill="none" viewBox="0 0 24 24" stroke="#8b949e"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
             <input ref={inputRef} value={query} onChange={e => onSearch(e.target.value)}
               onFocus={() => { onSearch(query) }} onKeyDown={onKey}
-              placeholder="Search symbol or name...  ⌘K"
+              placeholder={isMobile ? 'Search…' : 'Search symbol or name...  ⌘K'}
               aria-label="Search symbol or name"
-              style={{ width: '100%', background: '#0e1117', border: '1px solid #21262d', borderRadius: 2, fontSize: 11, color: '#c9d1d9', padding: '4px 8px 4px 26px', outline: 'none' }} />
+              style={{ width: '100%', background: '#0e1117', border: '1px solid #21262d', borderRadius: 2, fontSize: isMobile ? 13 : 11, color: '#c9d1d9', padding: isMobile ? '8px 10px 8px 28px' : '4px 8px 4px 26px', outline: 'none' }} />
           </div>
           {searchOpen && (
             <div style={{ position: 'absolute', top: '100%', left: 0, width: 360, marginTop: 4, background: '#161b22', border: '1px solid #21262d', boxShadow: '0 8px 24px rgba(0,0,0,0.5)', zIndex: 200, maxHeight: 400, display: 'flex', flexDirection: 'column' }}>
@@ -442,8 +453,7 @@ export function Navbar() {
             </div>
           )}
         </div>
-        )}
-        <div style={{ flex: 1 }} />
+        {!isMobile && <div style={{ flex: 1 }} />}
         {/* Regime + connection + clock — hidden on mobile to save horizontal room */}
         {!isMobile && (
         <div style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '3px 8px', borderRadius: 2, fontSize: 11, fontWeight: 500, color: regCol, background: regCol + '15' }}>
@@ -465,7 +475,9 @@ export function Navbar() {
         <span style={{ fontSize: 12, color: '#484f58', fontFamily: "'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace", fontVariantNumeric: 'tabular-nums', letterSpacing: 0.3 }}>{clock}</span>
         )}
 
-        {/* ═══ Account Menu ═══ */}
+        {/* ═══ Account Menu ═══ Desktop only — on mobile, profile / billing / sign-out
+            live inside the hamburger drawer so we don't have two separate menus. */}
+        {!isMobile && (
         <div ref={acctRef} style={{ position: 'relative', marginLeft: 4 }}>
           <div role="button" tabIndex={0} onClick={() => setAcctOpen(!acctOpen)} onKeyDown={onActivate(() => setAcctOpen(!acctOpen))}
             style={{
@@ -550,6 +562,7 @@ export function Navbar() {
             </div>
           )}
         </div>
+        )}
       </div>
 
       {/* ── Tab bar with drag-to-reorder — hidden on mobile (use hamburger) ── */}
