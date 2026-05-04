@@ -5,7 +5,7 @@
 export const runtime = 'edge'
 
 import { NextResponse } from 'next/server'
-import { yahooFetch, yahooErrorPayload } from '@/lib/market/yahoo'
+import { yahooFetchAuthed, yahooErrorPayload } from '@/lib/market/yahoo'
 
 interface YahooCalSummary {
   quoteSummary?: {
@@ -27,7 +27,7 @@ export async function GET(
   if (!sym) return NextResponse.json({ error: 'missing symbol' }, { status: 400 })
 
   try {
-    const json = await yahooFetch<YahooCalSummary>(
+    const json = await yahooFetchAuthed<YahooCalSummary>(
       `https://query2.finance.yahoo.com/v10/finance/quoteSummary/${encodeURIComponent(sym)}?modules=calendarEvents`,
       { ttl: 3600 },
     )

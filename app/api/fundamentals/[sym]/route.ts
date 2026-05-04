@@ -12,7 +12,7 @@
 export const runtime = 'edge'
 
 import { NextResponse } from 'next/server'
-import { yahooFetch, yahooErrorPayload } from '@/lib/market/yahoo'
+import { yahooFetchAuthed, yahooErrorPayload } from '@/lib/market/yahoo'
 
 interface YahooQuoteSummary {
   quoteSummary?: {
@@ -84,7 +84,7 @@ export async function GET(
     `https://query2.finance.yahoo.com/v10/finance/quoteSummary/${encodeURIComponent(sym)}?modules=${modules}`
 
   try {
-    const json = await yahooFetch<YahooQuoteSummary>(yahooUrl, { ttl: 300 })
+    const json = await yahooFetchAuthed<YahooQuoteSummary>(yahooUrl, { ttl: 300 })
     const r = json?.quoteSummary?.result?.[0]
     if (!r) return NextResponse.json({ error: 'symbol not found' }, { status: 404 })
 
