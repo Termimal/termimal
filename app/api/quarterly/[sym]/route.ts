@@ -20,7 +20,7 @@
 export const runtime = 'edge'
 
 import { NextResponse } from 'next/server'
-import { yahooFetch, yahooErrorPayload } from '@/lib/market/yahoo'
+import { yahooFetch, yahooFetchAuthed, yahooErrorPayload } from '@/lib/market/yahoo'
 import { cachedJson } from '@/lib/edge-cache'
 import { withTiming } from '@/lib/observability'
 import { checkRateLimit, rateLimitResponse } from '@/lib/rate-limit-edge'
@@ -115,7 +115,7 @@ async function handle(sym: string): Promise<Response> {
     // Fire Yahoo + SEC in parallel.
     const sec = await loadSec()
     const [yahooJson, cik] = await Promise.all([
-      yahooFetch<QuoteSummary>(
+      yahooFetchAuthed<QuoteSummary>(
         `https://query2.finance.yahoo.com/v10/finance/quoteSummary/${encodeURIComponent(sym)}?modules=${modules}`,
         { ttl: 1800 },
       ),

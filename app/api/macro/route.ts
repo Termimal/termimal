@@ -21,7 +21,7 @@
 export const runtime = 'edge'
 
 import { NextResponse } from 'next/server'
-import { yahooFetch, yahooErrorPayload } from '@/lib/market/yahoo'
+import { yahooFetch, yahooFetchAuthed, yahooErrorPayload } from '@/lib/market/yahoo'
 import { cachedJson } from '@/lib/edge-cache'
 import { withTiming } from '@/lib/observability'
 
@@ -123,7 +123,7 @@ async function handle(): Promise<Response> {
   // Run everything in parallel — Cloudflare Edge will fan out.
   const [yahooQuotes, m2, t10yie, rec, walcl, hyg, vixHist, dxyHist, wtiHist, brentHist, spyHist] =
     await Promise.all([
-      yahooFetch<YahooQuote>(
+      yahooFetchAuthed<YahooQuote>(
         `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${encodeURIComponent(YAHOO_SYMBOLS.join(','))}`,
         { ttl: 60 },
       ).catch(() => null),

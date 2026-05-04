@@ -318,13 +318,17 @@ async function fetchTradesForMarket(market: string, limit = 200): Promise<ClobTr
  * Used to confirm a Polymarket signal direction against the broader
  * macro tape — e.g. a YES "recession" signal aligns with rising VIX
  * and falling /ES; a "BTC > $100k" YES aligns with positive BTC 24h.
+ *
+ * Uses /v7/finance/spark (anonymous batch endpoint) — /v7/quote
+ * requires the crumb auth which would force a cookie bootstrap on
+ * every cold isolate just to power the polymarket scan.
  */
 interface RefQuote { price: number; pct: number }
 async function fetchRefQuotes(): Promise<Record<string, RefQuote>> {
   try {
     const symbols = ['ES=F', 'BTC-USD', 'ETH-USD', '^VIX', 'GC=F']
     const r = await fetch(
-      `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${symbols.join(',')}`,
+      `https://query1.finance.yahoo.com/v7/finance/spark?symbols=${symbols.join(',')}&range=1d&interval=1d`,
       {
         next: { revalidate: 60 },
         headers: {
@@ -334,13 +338,28 @@ async function fetchRefQuotes(): Promise<Record<string, RefQuote>> {
       },
     )
     if (!r.ok) return {}
-    const j = await r.json() as { quoteResponse?: { result?: Array<{ symbol: string; regularMarketPrice?: number; regularMarketChangePercent?: number }> } }
-    const out: Record<string, RefQuote> = {}
-    for (const q of j?.quoteResponse?.result ?? []) {
-      out[q.symbol] = {
-        price: Number(q.regularMarketPrice ?? 0),
-        pct:   Number(q.regularMarketChangePercent ?? 0),
+    const j = await r.json() as {
+      spark?: {
+        result?: Array<{
+          symbol: string
+          response?: Array<{
+            meta?: {
+              regularMarketPrice?: number
+              previousClose?: number
+              chartPreviousClose?: number
+            }
+          }>
+        }>
       }
+    }
+    const out: Record<string, RefQuote> = {}
+    for (const r0 of j?.spark?.result ?? []) {
+      const m = r0.response?.[0]?.meta
+      if (!m) continue
+      const price = Number(m.regularMarketPrice ?? 0)
+      const prev  = Number(m.previousClose ?? m.chartPreviousClose ?? price)
+      const pct   = prev ? ((price - prev) / prev) * 100 : 0
+      out[r0.symbol] = { price, pct }
     }
     return out
   } catch { return {} }
