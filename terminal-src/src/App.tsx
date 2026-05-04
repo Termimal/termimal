@@ -149,22 +149,23 @@ function Layout({ children }: { children: React.ReactNode }) {
         </main>
         <Watchlist />
       </div>
-      {/* Persistent footer — Bloomberg-style: tiny, muted, one line.
+      {/* Persistent footer — Bloomberg-style: muted, one line.
           Heavier disclaimer text only on signal-generating routes. */}
       <div
         role="contentinfo"
         style={{
-          padding: '3px 12px',
+          padding: '8px 16px',
           background: '#0a0d12',
           borderTop: '1px solid #161b22',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          gap: 12,
-          fontFamily: "'SF Mono', Menlo, Consolas, monospace",
-          fontSize: 8,
-          color: '#3a4048',
+          gap: 16,
+          fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+          fontSize: 11,
+          color: '#6e7681',
           flexShrink: 0,
+          letterSpacing: 0.1,
         }}
       >
         <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -174,15 +175,29 @@ function Layout({ children }: { children: React.ReactNode }) {
             <>Termimal · Research only · No execution · No advice.</>
           )}
         </span>
-        <span style={{ display: 'flex', gap: 10, flexShrink: 0 }}>
-          <a href="/risk-disclaimer" style={{ color: '#3a4048', textDecoration: 'none' }}>Risk</a>
-          <a href="/terms" style={{ color: '#3a4048', textDecoration: 'none' }}>Terms</a>
-          <a href="/privacy" style={{ color: '#3a4048', textDecoration: 'none' }}>Privacy</a>
-          <a href="/security" style={{ color: '#3a4048', textDecoration: 'none' }}>Security</a>
+        <span style={{ display: 'flex', gap: 16, flexShrink: 0 }}>
+          {[
+            { href: '/risk-disclaimer', label: 'Risk' },
+            { href: '/terms',           label: 'Terms' },
+            { href: '/privacy',         label: 'Privacy' },
+            { href: '/security',        label: 'Security' },
+          ].map(l => (
+            <a
+              key={l.href}
+              href={l.href}
+              style={{ color: '#6e7681', textDecoration: 'none', transition: 'color 120ms ease-out' }}
+              onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.color = '#c9d1d9' }}
+              onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.color = '#6e7681' }}
+            >
+              {l.label}
+            </a>
+          ))}
           <button
             type="button"
             onClick={() => openCookiePreferences()}
-            style={{ background: 'transparent', border: 'none', color: '#3a4048', cursor: 'pointer', fontFamily: 'inherit', fontSize: 8, padding: 0 }}
+            style={{ background: 'transparent', border: 'none', color: '#6e7681', cursor: 'pointer', fontFamily: 'inherit', fontSize: 11, padding: 0, transition: 'color 120ms ease-out' }}
+            onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.color = '#c9d1d9' }}
+            onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.color = '#6e7681' }}
           >
             Cookies
           </button>

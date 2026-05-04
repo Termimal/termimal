@@ -253,7 +253,7 @@ export function Navbar() {
   return (
     <div style={{ flexShrink: 0 }}>
       {/* ── Top bar ── */}
-      <div style={{ display: 'flex', alignItems: 'center', height: 48, background: '#161b22', borderBottom: '1px solid #21262d', padding: '0 12px', gap: 10 }}>
+      <div style={{ display: 'flex', alignItems: 'center', height: 56, background: '#161b22', borderBottom: '1px solid #21262d', padding: '0 16px', gap: 12 }}>
         {/* Mobile hamburger — opens slide-out drawer */}
         {isMobile && (
           <button
@@ -276,23 +276,23 @@ export function Navbar() {
           <a
             href="/"
             title="Back to termimal.com"
-            style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '4px 8px', textDecoration: 'none', color: '#8b949e', fontSize: 12, border: '1px solid #21262d', borderRadius: 2, marginRight: 4 }}
-            onMouseEnter={e => { e.currentTarget.style.color = '#c9d1d9'; e.currentTarget.style.borderColor = '#30363d' }}
+            style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '6px 10px', textDecoration: 'none', color: '#8b949e', fontSize: 12, border: '1px solid #21262d', borderRadius: 6, marginRight: 4 }}
+            onMouseEnter={e => { e.currentTarget.style.color = '#e6edf3'; e.currentTarget.style.borderColor = '#388bfd33' }}
             onMouseLeave={e => { e.currentTarget.style.color = '#8b949e'; e.currentTarget.style.borderColor = '#21262d' }}
           >
-            <span aria-hidden style={{ fontSize: 12 }}>←</span>
-            <span style={{ fontSize: 11, letterSpacing: 0.3 }}>Site</span>
+            <span aria-hidden style={{ fontSize: 13 }}>←</span>
+            <span style={{ fontSize: 12, letterSpacing: 0.3 }}>Site</span>
           </a>
         )}
         {/* Logo — also hard-navigates home */}
         <a
           href="/"
-          style={{ display: 'flex', alignItems: 'center', gap: 6, textDecoration: 'none', cursor: 'pointer', marginRight: 4 }}
+          style={{ display: 'flex', alignItems: 'baseline', gap: 8, textDecoration: 'none', cursor: 'pointer', marginRight: 6 }}
         >
-          <span style={{ fontSize: 13, fontWeight: 600, color: '#c9d1d9', letterSpacing: 0.4 }}>TERMIMAL</span>
-          <span title="Build version" style={{ fontSize: 8, color: '#484f58', marginLeft: 4, fontFamily: "'SF Mono', Menlo, Consolas, monospace" }}>v6.9</span>
+          <span style={{ fontSize: 16, fontWeight: 700, color: '#e6edf3', letterSpacing: 0.6 }}>TERMIMAL</span>
+          <span title="Build version" style={{ fontSize: 10, color: '#484f58', fontFamily: "'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace", letterSpacing: 0.3 }}>v6.9</span>
         </a>
-        {!isMobile && <div style={{ width: 1, height: 20, background: '#21262d' }} />}
+        {!isMobile && <div style={{ width: 1, height: 24, background: '#21262d' }} />}
         {/* Search — narrows progressively. On phones it gets a flex:1
             slot so it fills the rest of the top-bar; on tablet it's
             180px; on desktop 240px. Hidden only when hamburger drawer
@@ -302,18 +302,29 @@ export function Navbar() {
           ref={searchBoxRef}
           style={{
             position: 'relative',
-            width: isMobile ? undefined : isTablet ? 180 : 240,
+            width: isMobile ? undefined : isTablet ? 240 : 360,
             flex: isMobile ? 1 : undefined,
             minWidth: 0,
           }}
         >
           <div style={{ position: 'relative' }}>
-            <svg style={{ position: 'absolute', left: 8, top: '50%', transform: 'translateY(-50%)', width: 13, height: 13 }} fill="none" viewBox="0 0 24 24" stroke="#8b949e"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+            <svg style={{ position: 'absolute', left: 11, top: '50%', transform: 'translateY(-50%)', width: 14, height: 14 }} fill="none" viewBox="0 0 24 24" stroke="#8b949e"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
             <input ref={inputRef} value={query} onChange={e => onSearch(e.target.value)}
               onFocus={() => { onSearch(query) }} onKeyDown={onKey}
-              placeholder={isMobile ? 'Search…' : 'Search symbol or name...  ⌘K'}
+              placeholder={isMobile ? 'Search…' : 'Search symbol or name…   ⌘K'}
               aria-label="Search symbol or name"
-              style={{ width: '100%', background: '#0e1117', border: '1px solid #21262d', borderRadius: 2, fontSize: isMobile ? 13 : 11, color: '#c9d1d9', padding: isMobile ? '8px 10px 8px 28px' : '4px 8px 4px 26px', outline: 'none' }} />
+              style={{
+                width: '100%',
+                background: '#0e1117', border: '1px solid #21262d', borderRadius: 8,
+                fontSize: isMobile ? 13 : 13,
+                color: '#e6edf3',
+                padding: isMobile ? '10px 12px 10px 32px' : '8px 10px 8px 32px',
+                outline: 'none',
+                transition: 'border-color 120ms ease-out, box-shadow 120ms ease-out',
+              }}
+              onFocusCapture={e => { e.currentTarget.style.borderColor = '#388bfd'; e.currentTarget.style.boxShadow = '0 0 0 1px #388bfd33' }}
+              onBlurCapture={e => { e.currentTarget.style.borderColor = '#21262d'; e.currentTarget.style.boxShadow = 'none' }}
+            />
           </div>
           {searchOpen && (
             <div style={{ position: 'absolute', top: '100%', left: 0, width: 360, marginTop: 4, background: '#161b22', border: '1px solid #21262d', boxShadow: '0 8px 24px rgba(0,0,0,0.5)', zIndex: 200, maxHeight: 400, display: 'flex', flexDirection: 'column' }}>
@@ -348,8 +359,8 @@ export function Navbar() {
         {!isMobile && <div style={{ flex: 1 }} />}
         {/* Regime + connection + clock — hidden on mobile to save horizontal room */}
         {!isMobile && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 4, padding: '3px 8px', borderRadius: 2, fontSize: 11, fontWeight: 500, color: regCol, background: regCol + '15' }}>
-          <span style={{ width: 6, height: 6, borderRadius: '50%', background: regCol }} className="pulse-dot" /> {regime}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '5px 12px', borderRadius: 999, fontSize: 12, fontWeight: 600, color: regCol, background: regCol + '14', border: '1px solid ' + regCol + '33', letterSpacing: 0.3 }}>
+          <span style={{ width: 7, height: 7, borderRadius: '50%', background: regCol }} className="pulse-dot" /> {regime}
         </div>
         )}
         <div
@@ -358,13 +369,20 @@ export function Navbar() {
               : apiOffline ? 'Backend unreachable. Check VITE_BACKEND_URL or try again.'
               : 'Trying to reach the backend...'
           }
-          style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 11, color: apiOnline ? '#3fb950' : apiOffline ? '#f85149' : '#d29922' }}
+          style={{
+            display: 'flex', alignItems: 'center', gap: 6,
+            fontSize: 12, fontWeight: 500, letterSpacing: 0.2,
+            padding: '5px 10px', borderRadius: 999,
+            color: apiOnline ? '#3fb950' : apiOffline ? '#f85149' : '#d29922',
+            background: (apiOnline ? '#3fb950' : apiOffline ? '#f85149' : '#d29922') + '12',
+            border: '1px solid ' + (apiOnline ? '#3fb950' : apiOffline ? '#f85149' : '#d29922') + '33',
+          }}
         >
-          <span style={{ width: 6, height: 6, borderRadius: '50%', background: apiOnline ? '#3fb950' : apiOffline ? '#f85149' : '#d29922' }} />
-          {!isMobile && (apiOnline ? 'Live' : apiOffline ? 'Offline' : 'Connecting...')}
+          <span style={{ width: 7, height: 7, borderRadius: '50%', background: apiOnline ? '#3fb950' : apiOffline ? '#f85149' : '#d29922' }} className={apiOnline ? 'pulse-dot' : undefined} />
+          {!isMobile && (apiOnline ? 'Live' : apiOffline ? 'Offline' : 'Connecting…')}
         </div>
         {!isMobile && (
-        <span style={{ fontSize: 12, color: '#484f58', fontFamily: "'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace", fontVariantNumeric: 'tabular-nums', letterSpacing: 0.3 }}>{clock}</span>
+        <span style={{ fontSize: 13, color: '#8b949e', fontFamily: "'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace", fontVariantNumeric: 'tabular-nums', letterSpacing: 0.4 }}>{clock}</span>
         )}
 
         {/* ═══ Account Menu ═══ Desktop only — on mobile, profile / billing / sign-out
@@ -373,15 +391,16 @@ export function Navbar() {
         <div ref={acctRef} style={{ position: 'relative', marginLeft: 4 }}>
           <div role="button" tabIndex={0} onClick={() => setAcctOpen(!acctOpen)} onKeyDown={onActivate(() => setAcctOpen(!acctOpen))}
             style={{
-              width: 28, height: 28, display: 'flex', alignItems: 'center', justifyContent: 'center',
-              cursor: 'pointer', fontSize: 9, fontWeight: 600, letterSpacing: '0.02em',
-              color: acctOpen ? '#c9d1d9' : '#8b949e',
+              width: 34, height: 34, borderRadius: 999,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              cursor: 'pointer', fontSize: 12, fontWeight: 700, letterSpacing: '0.02em',
+              color: acctOpen ? '#fff' : '#c9d1d9',
               background: acctOpen ? '#388bfd' : '#161b22',
-              border: `1px solid ${acctOpen ? '#388bfd' : '#21262d'}`,
-              transition: 'all 0.1s',
+              border: `1px solid ${acctOpen ? '#388bfd' : '#30363d'}`,
+              transition: 'all 120ms ease-out',
             }}
-            onMouseEnter={e => { if (!acctOpen) { e.currentTarget.style.borderColor = '#30363d'; e.currentTarget.style.color = '#c9d1d9' } }}
-            onMouseLeave={e => { if (!acctOpen) { e.currentTarget.style.borderColor = '#21262d'; e.currentTarget.style.color = '#8b949e' } }}>
+            onMouseEnter={e => { if (!acctOpen) { e.currentTarget.style.borderColor = '#388bfd66'; e.currentTarget.style.color = '#e6edf3' } }}
+            onMouseLeave={e => { if (!acctOpen) { e.currentTarget.style.borderColor = '#30363d'; e.currentTarget.style.color = '#c9d1d9' } }}>
             {initials}
           </div>
           {acctOpen && (
@@ -459,7 +478,7 @@ export function Navbar() {
 
       {/* ── Tab bar with drag-to-reorder — hidden on mobile (use hamburger) ── */}
       {!isMobile && (
-      <div style={{ display: 'flex', alignItems: 'stretch', height: 42, background: '#0e1117', borderBottom: '1px solid #21262d', paddingLeft: 6, overflowX: 'auto' }}>
+      <div style={{ display: 'flex', alignItems: 'stretch', height: 44, background: '#0e1117', borderBottom: '1px solid #21262d', paddingLeft: 8, overflowX: 'auto' }}>
         {openTabs.map((tabPath, idx) => {
           const page = ALL_PAGES.find(p => p.path === tabPath)
           if (!page) return null
@@ -479,10 +498,10 @@ export function Navbar() {
                 display: 'flex', alignItems: 'center', gap: 6, height: '100%',
                 padding: '0 18px', cursor: 'grab', fontSize: 13, whiteSpace: 'nowrap',
                 fontWeight: active ? 600 : 500,
-                transition: 'color 120ms ease-out, background 120ms ease-out', position: 'relative',
-                background: active ? '#161b22' : 'transparent',
-                color: active ? '#f0f6fc' : '#8b949e',
-                borderBottom: active ? '2px solid #388bfd' : '2px solid transparent',
+                transition: 'color 120ms ease-out, background 120ms ease-out, box-shadow 120ms ease-out', position: 'relative',
+                background: active ? 'rgba(56,139,253,0.10)' : 'transparent',
+                color: active ? '#e6edf3' : '#8b949e',
+                boxShadow: active ? 'inset 0 -2px 0 0 #388bfd' : 'inset 0 -2px 0 0 transparent',
                 borderLeft: isDragOver ? '2px solid #388bfd' : 'none',
                 letterSpacing: 0.2,
                 opacity: dragIdx === idx ? 0.5 : 1,
@@ -492,9 +511,9 @@ export function Navbar() {
               <span>{page.label}</span>
               {openTabs.length > 1 && (
                 <span role="button" tabIndex={0} onClick={e => closeTab(tabPath, e)} onKeyDown={onActivate(e => closeTab(tabPath, e as any))}
-                  style={{ marginLeft: 6, width: 16, height: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 2, fontSize: 12, color: '#484f58' }}
-                  onMouseEnter={e => { e.currentTarget.style.background = '#30363d'; e.currentTarget.style.color = '#c9d1d9' }}
-                  onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#8b949e' }}>×</span>
+                  style={{ marginLeft: 8, width: 18, height: 18, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 4, fontSize: 13, color: '#484f58', transition: 'all 120ms ease-out' }}
+                  onMouseEnter={e => { e.currentTarget.style.background = '#30363d'; e.currentTarget.style.color = '#e6edf3' }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#484f58' }}>×</span>
               )}
             </div>
           )
@@ -503,8 +522,8 @@ export function Navbar() {
         {/* + button → opens new tab landing page */}
         <div style={{ position: 'relative', zIndex: 300, display: 'flex', alignItems: 'center', height: '100%' }}>
           <div role="button" tabIndex={0} onClick={() => { if (!openTabs.includes('/newtab')) { setOpenTabs([...openTabs, '/newtab']); } navigate('/newtab') }} onKeyDown={onActivate(() => { if (!openTabs.includes('/newtab')) { setOpenTabs([...openTabs, '/newtab']); } navigate('/newtab') })}
-            style={{ width: 28, height: 28, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', borderRadius: 3, marginLeft: 6, fontSize: 17, lineHeight: 1, color: '#8b949e' }}
-            onMouseEnter={e => { e.currentTarget.style.background = '#161b22'; e.currentTarget.style.color = '#c9d1d9' }}
+            style={{ width: 30, height: 30, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', borderRadius: 6, marginLeft: 8, fontSize: 18, lineHeight: 1, color: '#8b949e', transition: 'all 120ms ease-out' }}
+            onMouseEnter={e => { e.currentTarget.style.background = '#161b22'; e.currentTarget.style.color = '#388bfd' }}
             onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#8b949e' }}>+</div>
         </div>
       </div>
