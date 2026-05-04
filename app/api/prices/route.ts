@@ -29,21 +29,35 @@ const DEFAULT_SYMBOLS = [
   'GC=F', 'SI=F', 'CL=F', 'BTC-USD', 'ETH-USD', 'SOL-USD',
 ]
 
-interface YahooQuoteResponse {
-  quoteResponse?: {
+/**
+ * Yahoo's `/v7/finance/quote` started returning HTTP 401 in 2024 unless
+ * the request carries a session cookie + crumb token. The "spark"
+ * endpoint (`/v7/finance/spark`) is still anonymous and returns
+ * everything we need (regularMarketPrice, previousClose, dayHigh/Low,
+ * volume, regularMarketTime) inside `result[i].response[0].meta`.
+ * One round-trip, batch over many symbols, no crumb dance.
+ */
+interface YahooSparkResponse {
+  spark?: {
     result?: Array<{
       symbol: string
-      regularMarketPrice?: number
-      regularMarketPreviousClose?: number
-      regularMarketChange?: number
-      regularMarketChangePercent?: number
-      regularMarketOpen?: number
-      regularMarketDayHigh?: number
-      regularMarketDayLow?: number
-      regularMarketVolume?: number
-      regularMarketTime?: number
+      response?: Array<{
+        meta?: {
+          symbol?: string
+          regularMarketPrice?: number
+          chartPreviousClose?: number
+          previousClose?: number
+          regularMarketDayHigh?: number
+          regularMarketDayLow?: number
+          regularMarketVolume?: number
+          regularMarketTime?: number
+        }
+        timestamp?: number[]
+        indicators?: {
+          quote?: Array<{ open?: (number | null)[] }>
+        }
+      }>
     }>
-    error?: { description?: string } | null
   }
 }
 
@@ -63,23 +77,30 @@ async function handle(request: Request): Promise<Response> {
   }
 
   const yahooUrl =
-    `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${encodeURIComponent(symbols.join(','))}`
+    `https://query1.finance.yahoo.com/v7/finance/spark?symbols=${encodeURIComponent(symbols.join(','))}&range=1d&interval=1d`
 
   try {
-    const json = await yahooFetch<YahooQuoteResponse>(yahooUrl, { ttl: 15 })
+    const json = await yahooFetch<YahooSparkResponse>(yahooUrl, { ttl: 15 })
     const out: Record<string, unknown> = {}
-    for (const q of json?.quoteResponse?.result ?? []) {
-      out[q.symbol] = {
-        price:   q.regularMarketPrice          ?? 0,
-        prev:    q.regularMarketPreviousClose  ?? 0,
-        chg:     q.regularMarketChange         ?? 0,
-        pct:     q.regularMarketChangePercent  ?? 0,
-        open:    q.regularMarketOpen           ?? 0,
-        high:    q.regularMarketDayHigh        ?? 0,
-        low:     q.regularMarketDayLow         ?? 0,
-        vol:     q.regularMarketVolume         ?? 0,
-        date:    q.regularMarketTime
-          ? new Date(q.regularMarketTime * 1000).toISOString()
+    for (const r of json?.spark?.result ?? []) {
+      const m = r.response?.[0]?.meta
+      if (!m) continue
+      const price = m.regularMarketPrice ?? 0
+      const prev  = m.previousClose ?? m.chartPreviousClose ?? price
+      const chg   = price - prev
+      const pct   = prev ? (chg / prev) * 100 : 0
+      const open  = r.response?.[0]?.indicators?.quote?.[0]?.open?.[0] ?? prev
+      out[r.symbol] = {
+        price,
+        prev,
+        chg,
+        pct,
+        open,
+        high:    m.regularMarketDayHigh ?? price,
+        low:     m.regularMarketDayLow  ?? price,
+        vol:     m.regularMarketVolume  ?? 0,
+        date:    m.regularMarketTime
+          ? new Date(m.regularMarketTime * 1000).toISOString()
           : new Date().toISOString(),
         source:  'Yahoo Finance',
         updated: new Date().toISOString(),

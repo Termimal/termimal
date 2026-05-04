@@ -8,20 +8,28 @@ export const runtime = 'edge'
 import { NextResponse } from 'next/server'
 import { yahooFetch, yahooErrorPayload } from '@/lib/market/yahoo'
 
-interface YahooQuoteResponse {
-  quoteResponse?: {
+/**
+ * Use the v8/chart endpoint which still returns a full quote (in
+ * `meta`) without needing the crumb auth that /v7/quote now demands.
+ */
+interface YahooChartResponse {
+  chart?: {
     result?: Array<{
-      symbol: string
-      regularMarketPrice?: number
-      regularMarketPreviousClose?: number
-      regularMarketChange?: number
-      regularMarketChangePercent?: number
-      regularMarketOpen?: number
-      regularMarketDayHigh?: number
-      regularMarketDayLow?: number
-      regularMarketVolume?: number
-      regularMarketTime?: number
+      meta?: {
+        symbol?: string
+        regularMarketPrice?: number
+        chartPreviousClose?: number
+        previousClose?: number
+        regularMarketDayHigh?: number
+        regularMarketDayLow?: number
+        regularMarketVolume?: number
+        regularMarketTime?: number
+      }
+      indicators?: {
+        quote?: Array<{ open?: (number | null)[] }>
+      }
     }>
+    error?: { code?: string; description?: string } | null
   }
 }
 
@@ -33,26 +41,32 @@ export async function GET(
   if (!sym) return NextResponse.json({ error: 'missing symbol' }, { status: 400 })
 
   try {
-    const json = await yahooFetch<YahooQuoteResponse>(
-      `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${encodeURIComponent(sym)}`,
+    const json = await yahooFetch<YahooChartResponse>(
+      `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(sym)}?range=1d&interval=1d`,
       { ttl: 15 },
     )
-    const q = json?.quoteResponse?.result?.[0]
-    if (!q) {
+    const r = json?.chart?.result?.[0]
+    const m = r?.meta
+    if (!m) {
       return NextResponse.json({ error: 'symbol not found' }, { status: 404 })
     }
+    const price = m.regularMarketPrice ?? 0
+    const prev  = m.previousClose ?? m.chartPreviousClose ?? price
+    const chg   = price - prev
+    const pct   = prev ? (chg / prev) * 100 : 0
+    const open  = r?.indicators?.quote?.[0]?.open?.[0] ?? prev
     return NextResponse.json({
       data: {
-        price:   q.regularMarketPrice          ?? 0,
-        prev:    q.regularMarketPreviousClose  ?? 0,
-        chg:     q.regularMarketChange         ?? 0,
-        pct:     q.regularMarketChangePercent  ?? 0,
-        open:    q.regularMarketOpen           ?? 0,
-        high:    q.regularMarketDayHigh        ?? 0,
-        low:     q.regularMarketDayLow         ?? 0,
-        vol:     q.regularMarketVolume         ?? 0,
-        date:    q.regularMarketTime
-          ? new Date(q.regularMarketTime * 1000).toISOString()
+        price,
+        prev,
+        chg,
+        pct,
+        open,
+        high:    m.regularMarketDayHigh ?? price,
+        low:     m.regularMarketDayLow  ?? price,
+        vol:     m.regularMarketVolume  ?? 0,
+        date:    m.regularMarketTime
+          ? new Date(m.regularMarketTime * 1000).toISOString()
           : new Date().toISOString(),
         source:  'Yahoo Finance',
         updated: new Date().toISOString(),
