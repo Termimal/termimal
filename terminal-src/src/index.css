@@ -377,7 +377,16 @@ td, th { padding: 0 8px; height: 26px; }
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
   }
-  body { overflow-x: hidden; }
+  /* Hard cap the document so nothing inside can force a horizontal
+     swipe gesture, even when an inline width or grid is too wide. */
+  html, body, #root { max-width: 100vw; overflow-x: hidden; }
+
+  /* The terminal Layout (App.tsx) uses display:flex + overflow:hidden
+     on the outer shell and overflow:auto on <main>. On mobile, force
+     <main> to suppress horizontal scroll so a stray wide child gets
+     clipped instead of triggering a side swipe. Pages still scroll
+     vertically. */
+  main { overflow-x: hidden !important; }
 
   /* Lift the institutional typography utilities. */
   .sec-title       { font-size: 13px; padding-bottom: 8px; margin-bottom: 10px; }
@@ -389,8 +398,8 @@ td, th { padding: 0 8px; height: 26px; }
   .chip            { font-size: 12px; padding: 4px 8px; }
 
   /* Tables become tappable: 40px rows, larger text, allow horizontal
-     scroll if a wide table refuses to wrap. */
-  table       { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+     scroll INSIDE the table only if a wide table refuses to wrap. */
+  table       { display: block; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
   td, th      { height: 40px; padding: 0 12px; font-size: 14px; }
 
   /* Inputs at 16px+ stop iOS Safari auto-zooming on focus. 44px tap
@@ -402,8 +411,8 @@ td, th { padding: 0 8px; height: 26px; }
   }
   button { min-height: 36px; }
 
-  /* The persistent footer in App.tsx uses inline font-size: 8. That's
-     unreadable on phones; bump via a high-specificity attribute hook. */
+  /* Persistent footer (role="contentinfo") uses inline font-size: 8.
+     Bump it so the disclaimer is legible. */
   [role="contentinfo"] {
     font-size: 11px !important;
     padding: 8px 12px !important;
@@ -411,16 +420,73 @@ td, th { padding: 0 8px; height: 26px; }
   }
   [role="contentinfo"] button { font-size: 11px !important; }
 
-  /* Lift the smallest inline pixel font sizes used across the pages
-     (Dashboard et al. ship style={{ fontSize: 7–10 }} for desktop
-     density). The substring match is intentionally narrow — it only
-     matches "font-size: <N>px" with a colon, which React inline
-     styles always produce. */
-  [style*="font-size: 7px"],   [style*="font-size:7px"]   { font-size: 11px !important; }
-  [style*="font-size: 8px"],   [style*="font-size:8px"]   { font-size: 11px !important; }
-  [style*="font-size: 9px"],   [style*="font-size:9px"]   { font-size: 12px !important; }
-  [style*="font-size: 10px"],  [style*="font-size:10px"]  { font-size: 12px !important; }
-  [style*="font-size: 11px"],  [style*="font-size:11px"]  { font-size: 13px !important; }
+  /* ── Inline-style font-size lifts ───────────────────────────────
+     Dashboard et al. ship style={{ fontSize: 7–11 }} for desktop
+     density. The matchers target React's rendered output:
+     style="font-size: <N>px" (with or without space after colon). */
+  [style*="font-size: 7px"],   [style*="font-size:7px"]   { font-size: 12px !important; }
+  [style*="font-size: 8px"],   [style*="font-size:8px"]   { font-size: 12px !important; }
+  [style*="font-size: 9px"],   [style*="font-size:9px"]   { font-size: 13px !important; }
+  [style*="font-size: 10px"],  [style*="font-size:10px"]  { font-size: 13px !important; }
+  [style*="font-size: 11px"],  [style*="font-size:11px"]  { font-size: 14px !important; }
+  [style*="font-size: 12px"],  [style*="font-size:12px"]  { font-size: 15px !important; }
+  [style*="font-size: 13px"],  [style*="font-size:13px"]  { font-size: 15px !important; }
+
+  /* ── Inline-style grid collapse ─────────────────────────────────
+     Pages use style={{ gridTemplateColumns: 'repeat(N, 1fr)' }} with
+     N up to 8 — at 375px that's 47px tiles, unreadable. Collapse
+     wide grids on mobile so each cell is at least ~160px wide. */
+  [style*="grid-template-columns: repeat(8"],
+  [style*="grid-template-columns: repeat(7"],
+  [style*="grid-template-columns: repeat(6"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+  [style*="grid-template-columns: repeat(5"],
+  [style*="grid-template-columns: repeat(4"],
+  [style*="grid-template-columns: repeat(3"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+  /* Two-column splits collapse to a single column on mobile so each
+     half gets the full viewport width. */
+  [style*="grid-template-columns: 1.3fr 0.7fr"],
+  [style*="grid-template-columns: 0.7fr 1.3fr"],
+  [style*="grid-template-columns: 1fr 1fr"],
+  [style*="grid-template-columns: 2fr 1fr"],
+  [style*="grid-template-columns: 1fr 2fr"],
+  [style*="grid-template-columns: 0.5fr 1.5fr"],
+  [style*="grid-template-columns: 1.5fr 0.5fr"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Prevent any flex/grid child from blowing out its container.
+     Without min-width:0, long tickers force horizontal overflow.
+     We only set min-width here — max-width:100% on every descendant
+     would clamp the lightweight-charts canvas which is sized in JS
+     and needs to render at its requested pixel width. */
+  main * { min-width: 0; }
+
+  /* Inline-style fixed pixel widths often exceed 375px — clamp them. */
+  [style*="width: 800px"],
+  [style*="width: 900px"],
+  [style*="width: 1000px"],
+  [style*="width: 1100px"],
+  [style*="width: 1200px"],
+  [style*="min-width: 800px"],
+  [style*="min-width: 900px"],
+  [style*="min-width: 1000px"] {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  /* Bottom-tab safe area padding for any page that opts in via
+     .pm-mobile-padded — already used on Polymarket. */
+  body, main { padding-bottom: env(safe-area-inset-bottom); }
+
+  /* Cards / panels that ship with `display:grid` and many auto-sized
+     items should wrap rather than overflow. */
+  [style*="display: grid"][style*="grid-auto-flow: column"] {
+    grid-auto-flow: row !important;
+  }
 }
 
 /* On phones smaller than 480px (iPhone SE class), give one more nudge
@@ -437,4 +503,3 @@ td, th { padding: 0 8px; height: 26px; }
 @media (pointer: coarse) {
   input, select, textarea { font-size: 16px; }
 }
-
