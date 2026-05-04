@@ -98,40 +98,107 @@ function extractA1Cookie(setCookieRaw: string | null): string | null {
   return match ? match[0] : null
 }
 
+/**
+ * Sources we try to bootstrap an A1 cookie from. fc.yahoo.com used
+ * to be the canonical "fast-cookie" origin but as of 2024 it
+ * frequently does NOT set A1 from datacenter (Cloudflare Worker)
+ * IPs. The Yahoo finance origin still sets it for those callers.
+ * We try them in order until one works.
+ */
+const COOKIE_SOURCES = [
+  'https://finance.yahoo.com/quote/AAPL/',
+  'https://finance.yahoo.com/',
+  'https://www.yahoo.com/',
+  'https://login.yahoo.com/',
+  'https://fc.yahoo.com/',
+]
+
+async function fetchA1Cookie(): Promise<string | null> {
+  for (const url of COOKIE_SOURCES) {
+    try {
+      const res = await fetch(url, {
+        headers: {
+          'user-agent': UA,
+          accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+          'accept-language': 'en-US,en;q=0.9',
+        },
+        redirect: 'follow',
+      })
+      const cookieRaw =
+        (typeof (res.headers as { getSetCookie?: () => string[] }).getSetCookie === 'function'
+          ? ((res.headers as { getSetCookie: () => string[] }).getSetCookie().join('; '))
+          : res.headers.get('set-cookie'))
+      const cookie = extractA1Cookie(cookieRaw)
+      if (cookie) return cookie
+    } catch {
+      // Try next source.
+    }
+  }
+  return null
+}
+
+/**
+ * Extract a `crumb` value from the inline JS of a Yahoo finance
+ * page. Yahoo embeds it as `"CrumbStore":{"crumb":"<value>"}` in
+ * the HTML body. Used as a fallback when the /v1/test/getcrumb
+ * endpoint refuses to serve our cookie.
+ */
+async function fetchCrumbFromHtml(cookie: string): Promise<string | null> {
+  try {
+    const res = await fetch('https://finance.yahoo.com/quote/AAPL/', {
+      headers: {
+        'user-agent': UA,
+        accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'accept-language': 'en-US,en;q=0.9',
+        cookie,
+      },
+    })
+    if (!res.ok) return null
+    const html = await res.text()
+    const m = html.match(/"CrumbStore"\s*:\s*\{\s*"crumb"\s*:\s*"([^"]+)"/)
+    if (m && m[1]) {
+      // Yahoo escapes `/` etc. into the crumb; un-escape.
+      return m[1].replace(/\\u002F/g, '/').replace(/\\u003D/g, '=')
+    }
+    return null
+  } catch {
+    return null
+  }
+}
+
 async function bootstrapCrumb(): Promise<CrumbState> {
-  // Step 1: Hit a Yahoo origin that issues an A1 cookie.
-  const seedRes = await fetch('https://fc.yahoo.com/', {
-    headers: {
-      'user-agent': UA,
-      accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-      'accept-language': 'en-US,en;q=0.9',
-    },
-    redirect: 'follow',
-  })
-  // Workers expose Set-Cookie via getSetCookie() (multi-value) or
-  // get('set-cookie') (joined). Try both for portability.
-  const cookieRaw =
-    (typeof (seedRes.headers as { getSetCookie?: () => string[] }).getSetCookie === 'function'
-      ? ((seedRes.headers as { getSetCookie: () => string[] }).getSetCookie().join('; '))
-      : seedRes.headers.get('set-cookie'))
-  const cookie = extractA1Cookie(cookieRaw)
+  // Step 1: Get an A1 cookie. Try multiple Yahoo origins.
+  const cookie = await fetchA1Cookie()
   if (!cookie) {
     throw new Error('yahoo crumb bootstrap: no A1 cookie returned')
   }
 
-  // Step 2: Trade the cookie for a crumb token.
-  const crumbRes = await fetch('https://query1.finance.yahoo.com/v1/test/getcrumb', {
-    headers: {
-      'user-agent': UA,
-      accept: 'text/plain,*/*',
-      cookie,
-    },
-  })
-  if (!crumbRes.ok) {
-    throw new Error(`yahoo crumb bootstrap: getcrumb http ${crumbRes.status}`)
+  // Step 2a: Trade the cookie for a crumb via the API endpoint.
+  let crumb = ''
+  try {
+    const crumbRes = await fetch('https://query1.finance.yahoo.com/v1/test/getcrumb', {
+      headers: {
+        'user-agent': UA,
+        accept: 'text/plain,*/*',
+        cookie,
+      },
+    })
+    if (crumbRes.ok) {
+      const body = (await crumbRes.text()).trim()
+      if (body && body.length <= 32 && !body.includes('<')) crumb = body
+    }
+  } catch {
+    // fall through to HTML fallback
   }
-  const crumb = (await crumbRes.text()).trim()
-  if (!crumb || crumb.length > 32) {
+
+  // Step 2b: Fall back to scraping the crumb from a Yahoo finance
+  // page if the API endpoint refused us.
+  if (!crumb) {
+    const fromHtml = await fetchCrumbFromHtml(cookie)
+    if (fromHtml) crumb = fromHtml
+  }
+
+  if (!crumb) {
     throw new Error('yahoo crumb bootstrap: empty or malformed crumb')
   }
 

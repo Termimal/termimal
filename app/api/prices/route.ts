@@ -76,8 +76,11 @@ async function handle(request: Request): Promise<Response> {
     return NextResponse.json({ error: 'no symbols' }, { status: 400 })
   }
 
+  // Encode each symbol individually then join with literal commas —
+  // `encodeURIComponent(symbols.join(','))` would encode the comma
+  // separator as %2C, which Yahoo's batch parser does not accept.
   const yahooUrl =
-    `https://query1.finance.yahoo.com/v7/finance/spark?symbols=${encodeURIComponent(symbols.join(','))}&range=1d&interval=1d`
+    `https://query1.finance.yahoo.com/v7/finance/spark?symbols=${symbols.map(encodeURIComponent).join(',')}&range=1d&interval=1d`
 
   try {
     const json = await yahooFetch<YahooSparkResponse>(yahooUrl, { ttl: 15 })
