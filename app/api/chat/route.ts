@@ -74,33 +74,6 @@ function localFallback(question: string): string {
   return "I can help with questions about Termimal's features, plans, markets, or your account. For anything I can't resolve, please email support@termimal.com."
 }
 
-async function callGrok(messages: Msg[]): Promise<string | null> {
-  const apiKey = process.env.XAI_API_KEY || process.env.GROK_API_KEY
-  if (!apiKey) return null
-  try {
-    const res = await fetch("https://api.x.ai/v1/chat/completions", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
-      body: JSON.stringify({
-        model: process.env.XAI_MODEL || "grok-4-latest",
-        temperature: 0.3,
-        max_tokens: 400,
-        messages: [{ role: "system", content: SYSTEM_PROMPT }, ...messages],
-      }),
-    })
-    if (!res.ok) {
-      console.error("Grok failed:", res.status, await res.text().catch(() => ""))
-      return null
-    }
-    const data = await res.json()
-    const reply = data?.choices?.[0]?.message?.content?.trim()
-    return reply || null
-  } catch (err) {
-    console.error("Grok error:", err)
-    return null
-  }
-}
-
 async function callGemini(messages: Msg[]): Promise<string | null> {
   const apiKey = process.env.GEMINI_API_KEY
   if (!apiKey) return null
@@ -136,7 +109,6 @@ async function callGemini(messages: Msg[]): Promise<string | null> {
 }
 
 const PROVIDERS: Array<{ name: string; fn: (m: Msg[]) => Promise<string | null> }> = [
-  { name: "grok", fn: callGrok },
   { name: "gemini", fn: callGemini },
 ]
 
