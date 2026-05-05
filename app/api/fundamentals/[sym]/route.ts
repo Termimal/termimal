@@ -156,7 +156,7 @@ export async function GET(
       source: 'Yahoo Finance',
       updated: new Date().toISOString(),
     }, {
-      headers: { 'cache-control': 'public, max-age=300, s-maxage=300' },
+      headers: { 'cache-control': 'public, max-age=300, s-maxage=300, stale-while-revalidate=1800' },
     })
   } catch (err) {
     return NextResponse.json(yahooErrorPayload(err), { status: 503 })

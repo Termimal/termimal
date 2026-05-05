@@ -4,6 +4,7 @@ import { ReactNode, useEffect, useMemo, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
+import { useAuthUser } from '@/components/auth/AuthProvider'
 import ThemeToggle from '@/components/ui/ThemeToggle'
 import Logo from '@/components/ui/Logo'
 import { openSupportChat } from '@/components/support/SupportChatLauncher'
@@ -35,25 +36,22 @@ const navItems = [
 ]
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
+  // Read the shared user from the AuthProvider — no extra getUser()
+  // roundtrip on top of the one Navbar already issued.
+  const { user, loading: authLoading } = useAuthUser()
   const [mobileOpen, setMobileOpen] = useState(false)
   const router = useRouter()
   const pathname = usePathname()
   const supabase = useMemo(() => createClient(), [])
 
+  // Bounce signed-out users to /login as soon as the snapshot is ready.
   useEffect(() => {
-    const getUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) {
-        router.push('/login')
-        return
-      }
-      setUser(user)
-      setLoading(false)
+    if (!authLoading && !user) {
+      router.push('/login')
     }
-    getUser()
-  }, [router, supabase])
+  }, [authLoading, user, router])
+
+  const loading = authLoading || !user
 
   useEffect(() => {
     setMobileOpen(false)

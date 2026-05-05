@@ -11,6 +11,13 @@
     <meta name="robots" content="noindex,follow" />
     <title>Termimal — Web Terminal</title>
     <meta name="description" content="The Termimal web terminal — sign in to access charts, macro intelligence, COT positioning, and risk research." />
+    <!-- Favicon — same icon as the marketing site so the browser tab
+         shows the Termimal mark while the SPA is loaded. Without this
+         declaration the browser falls back to /favicon.ico which we
+         don't ship, leaving the tab with the default globe glyph. -->
+    <link rel="icon"          href="/icon.png" type="image/png" />
+    <link rel="shortcut icon" href="/icon.png" type="image/png" />
+    <link rel="apple-touch-icon" href="/icon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />

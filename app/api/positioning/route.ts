@@ -33,7 +33,7 @@ export async function GET() {
       source: 'Polymarket CLOB (positioning overview)',
       updated: new Date().toISOString(),
     }, {
-      headers: { 'cache-control': 'public, max-age=60, s-maxage=60' },
+      headers: { 'cache-control': 'public, max-age=60, s-maxage=60, stale-while-revalidate=300' },
     })
   } catch (err) {
     return NextResponse.json({
