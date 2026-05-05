@@ -192,7 +192,7 @@ type GeminiResult = { reply: string } | { error: string }
 async function callGemini(messages: Msg[]): Promise<GeminiResult> {
   const apiKey = readEnv("GEMINI_API_KEY")
   if (!apiKey) return { error: "no_key" }
-  const model = readEnv("GEMINI_MODEL") || "gemini-1.5-flash"
+  const model = readEnv("GEMINI_MODEL") || "gemini-2.0-flash"
   try {
     const contents = messages.map((m) => ({
       role: m.role === "assistant" ? "model" : "user",
