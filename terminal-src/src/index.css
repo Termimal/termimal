@@ -66,10 +66,12 @@ html, body { margin: 0; padding: 0; }
    (10–12px inline) by design for institutional density. On a normal
    monitor this can read tiny — apply a CSS zoom on the root so the
    whole interface scales proportionally without per-component
-   refactoring. Bumped 1.10 → 1.18 in the desktop UX revamp so the
-   institutional density is actually legible at a normal viewing
-   distance. The mobile breakpoint resets this to 1.0 (see below). */
-:root { --terminal-zoom: 1.18; }
+   refactoring. Bumped 1.10 → 1.18 → 1.30 across the desktop UX
+   revamps so the institutional density is comfortable at a normal
+   viewing distance. The mobile breakpoint resets this to 1.0 (see
+   below) — phones get their own typography pass via the @media
+   (max-width: 899px) block at the bottom of this file. */
+:root { --terminal-zoom: 1.30; }
 #root {
   min-height: 100vh;
   zoom: var(--terminal-zoom);
