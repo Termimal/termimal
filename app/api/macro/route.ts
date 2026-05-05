@@ -186,6 +186,6 @@ async function handle(): Promise<Response> {
     source: 'Yahoo + DBnomics',
     updated: new Date().toISOString(),
   }, {
-    headers: { 'cache-control': 'public, max-age=300, s-maxage=300' },
+    headers: { 'cache-control': 'public, max-age=300, s-maxage=300, stale-while-revalidate=600' },
   })
 }

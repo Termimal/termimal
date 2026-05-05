@@ -145,7 +145,7 @@ async function handle(request: Request): Promise<Response> {
       updated: new Date().toISOString(),
     }, {
       headers: {
-        'cache-control': 'public, max-age=15, s-maxage=15',
+        'cache-control': 'public, max-age=15, s-maxage=15, stale-while-revalidate=60',
       },
     })
   } catch (err) {

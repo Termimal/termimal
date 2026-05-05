@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import "./globals.css"
 import SupportChatLauncher from "@/components/support/SupportChatLauncher"
+import { AuthProvider } from "@/components/auth/AuthProvider"
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://termimal.com"
 
@@ -85,13 +86,23 @@ export default function RootLayout({
               '@type': 'Organization',
               name: 'Termimal',
               url: siteUrl,
-              logo: `${siteUrl}/logo-dark.png`,
+              // Use the dark wordmark on light backgrounds — Google search
+              // results render the schema.org logo on a white SERP, so we
+              // need the version with dark text/glyph (= /logo-light.png,
+              // i.e. "the logo for light themes"), not the white one.
+              logo: `${siteUrl}/logo-light.png`,
               legalName: 'Hiram OÜ',
             }),
           }}
         />
-        {children}
-        <SupportChatLauncher />
+        {/* AuthProvider keeps a single Supabase session subscription
+            across the whole tree — Navbar, dashboard layout, and any
+            dashboard page can read the current user via useAuthUser()
+            without each making its own getUser() call. */}
+        <AuthProvider>
+          {children}
+          <SupportChatLauncher />
+        </AuthProvider>
       </body>
     </html>
   )

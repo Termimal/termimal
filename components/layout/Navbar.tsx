@@ -6,12 +6,15 @@ import { usePathname, useRouter } from "next/navigation"
 import { Menu, X } from "lucide-react"
 import Logo from "@/components/ui/Logo"
 import { createClient } from "@/lib/supabase/client"
-import type { User } from "@supabase/supabase-js"
+import { useAuthUser } from "@/components/auth/AuthProvider"
 
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
-  const [user, setUser] = useState<User | null>(null)
+  // Auth user comes from the shared AuthProvider context — one
+  // subscription for the whole app, no extra getUser() roundtrip per
+  // page mount. (The previous version did its own getUser + listener.)
+  const { user } = useAuthUser()
   const [acctOpen, setAcctOpen] = useState(false)
   const acctRef = useRef<HTMLDivElement>(null)
   const pathname = usePathname()
@@ -41,18 +44,6 @@ export default function Navbar() {
       document.body.style.overflow = original
     }
   }, [isMobileMenuOpen])
-
-  // Keep navbar in sync with the live Supabase session.
-  useEffect(() => {
-    let cancelled = false
-    supabase.auth.getUser().then(({ data }) => {
-      if (!cancelled) setUser(data.user)
-    })
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
-      setUser(session?.user ?? null)
-    })
-    return () => { cancelled = true; sub.subscription.unsubscribe() }
-  }, [supabase])
 
   // Close the account dropdown on click outside / Escape.
   useEffect(() => {
