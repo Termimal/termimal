@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { getCanonicalUrl } from '@/lib/seo/canonical'
-import BackToHome from '@/components/BackToHome'
+import PageShell from '@/components/layout/PageShell'
 import Link from "next/link"
 
 export const metadata: Metadata = {
@@ -47,15 +47,9 @@ const VALUES = [
 
 export default function AboutPage() {
   return (
-    <main style={{ background: "var(--bg)", color: "var(--t1)", minHeight: "100vh" }}>
-      <div className="mx-auto w-full max-w-4xl px-4 md:px-8 pt-6">
-        <BackToHome />
-      </div>
-      <div className="border-b px-6 py-4" style={{ borderColor: "var(--border)" }}>
-        <Link href="/" className="text-sm" style={{ color: "var(--t3)" }}>← Back to Termimal</Link>
-      </div>
-
-      <div className="mx-auto max-w-3xl px-4 py-16">
+    <PageShell title="About Termimal">
+    <div style={{ background: "var(--bg)", color: "var(--t1)", minHeight: "100vh" }}>
+      <div className="mx-auto max-w-3xl px-4 pt-12 pb-16">
         <div className="mb-2 text-xs font-semibold uppercase tracking-[0.22em]" style={{ color: "var(--t4)" }}>Our Story</div>
         <h1 className="mt-2 text-3xl font-semibold sm:text-4xl" style={{ letterSpacing: "-0.03em" }}>
           Built by traders, for traders.
@@ -119,6 +113,7 @@ export default function AboutPage() {
           <Link href="/contact" className="text-sm" style={{ color: "var(--t3)" }}>Contact us →</Link>
         </div>
       </div>
-    </main>
+    </div>
+    </PageShell>
   )
 }
