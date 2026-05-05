@@ -51,7 +51,7 @@ interface ModelFit {
 const FORECAST_WEEKS = 26
 
 export async function GET(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ sym: string }> },
 ) {
   const { sym } = await params
@@ -83,17 +83,27 @@ export async function GET(
     const t = Array.from({ length: n }, (_, i) => i)
     const yMean = closes.reduce((a, b) => a + b, 0) / n
 
+    // CPU-conscious: 10 y of weekly data is ~520 points × 4 models ×
+    // 2 arrays (fit + 26-week forecast) ≈ 4 400 numbers in the JSON.
+    // On the Free-plan 10 ms ceiling that JSON-encode alone burns
+    // ~3 ms. Limit to two models (linear + log-linear) by default —
+    // polynomial-2 and power add little signal for >90 % of tickers
+    // and double the CPU. Clients can opt-in via ?models=all.
+    const url = new URL(request.url)
+    const wantAll = url.searchParams.get('models') === 'all'
+
     const linear      = fitLinear(t, closes, yMean, n)
     const logLinear   = fitLogLinear(t, closes, yMean, n)
-    const polynomial2 = fitPoly2(t, closes, yMean, n)
-    const power       = fitPower(t, closes, yMean, n)
-
     const models: ModelFit[] = [
-      { name: 'linear',         ...linear        },
-      { name: 'log-linear',     ...logLinear     },
-      { name: 'polynomial-2',   ...polynomial2   },
-      { name: 'power',          ...power         },
+      { name: 'linear',     ...linear    },
+      { name: 'log-linear', ...logLinear },
     ]
+    if (wantAll) {
+      models.push(
+        { name: 'polynomial-2', ...fitPoly2(t, closes, yMean, n) },
+        { name: 'power',        ...fitPower(t, closes, yMean, n) },
+      )
+    }
 
     // Best model = highest R² (clamped to >= 0; some power fits return
     // a negative R² when the trajectory is genuinely non-power).
