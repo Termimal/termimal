@@ -135,27 +135,33 @@ const GROUPS: Group[] = [
         body: (
           <>
             <p>
-              Plans are listed at <Link href="/pricing" className="link-acc">termimal.com/pricing</Link>. In short:
+              Plans are listed at <Link href="/pricing" className="link-acc">termimal.com/pricing</Link>.
+              All prices in EUR, excluding tax:
             </p>
             <ul>
               <li>
-                <strong>Free</strong> — Dashboard, basic Charts, Indicators, watchlist (limited
-                symbols). Good for casual viewing.
+                <strong>Free — €0</strong>. Dashboard, basic Charts (single indicator, 3-month
+                range), basic Screener, basic News flow, basic Portfolio, basic Global Indicators,
+                Ticker workspace.
               </li>
               <li>
-                <strong>Pro</strong> — All TradingView-equivalent tools: full Charts with
-                drawing/indicators, Screener, Risk engine, COT positioning, Macro intelligence,
-                expanded watchlist.
+                <strong>Pro — €9.99/month</strong>. The TradingView-equivalent layer: full Charts
+                (multi-pane, every indicator, drawing tools), advanced Screener, Risk engine, COT
+                positioning, Scenario planner, Macro intelligence, full News flow, full Portfolio,
+                full Global Indicators, and the Desktop app.
               </li>
               <li>
-                <strong>Premium</strong> — Adds Polymarket signals, AI weekly briefing, deeper
-                fundamentals (FMP-backed), event-risk calendar.
+                <strong>Premium — €19.99/month</strong>. Adds Termimal&rsquo;s intelligence moat:
+                Polymarket event probabilities &amp; signals, on-chain analytics (BTC MVRV /
+                Z-Score / wallet flows), sentiment &amp; manipulation detection, the weekly AI
+                briefing, sovereign intelligence, API access, and priority support.
               </li>
             </ul>
             <p>
-              Trial converts on day 14 to whichever plan you selected. You can cancel any time
-              before that under <Link href="/dashboard/billing" className="link-acc">Billing</Link>{" "}
-              — no charge if you cancel during the trial.
+              Both Pro and Premium include a <strong>14-day free trial</strong>. Trial converts on
+              day 14 to whichever plan you selected. You can cancel any time before that under{" "}
+              <Link href="/dashboard/billing" className="link-acc">Billing</Link> — no charge if you
+              cancel during the trial.
             </p>
           </>
         ),
@@ -314,17 +320,18 @@ const GROUPS: Group[] = [
               <li>The top liquid markets ordered by volume.</li>
               <li>Order book depth and recent trades for any market you click.</li>
               <li>
-                <strong>Deep scan</strong> &mdash; runs a multi-factor analysis on the top 8
-                markets: volume spike multiplier vs the 7-day baseline, BUY/SELL direction shift,
+                <strong>Deep scan</strong> &mdash; runs a multi-factor analysis on the top liquid
+                markets: volume spike multiplier vs the recent baseline, BUY/SELL direction shift,
                 wallet-cluster confirmation, cross-market alignment with BTC / ETH / VIX / /ES /
-                gold. Markets that pass 3 of 4 conditions get a <strong>STRONG</strong> signal.
+                gold. Markets that pass 3 of 4 conditions get a <strong>STRONG</strong> signal,
+                1 or 2 conditions get a <strong>WEAK</strong> signal.
               </li>
               <li>
                 <strong>Whale tape</strong> &mdash; identifies the top wallets in each market by
-                notional, with a per-wallet accuracy proxy and pump-dump heuristic.
+                notional, with a per-wallet entry-edge accuracy proxy and a pump-dump heuristic.
               </li>
             </ul>
-            <p>Premium tier.</p>
+            <p>Gated under Premium (<code>eventProbabilities</code> in the plan matrix).</p>
           </>
         ),
       },
@@ -349,11 +356,13 @@ const GROUPS: Group[] = [
         body: (
           <>
             <p>
-              Filter the universe (~200 US-listed names by default) by market cap, sector, P/E,
-              fundamental quality, technical setup, and more. Save scans as presets to revisit them
-              later.
+              Filter the curated universe of US-listed names by market cap, sector, P/E, fundamental
+              quality, technical setup, and more.
             </p>
-            <p>Pro tier.</p>
+            <p>
+              Free tier ships a basic Screener; Pro unlocks the full filter set, saved presets, and
+              shareable scans.
+            </p>
           </>
         ),
       },
@@ -362,18 +371,16 @@ const GROUPS: Group[] = [
         title: "Risk engine",
         body: (
           <>
-            <p>
-              The risk page combines:
-            </p>
+            <p>The risk page combines:</p>
             <ul>
-              <li>Crash-risk score (0&ndash;100) derived from VIX, OAS, breadth, curve.</li>
+              <li>Crash-risk score (0&ndash;100) derived from VIX, credit spreads, breadth, curve.</li>
               <li>Sector breadth heat map.</li>
               <li>Volatility surface (skew, term structure).</li>
-              <li>Real-time flag system &mdash; e.g. &ldquo;Credit stress&rdquo;, &ldquo;Curve
-              inverted&rdquo;, &ldquo;Breadth fragile&rdquo; raise themselves automatically when
-              thresholds trigger.</li>
+              <li>Auto-raised flags &mdash; e.g. &ldquo;Credit stress&rdquo;, &ldquo;Curve
+              inverted&rdquo;, &ldquo;Breadth fragile&rdquo; trigger automatically when thresholds
+              are crossed.</li>
             </ul>
-            <p>Pro tier.</p>
+            <p>Pro tier (<code>riskEngine</code>).</p>
           </>
         ),
       },
@@ -383,16 +390,16 @@ const GROUPS: Group[] = [
         body: (
           <>
             <p>
-              Weekly Commitment of Traders data from the CFTC across futures contracts. We classify
-              traders into <strong>Commercial</strong> (hedgers), <strong>Non-commercial</strong>{" "}
+              Weekly Commitment of Traders data from the CFTC across futures contracts. Traders
+              classified into <strong>Commercial</strong> (hedgers), <strong>Non-commercial</strong>{" "}
               (speculators), and <strong>Non-reportable</strong> (small specs).
             </p>
             <p>
-              Per contract you get net positions over time, percentile vs 1y / 3y / 5y, extreme
+              Per contract you get net positions over time, percentile vs trailing windows, extreme
               positioning flags, and a sparkline. Click a contract for a deeper view with weekly
               changes, open interest, and reporter counts.
             </p>
-            <p>Pro tier.</p>
+            <p>Pro tier (<code>cotReport</code>).</p>
           </>
         ),
       },
@@ -402,11 +409,12 @@ const GROUPS: Group[] = [
         body: (
           <>
             <p>
-              Track positions you hold elsewhere (we don&rsquo;t execute, so positions are paper).
-              Manual entry or CSV upload. Dashboards: total exposure, gross/net, sector breakdown,
-              currency split, top winners/losers.
+              Track positions you hold elsewhere — Termimal does not execute, so positions are
+              tracked, not held. Manual entry or CSV upload. Dashboards cover total exposure,
+              gross/net, sector breakdown, currency split, top winners/losers.
             </p>
-            <p>Free tier sees up to 10 positions; Pro is unlimited.</p>
+            <p>Free shows the basic view; Pro unlocks the full Portfolio (deeper analytics,
+            unlimited positions).</p>
           </>
         ),
       },
@@ -420,7 +428,7 @@ const GROUPS: Group[] = [
               budget deficit, debt-to-GDP. Sourced from FRED + IMF + central bank releases. Useful
               for cross-country comparisons or sanity-checking macro narratives.
             </p>
-            <p>Free tier.</p>
+            <p>Free tier shows a basic view; Pro unlocks the full set of countries and series.</p>
           </>
         ),
       },
@@ -430,12 +438,28 @@ const GROUPS: Group[] = [
         body: (
           <>
             <p>
-              Per-ticker financials: revenue, EBITDA, FCF, gross / operating / net margins, ROE /
-              ROIC, net debt, leverage, dividend yield, P/E (trailing &amp; forward), PEG, EV/EBITDA,
-              52w high/low. Plus quarterly trends — last 8 quarters of revenue / EBITDA / FCF as a
-              sparkline.
+              Per-ticker financials: revenue, EBITDA, FCF, gross / operating / net margins, ROE,
+              net debt, leverage, dividend yield, P/E (trailing &amp; forward), PEG, EV/EBITDA,
+              52-week high/low. Plus quarterly trends &mdash; the last 8 quarters of revenue /
+              EBITDA / FCF.
             </p>
-            <p>Pro tier.</p>
+            <p>
+              Bundled with the Ticker workspace (Free tier shows the workspace; Pro unlocks
+              advanced charts on the same ticker page).
+            </p>
+          </>
+        ),
+      },
+      {
+        id: "alerts",
+        title: "Price alerts",
+        body: (
+          <>
+            <p>
+              Manage alerts at <Link href="/dashboard/alerts" className="link-acc">/dashboard/alerts</Link>.
+              Add an instrument, condition (greater-than / less-than), and trigger price; the alert
+              fires by email when the condition is met. In-app push is on the roadmap.
+            </p>
           </>
         ),
       },
@@ -537,11 +561,14 @@ const GROUPS: Group[] = [
           <>
             <p>
               The right sidebar on desktop. Sections are user-defined (e.g. &ldquo;Megacaps&rdquo;,
-              &ldquo;FX majors&rdquo;, &ldquo;Crypto&rdquo;). Drag tickers between sections.
-              Sparklines update on a 60-second cadence; price/change values update every 60s in
-              free tier and every 15s in Pro+.
+              &ldquo;FX majors&rdquo;, &ldquo;Crypto&rdquo;) — drag tickers between sections,
+              re-order with drag-and-drop. Sparklines refresh on a ~60-second cadence with
+              Cloudflare edge cache on top.
             </p>
-            <p>Free tier sees up to 25 symbols; Pro &amp; Premium are unlimited.</p>
+            <p>
+              Free tier is capped (your account&rsquo;s live cap is shown in the watchlist
+              header); Pro and Premium are effectively unlimited.
+            </p>
           </>
         ),
       },
