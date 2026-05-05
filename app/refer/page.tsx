@@ -1,6 +1,7 @@
 "use client"
 import { useEffect, useMemo, useState } from "react"
 import Link from "next/link"
+import PageShell from "@/components/layout/PageShell"
 import { createClient } from "@/lib/supabase/client"
 
 export default function ReferPage() {
@@ -40,20 +41,20 @@ export default function ReferPage() {
 
   if (loading) {
     return (
-      <main style={{ background: "var(--bg)", color: "var(--t1)", minHeight: "100vh" }}>
-        <div className="flex min-h-screen items-center justify-center">
-          <div className="h-5 w-5 animate-spin rounded-full border-2 border-current border-t-transparent" />
+      <PageShell title="Refer a friend">
+        <div style={{ background: "var(--bg)", color: "var(--t1)", minHeight: "100vh" }}>
+          <div className="flex min-h-screen items-center justify-center">
+            <div className="h-5 w-5 animate-spin rounded-full border-2 border-current border-t-transparent" />
+          </div>
         </div>
-      </main>
+      </PageShell>
     )
   }
 
   if (!user) {
     return (
-      <main style={{ background: "var(--bg)", color: "var(--t1)", minHeight: "100vh" }}>
-        <div className="border-b px-6 py-4" style={{ borderColor: "var(--border)" }}>
-          <Link href="/" className="text-sm" style={{ color: "var(--t3)" }}>← Back to Termimal</Link>
-        </div>
+      <PageShell title="Refer a friend">
+      <div style={{ background: "var(--bg)", color: "var(--t1)", minHeight: "100vh" }}>
         <div className="flex min-h-[80vh] flex-col items-center justify-center px-4 text-center">
           <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full"
             style={{ background: "rgba(16,185,129,.10)", border: "2px solid rgba(56,139,253,.20)" }}>
@@ -72,16 +73,14 @@ export default function ReferPage() {
             Sign in
           </Link>
         </div>
-      </main>
+      </div>
+      </PageShell>
     )
   }
 
   return (
-    <main style={{ background: "var(--bg)", color: "var(--t1)", minHeight: "100vh" }}>
-      <div className="border-b px-6 py-4" style={{ borderColor: "var(--border)" }}>
-        <Link href="/dashboard" className="text-sm" style={{ color: "var(--t3)" }}>← Back to dashboard</Link>
-      </div>
-
+    <PageShell title="Refer a friend">
+    <div style={{ background: "var(--bg)", color: "var(--t1)", minHeight: "100vh" }}>
       <div className="mx-auto max-w-3xl px-4 py-16">
         <div className="mb-2 text-xs font-semibold uppercase tracking-[0.22em]" style={{ color: "var(--t4)" }}>Refer a Friend</div>
         <h1 className="mt-2 text-3xl font-semibold sm:text-4xl" style={{ letterSpacing: "-0.03em" }}>
@@ -170,6 +169,7 @@ export default function ReferPage() {
           </ul>
         </div>
       </div>
-    </main>
+    </div>
+    </PageShell>
   )
 }

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { getCanonicalUrl } from '@/lib/seo/canonical'
 import Link from "next/link"
+import PageShell from "@/components/layout/PageShell"
 
 export const metadata: Metadata = {
   title: 'Careers — Join the Termimal Team',
@@ -27,11 +28,8 @@ const BENEFITS = [
 
 export default function CareersPage() {
   return (
-    <main style={{ background: "var(--bg)", color: "var(--t1)", minHeight: "100vh" }}>
-      <div className="border-b px-6 py-4" style={{ borderColor: "var(--border)" }}>
-        <Link href="/" className="text-sm" style={{ color: "var(--t3)" }}>← Back to Termimal</Link>
-      </div>
-
+    <PageShell title="Careers">
+    <div style={{ background: "var(--bg)", color: "var(--t1)", minHeight: "100vh" }}>
       <div className="mx-auto max-w-3xl px-4 py-16">
         <div className="mb-2 text-xs font-semibold uppercase tracking-[0.22em]" style={{ color: "var(--t4)" }}>Careers</div>
         <h1 className="mt-2 text-3xl font-semibold sm:text-4xl" style={{ letterSpacing: "-0.03em" }}>
@@ -87,6 +85,7 @@ export default function CareersPage() {
           </div>
         </div>
       </div>
-    </main>
+    </div>
+    </PageShell>
   )
 }

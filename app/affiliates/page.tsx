@@ -1,6 +1,7 @@
 "use client"
 import { useState } from "react"
 import Link from "next/link"
+import PageShell from "@/components/layout/PageShell"
 
 const STEPS = [
   { num: "01", title: "Apply", body: "Fill out the form below. Tell us about your audience — trading communities, newsletters, YouTube channels, social accounts." },
@@ -41,11 +42,8 @@ export default function AffiliatesPage() {
   } as React.CSSProperties
 
   return (
-    <main style={{ background: "var(--bg)", color: "var(--t1)", minHeight: "100vh" }}>
-      <div className="border-b px-6 py-4" style={{ borderColor: "var(--border)" }}>
-        <Link href="/" className="text-sm" style={{ color: "var(--t3)" }}>← Back to Termimal</Link>
-      </div>
-
+    <PageShell title="Affiliates">
+    <div style={{ background: "var(--bg)", color: "var(--t1)", minHeight: "100vh" }}>
       <div className="mx-auto max-w-4xl px-4 py-16">
         <div className="mb-2 text-xs font-semibold uppercase tracking-[0.22em]" style={{ color: "var(--t4)" }}>Partner Program</div>
         <h1 className="mt-2 text-3xl font-semibold sm:text-4xl" style={{ letterSpacing: "-0.03em" }}>Earn with Termimal.</h1>
@@ -173,6 +171,7 @@ export default function AffiliatesPage() {
           )}
         </div>
       </div>
-    </main>
+    </div>
+    </PageShell>
   )
 }

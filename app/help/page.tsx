@@ -1,6 +1,7 @@
 "use client"
 import { useState } from "react"
 import Link from "next/link"
+import PageShell from "@/components/layout/PageShell"
 import { openSupportChat } from "@/components/support/SupportChatLauncher"
 
 const FAQS = [
@@ -33,11 +34,8 @@ export default function HelpPage() {
   )
 
   return (
-    <main style={{ background: "var(--bg)", color: "var(--t1)", minHeight: "100vh" }}>
-      <div className="border-b px-6 py-4" style={{ borderColor: "var(--border)" }}>
-        <Link href="/" className="text-sm" style={{ color: "var(--t3)" }}>← Back to Termimal</Link>
-      </div>
-
+    <PageShell title="Help center">
+    <div style={{ background: "var(--bg)", color: "var(--t1)", minHeight: "100vh" }}>
       <div className="mx-auto max-w-4xl px-4 py-16">
         <div className="mb-12 text-center">
           <div className="mb-2 text-xs font-semibold uppercase tracking-[0.22em]" style={{ color: "var(--t4)" }}>Help Center</div>
@@ -131,6 +129,7 @@ export default function HelpPage() {
           </div>
         </div>
       </div>
-    </main>
+    </div>
+    </PageShell>
   )
 }

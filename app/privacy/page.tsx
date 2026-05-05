@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { getCanonicalUrl } from '@/lib/seo/canonical'
-import Link from 'next/link'
+import PageShell from '@/components/layout/PageShell'
 
 export const metadata: Metadata = {
   title: 'Privacy Policy — Termimal',
@@ -18,9 +18,9 @@ export const metadata: Metadata = {
 
 export default function PrivacyPage() {
   return (
-    <div className="min-h-screen pt-32 pb-20" style={{ background: 'var(--bg)' }}>
+    <PageShell title="Privacy Policy">
+    <div className="min-h-screen pt-24 pb-20" style={{ background: 'var(--bg)' }}>
       <div className="max-w-[800px] mx-auto px-4 md:px-8">
-        <Link href="/" className="text-sm mb-8 inline-block hover:underline" style={{ color: 'var(--acc)' }}>← Back to Home</Link>
         <h1 className="text-3xl font-bold mb-2" style={{ color: 'var(--t1)', letterSpacing: '-0.02em' }}>Privacy Policy</h1>
         <p className="text-sm mb-8" style={{ color: 'var(--t3)' }}>Last updated: April 2026</p>
         
@@ -47,5 +47,6 @@ export default function PrivacyPage() {
         </div>
       </div>
     </div>
+    </PageShell>
   )
 }

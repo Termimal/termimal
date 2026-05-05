@@ -1,6 +1,6 @@
 "use client"
 import { useEffect, useState } from "react"
-import Link from "next/link"
+import PageShell from "@/components/layout/PageShell"
 
 const SERVICES = [
   { name: "Web Terminal",       latency: "42ms",  uptime: "99.98%" },
@@ -23,11 +23,8 @@ export default function StatusPage() {
   }, [])
 
   return (
-    <main style={{ background: "var(--bg)", color: "var(--t1)", minHeight: "100vh" }}>
-      <div className="border-b px-6 py-4" style={{ borderColor: "var(--border)" }}>
-        <Link href="/" className="text-sm" style={{ color: "var(--t3)" }}>← Back to Termimal</Link>
-      </div>
-
+    <PageShell title="System status">
+    <div style={{ background: "var(--bg)", color: "var(--t1)", minHeight: "100vh" }}>
       <div className="mx-auto max-w-4xl px-4 py-16">
         <div className="mb-14 flex flex-col items-center text-center">
           <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full"
@@ -96,6 +93,7 @@ export default function StatusPage() {
           </div>
         </div>
       </div>
-    </main>
+    </div>
+    </PageShell>
   )
 }
